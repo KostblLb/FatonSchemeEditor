@@ -43,11 +43,11 @@ namespace HelloForms
             get
             {
                 if (type == Type.Class)
-                    return "Класс"; //hardcoded localization, bad
+                    return FatonConstants.NODE_CLASS;
                 else if (type == Type.Domain)
-                    return "Домен";
+                    return "Домен"; // FIXME
                 else if (type == Type.Relation)
-                    return "Отношение";
+                    return FatonConstants.NODE_RELATION;
                 else
                     return "";
             }
@@ -80,6 +80,9 @@ namespace HelloForms
             get { return _parents; }
         }
         
+        /// <summary>
+        /// returns ONLY attributes inherited from parents
+        /// </summary>
         public List<Tuple<Attribute, Class>> InheritedAttributes
         {
             get

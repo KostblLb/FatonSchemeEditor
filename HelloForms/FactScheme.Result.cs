@@ -21,6 +21,20 @@ namespace HelloForms
 
             ResultType _type;
             List<Rule> _rules;
+            String _name;
+
+            public Result(string name, ResultType type = ResultType.Create)
+            {
+                _name = name;
+                _type = type;
+                _rules = new List<Rule>();
+            }
+
+            public String Name
+            {
+                get { return _name; }
+                set { _name = value; }
+            }
         }
     }
 }

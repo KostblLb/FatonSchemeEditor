@@ -18,18 +18,13 @@ namespace HelloForms
             BindingSource bs = new BindingSource();
             bs.DataSource = arg.Conditions;
             _argumentConditions.DataSource = bs;
-            
-            //_argumentConditions.DataSource
-            foreach (FactScheme.Condition cond in arg.Conditions)
-            {
-               // _argumentConditions.Rows.Add(1);
-            }
+
         }
         private void argumentPanelSelect(FlowLayoutPanel argPanel)
         {
             Console.WriteLine("selected argument panel");
             _argumentConditions.Tag = argPanel.Tag;
-            //reloadArgConditions();
+            reloadArgConditions(argPanel.Tag as FactScheme.Argument);
         }
 
         private void argumentPanelClick(object sender, MouseEventArgs e)
@@ -92,13 +87,16 @@ namespace HelloForms
         static Point motionstart = Point.Empty;
         static void panelMouseMove(object sender, MouseEventArgs e)
         {
+            Control control = sender as Control;
+            while (!(control is FlowLayoutPanel))
+                control = control.Parent;
             if (mousedown)
             {
-                Point loc = ((Panel)sender).Location;
+                Point loc = ((Panel)control).Location;
                 Point mousedelta = new Point(-motionstart.X + e.X, -motionstart.Y + e.Y);
                 loc.X += mousedelta.X;
                 loc.Y += mousedelta.Y;
-                ((Panel)sender).Location = loc;
+                ((Panel)control).Location = loc;
                 Console.WriteLine(loc);
             }
         }
@@ -115,6 +113,14 @@ namespace HelloForms
             mousedown = false;
         }
 
+        static private void panelControlAdded(object sender, ControlEventArgs e)
+        {
+            Control control = e.Control;
+            control.MouseDown += new MouseEventHandler(panelMouseDown);
+            control.MouseMove += new MouseEventHandler(panelMouseMove);
+            control.MouseUp += new MouseEventHandler(panelMouseUp);
+        }
+
         static private Label objNameLabel(string name)
         {
             Label label = new Label();
@@ -128,9 +134,13 @@ namespace HelloForms
         static FlowLayoutPanel DraggablePanel()
         {
             FlowLayoutPanel panel = new FlowLayoutPanel();
+            panel.AutoSize = true;
+
             panel.MouseDown += new MouseEventHandler(panelMouseDown);
             panel.MouseMove += new MouseEventHandler(panelMouseMove);
             panel.MouseUp += new MouseEventHandler(panelMouseUp);
+            panel.ControlAdded += new ControlEventHandler(panelControlAdded);
+
             return panel;
         }
 
@@ -191,15 +201,17 @@ namespace HelloForms
             argumentPanel.Tag = arg;
             return argumentPanel;
         }
-        FlowLayoutPanel ResultPanel()
+        FlowLayoutPanel ResultPanel(FactScheme.Result res)
         {
             FlowLayoutPanel resultPanel = DraggablePanel();
             resultPanel.FlowDirection = FlowDirection.TopDown;
             Label label = new Label();
             resultPanel.BackColor = Color.PeachPuff;
             label = new Label();
+            label.AutoSize = true;
             label.Name = "ObjectName";
-            label.Text = "Some Result";
+            //label.Text = "Some Result";
+            label.Text = res.Name;
             resultPanel.Controls.Add(label);
             return resultPanel;
         }
@@ -236,6 +248,18 @@ namespace HelloForms
             _parentControl.Controls.Add(argPanel);
             argumentPanelSelect(argPanel);
             argPanel.BringToFront();
+        }
+
+        public void AddResult(Point point, FactScheme.Result res = null)
+        {
+            if (res == null)
+            {
+                res = _scheme.AddResult();
+            }
+            FlowLayoutPanel panel = ResultPanel(res);
+            Point location = _parentControl.PointToClient(point);
+            panel.Location = location;
+            _parentControl.Controls.Add(panel);
         }
     }
 }

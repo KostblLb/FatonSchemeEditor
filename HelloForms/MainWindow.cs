@@ -11,10 +11,10 @@ using System.Windows.Forms;
 
 namespace HelloForms
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
 
-        public Form1()
+        public MainWindow()
         {
             InitializeComponent();
         }
@@ -28,6 +28,17 @@ namespace HelloForms
             tabPage1.DragOver += new DragEventHandler(tabPage_DragOver);
             tabPage1.DragDrop += new DragEventHandler(tabPage_DragDrop);
             tabPage1.Paint += new PaintEventHandler(tabPage_Paint);
+
+            DataGridViewComboBoxColumn conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
+            conditionTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ConditionType));
+
+            DataGridViewComboBoxColumn comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
+            comparTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ComparisonType));
+
+            if(Properties.Settings.Default["OntologyPath"] != null)
+            {
+                loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+            }
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -169,7 +180,21 @@ namespace HelloForms
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            System.IO.Stream fstream = openFileDialog1.OpenFile();
+
+            //ontologyNodes = OntologyNode
+        }
+
+        private void loadOntologyTree(String filename)
+        {
+            System.IO.FileStream fstream = null;
+            try
+            {
+                fstream = System.IO.File.Open(filename, System.IO.FileMode.Open);
+            } catch(System.IO.FileNotFoundException e)
+            {
+                MessageBox.Show(e.FileName + " not found");
+                return;
+            }
             List<OntologyNode> ontology = OntologyBuilder.fromXmlTest(fstream);
             fstream.Close();
 
@@ -180,7 +205,7 @@ namespace HelloForms
             while (s.Any())
             {
                 OntologyNode ontNode = s.Pop();
-                while(ontNode == null && s.Any()) // null may be last element in stack!
+                while (ontNode == null && s.Any()) // null may be last element in stack!
                 {
                     ontNode = s.Pop();
                     if (baseNodeCollection[0].Parent == null || baseNodeCollection[0].Parent.Parent == null)
@@ -193,7 +218,7 @@ namespace HelloForms
                 TreeNode treeNode = new TreeNode(ontNode.Name);
                 treeNode.Tag = ontNode;
                 baseNodeCollection.Add(treeNode);
-                if(ontNode.type == OntologyNode.Type.Class && ((Class)ontNode).Children.Count > 0)
+                if (ontNode.type == OntologyNode.Type.Class && ((Class)ontNode).Children.Count > 0)
                 {
                     baseNodeCollection = treeNode.Nodes;
                     s.Push(null); //trick to control baseNodeCollection
@@ -203,7 +228,6 @@ namespace HelloForms
                     }
                 }
             }
-            //ontologyNodes = OntologyNode
         }
 
         private void онтологиюToolStripMenuItem_Click(object sender, EventArgs e)
@@ -303,6 +327,94 @@ namespace HelloForms
             System.Xml.Linq.XDocument doc = ((FactScheme)tabControl1.SelectedTab.Tag).ToXml();
             doc.Save(fstream);
             fstream.Close();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsPathsDialog dialog = new SettingsPathsDialog();
+            DialogResult dr = dialog.ShowDialog(this);
+            if(dr == DialogResult.OK)
+            {
+                loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+            }
+        }
+
+        private void dataGridView1_Validating(object sender, CancelEventArgs e)
+        {
+            DataGridView view = sender as DataGridView;
+            FactScheme.Argument arg = view.Tag as FactScheme.Argument;
+            List<OntologyNode.Attribute> attrs = ((Class)arg.Tag).Attributes;
+            foreach (FactScheme.Condition cond in arg.Conditions)
+            {
+                bool ok = false;
+                foreach(OntologyNode.Attribute attr in attrs)
+                {
+                    if (attr.Name.Equals(cond.Attribute))
+                    {
+                        ok = true;
+                        break;
+                    }
+                }
+                if (!ok)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            e.Cancel = false;
+        }
+
+        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            dataGridView1.Rows[e.RowIndex].ErrorText = null;
+
+            if (e.ColumnIndex != EditorConstants.CONDITION_DATAGRID_ATTR_COL)
+            {
+                e.Cancel = false;
+                return;
+            }
+
+            FactScheme.Argument arg = ((DataGridView)sender).Tag as FactScheme.Argument;
+            List<OntologyNode.Attribute> attrs = ((Class)arg.Tag).Attributes;
+            String cellAttrName = e.FormattedValue as String;
+
+            foreach (OntologyNode.Attribute attr in attrs)
+            {
+                if (attr.Name.Equals(cellAttrName))
+                {
+                    e.Cancel = false;
+                    return;
+                }
+            }
+
+            if (arg.Inheritance)
+            {
+                List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)arg.Tag).InheritedAttributes;
+                foreach(Tuple<OntologyNode.Attribute, Class> attr in inheritedAttrs)
+                {
+                    if (attr.Item2.Name.Equals(cellAttrName))
+                    {
+                        e.Cancel = false;
+                        return;
+                    }
+                }
+            }
+
+            e.Cancel = true;
+            dataGridView1.Rows[e.RowIndex].ErrorText = EditorConstants.CONDITION_DATAGRID_ERROR_ATT_NAME;
+
+        }
+
+        private void добавитьРезультатToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Point location = ((ToolStripMenuItem)sender).Owner.Location;
+            Layout layout = ((FactScheme)tabPage1.Tag).Layout;
+            layout.AddResult(location);
         }
     }
 }

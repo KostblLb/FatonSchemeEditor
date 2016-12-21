@@ -54,6 +54,22 @@ namespace HelloForms
             _layout.AddArgument(point, arg);
         }
 
+        public Result AddResult()
+        {
+            String name = EditorConstants.RESULT_NAME_NEW;
+            int defaultNamesCount = 0;
+            foreach(Result r in _results)
+            {
+                if (r.Name.Contains(name))
+                    defaultNamesCount++;
+            }
+            if (defaultNamesCount > 0)
+                name += string.Format("({0})", defaultNamesCount);
+            Result res = new Result(name);
+            _results.Add(res);
+            return res;
+        }
+
         public void AddArgument(string dictionaryEntry) { }
 
         public XDocument ToXml() //TODO MOVE TO LINQ?

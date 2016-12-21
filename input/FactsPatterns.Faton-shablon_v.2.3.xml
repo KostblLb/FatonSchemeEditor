@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="Windows-1251"?>
+
+<FATON version="1.0" description="FATON Scheme of Facts Types Shablon">
+
+    <Scheme Name="FullShablon" NumArg="1|2" CountType="" Segment="SegmentName">
+
+    	<!-- Описание аргумента. Поля Segment и GroupType необязательны /-->
+      <Argument ObjectType="" ClassName="" TypeCompare="" Segment="SegmentName" GroupType="" />
+      <Argument ObjectType="" ClassName="" TypeCompare="" Segment="SegmentName" GroupType="" >
+		  <Condition Type="SEG" Name="" />
+		  <Condition Type="SEM" Operation="=|!=|..." AttrName="" AttrType="" Data="" />
+		  <Condition Type="MORH" Operation="=|!=" AttrName="" Data="attr_val" />
+	      	<!-- Список равнозначных значений одного морфологического атрибута /-->
+		  <Condition Type="MORH" Operation="=|!=" AttrName="" Data="{attr_val1,attr_va2,...}" />
+	      	<!-- Список значений разных морфологических атрибутов (И-условие) /-->
+		  <Condition Type="MORH_LIST" Operation="=|!=" >
+			<Element AttrName="" Data="" />
+			...
+			<Element AttrName="" Data="" />
+		  </Condition>
+      </Argument>
+
+
+	  <ConditionComplex Arg1="1|2|..." Arg2="1|2|...">
+		  <Condition Type="SEG" Type="contact/include/left/right" />
+		  <Condition Type="SEM" Operation="=|!=" AttrName1="" AttrName2=""/>
+    		<!-- Синтаксическое ограничение, требует наличие словаря ССК (МУ). ActantNum необязательно. /-->
+		  <Condition Type="SYNT" Operation="=|!=" ArgPredicat="1|2" ActantNum="" />
+		  <Condition Type="SYNT_NAME" Operation="=|!=" ArgPredicat="1|2" ActantName="" />
+		  <Condition Type="MORH" Operation="=|!=" AttrName="" />
+		  <!--Condition Type="MORH_LIST" Operation="=|!=" AttrNameList="{attr1,attr2,...}" /-->
+	  </ConditionComplex>
+
+      <ConditionStruct CondType="Position" Contact="" TextPos="" />
+      
+      <Result Type="CREATE" ObjectType="" ClassName="" >
+      	<Rule RuleType="Def" AttrName="Имя" AttrType="" DefultData=""/>
+      	<Rule RuleType="Attr" AttrName="Имя" AttrType="" Resurce="1|2|..." FromAttrName=""/>
+      	<Rule RuleType="RelArg" Resurce="1|2|..." />
+      	<!--Rule RuleType="Table" AttrName="Имя" AttrType="" TableIndex=""/-->
+      	<Rule RuleType="Func|FuncAbr" AttrName="Имя" >
+				<Field Resurce="1|2|..." FromAttrName="" />
+				<Field Resurce="string" Data=""/>
+				<Field Resurce="1|2|.." FromAttrName="" />
+				<Field Resurce="string" Data=""/>
+      	</Rule>
+      </Result>
+
+      <Result Type="EDIT" EditType="Doc|Arg1|Arg2|..." >
+      	<Rule RuleType="Def" AttrName="Имя" AttrType="" DefultData=""/>
+      	<Rule RuleType="Attr" AttrName="Имя" AttrType="" Resurce="1|2|..." FromAttrName=""/>
+      	<Rule RuleType="RelArg" Resurce="1|2|..." ArgNum="1|2"/>
+      	<!--Rule RuleType="Table" AttrName="Имя" AttrType="" TableIndex=""/-->
+      	<Rule RuleType="Func|FuncAbr" AttrName="Имя" AttrType="" >
+				<Field Resurce="1|2|..." FromAttrName="" />
+				<Field Resurce="string" Data=""/>
+				<Field Resurce="1|2|.." FromAttrName="" />
+				<Field Resurce="string" Data=""/>
+      	</Rule>
+      </Result>
+    </Scheme>
+    
+      <Domain Name="RuleType" Teg="Rule" Parent="Result">
+	      <DomainValue Value="Def"/>
+    	  <DomainValue Value="Attr"/>
+	      <DomainValue Value="RelArg"/>
+    	  <DomainValue Value="Table"/>
+	      <DomainValue Value="Func"/>
+    	  <DomainValue Value="FuncAbr"/>
+      </Domain>
+      
+      <Domain Name="AttrType" Value="string"/>
+      <Domain Name="AttrType" Value="int" />
+      <Domain Name="AttrType" Value="bool" />
+      <Domain Name="AttrType" Value="float" />
+      <!--Domain Name="AttrType" Value="object" /-->
+
+      <Domain Name="CountType" Value="0" Comment="forall"/>
+      <Domain Name="CountType" Value="1" Comment="exist"/>
+      <!--Domain Name="CountType" Value="2" Comment="local exist"/-->
+      <!--Domain Name="CountType" Value="3" Comment="one local exist"/-->
+      <!--Domain Name="CountType" Value="4" Comment="first local exist"/-->
+
+  <!-- ТИП ОБЪЕКТА -->
+
+      <Domain Name="ObjectType" Value="TERMIN"/>
+      <Domain Name="ObjectType" Value="TERMIN_PRASE"/>
+      <Domain Name="ObjectType" Value="TERMIN_ALEX"/>
+      <Domain Name="ObjectType" Value="IOBJECT"/>
+      <Domain Name="ObjectType" Value="IOBJECT_REL"/>
+      <Domain Name="ObjectType" Value="FACT"/>
+      <Domain Name="ObjectType" Value="DOC"/>
+
+  <!-- ТИП ОПЕРАЦИИ СРАВНЕНИЯ КЛАССОВ -->
+
+      <Domain Name="TypeCompare" Value="EQUAL"/>
+      <Domain Name="TypeCompare" Value="PLUS_CHILD"/>
+      <!--Domain Name="TypeCompare" Value="PLUS_PARENT"/-->
+      <!--Domain Name="TypeCompare" Value="PLUS_ALL"/-->
+
+      <Domain Name="Resurce" Value="Arg1"/>
+      <Domain Name="Resurce" Value="Arg2"/>
+      <Domain Name="Resurce" Value="Doc"/>
+      <Domain Name="Resurce" Value="Defult"/>
+      <Domain Name="Resurce" Value="Table"/>
+      <Domain Name="Resurce" Value="FunctionPlus"/>
+
+      <Domain Name="CondType" Value="Position"/>
+
+
+  <!-- ТИП КОНТАКТНОСТИ аргументов -->
+      <Domain Name="Contact" Value="CONTACT_NULL"/>
+	<!-- контактность по тексту -->
+      <Domain Name="Contact" Value="CONTACT_ABSOLUTE"/>
+	<!-- контактность значимых терминов, допускает разрыв служебными и незначимыми терминами 
+		 не учитывает однородность -->
+      <Domain Name="Contact" Value="CONTACT_OBJECT"/>
+	<!-- собират однородные группы, контактность терминов допускает разрыв знаками -->
+      <Domain Name="Contact" Value="CONTACT_GROUP"/>
+	<!-- собирать однородные группы, контактность терминов допускает разрыв служебными и незначимыми терминами  -->
+      <Domain Name="Contact" Value="CONTACT_OBJECT_GROUP"/>
+
+
+  <!-- ТИП ВЗАИМОРАСПОЛОЖЕНИЯ аргументов -->
+      <Domain Name="TextPos" Value="POSITION_ANY"/>
+	<!-- обязательная препозиция 1-го аргумента -->
+      <Domain Name="TextPos" Value="POSITION_PRE_FORCED"/>
+	<!-- приоритетная препозиция 1-го аргумента -->
+      <Domain Name="TextPos" Value="POSITION_PRE_PRIOR"/>
+	<!-- обязательная постпозиция 1-го аргумента -->
+      <Domain Name="TextPos" Value="POSITION_POST_FORCED"/>
+	<!-- приоритетная постпозиция 1-го аргумента -->
+      <Domain Name="TextPos" Value="POSITION_POST_PRIOR"/>
+
+</FATON>

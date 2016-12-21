@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ontology>
+	<class name="Деятельность">
+		<attr type="domain">Пол</attr>
+		<attr type="string">Описание деятельности</attr>
+		<attr type="string">Дата начала</attr>
+		<attr type="string">Стадия проекта</attr>
+        <class name="Проекты">
+            <attr type="string">Ответственный</attr>
+        </class>
+	</class>
+
+	<class name="Интернет-ресурсы">
+		<attr type="string">Название Ресурса</attr>
+		<attr type="string">URL</attr>
+		<attr type="string">Формат</attr>
+		<attr type="string">Тип ресурса</attr>
+		<attr type="string">Описание ресурса</attr>
+		<attr type="string">Язык ресурса</attr>
+		<attr type="int">Тип доступа</attr>
+		<attr type="string">Права доступа</attr>
+        <class name="Информационные Ресурсы"/>
+        <class name="Сайты организаций, персон, проектов"/>
+	</class>
+	
+	<class name="Организация"> <!--<Возможно или class name = "Орг"/> и <relation name = "Орг"/>/-->
+		<attr type="string">Название</attr>
+		<attr type="string">Аббревиатура</attr>
+	</class>
+	<class name="Персона">
+		<attr type="string">Имя</attr>
+		<attr type="string">Фамилия</attr>
+		<attr type="string">Отчество</attr>
+		<attr type="string">Инициалы</attr>
+		<attr type="string">Пол</attr>
+		<attr type="domain">Ученая степень</attr>
+	</class>
+	
+	<class name="ФИО">
+		<attr type="string">Имя</attr>
+	</class>
+	<relation name="Сотрудник" arg1="Персона" arg2="Организация">
+		<attr type="string">Должность</attr>
+		<attr type="string">Дата</attr>
+	</relation>
+	
+	<domain name="Ученая степень">
+		<value>Кандидат наук</value>
+		<value>Доктор наук</value>
+	</domain>	
+    <domain name="Пол">
+		<value>Мужской</value>
+		<value>Женский</value>
+	</domain>	
+</ontology>
