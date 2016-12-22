@@ -65,7 +65,7 @@ namespace HelloForms
             }
             if (defaultNamesCount > 0)
                 name += string.Format("({0})", defaultNamesCount);
-            Result res = new Result(name);
+            Result res = new Result(name, ResultType.Create);
             _results.Add(res);
             return res;
         }

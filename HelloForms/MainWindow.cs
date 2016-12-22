@@ -59,19 +59,10 @@ namespace HelloForms
                 listView1.Columns.Add("Атрибут"); //bad hardcode
                 listView1.Columns.Add("Тип");
                 listView1.Columns.Add("Унаследован");
-                List<OntologyNode.Attribute> attrs = ((Class)node).Attributes;
+                List<OntologyNode.Attribute> attrs = ((Class)node).OwnAttributes;
                 
                 List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)node).InheritedAttributes;
-                /*
-                Class parent = ((Class)node).parent;
-                List<string> inheritance = new List<string>();
-                while (parent != null)
-                {
-                    attrs.AddRange(parent.attrs);
-                    for (int i = 0; i < parent.attrs.Count; i++)
-                        inheritance.Add(parent.Name);
-                    parent = parent.parent; // :(
-                }*/
+
                 foreach(OntologyNode.Attribute attr in attrs)
                 {
                     string[] values = { attr.Name, attr.Type, "" };
@@ -192,9 +183,15 @@ namespace HelloForms
                 fstream = System.IO.File.Open(filename, System.IO.FileMode.Open);
             } catch(System.IO.FileNotFoundException e)
             {
-                MessageBox.Show(e.FileName + " not found");
+                MessageBox.Show(e.Message);
                 return;
             }
+            catch(System.IO.DirectoryNotFoundException e)
+            {
+                MessageBox.Show(e.Message);
+                return;
+            }
+
             List<OntologyNode> ontology = OntologyBuilder.fromXmlTest(fstream);
             fstream.Close();
 
@@ -228,6 +225,7 @@ namespace HelloForms
                     }
                 }
             }
+            OntologyNode.Ontology = ontology;
         }
 
         private void онтологиюToolStripMenuItem_Click(object sender, EventArgs e)
@@ -344,31 +342,10 @@ namespace HelloForms
             }
         }
 
-        private void dataGridView1_Validating(object sender, CancelEventArgs e)
+        private void dataGridView1_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridView view = sender as DataGridView;
-            FactScheme.Argument arg = view.Tag as FactScheme.Argument;
-            List<OntologyNode.Attribute> attrs = ((Class)arg.Tag).Attributes;
-            foreach (FactScheme.Condition cond in arg.Conditions)
-            {
-                bool ok = false;
-                foreach(OntologyNode.Attribute attr in attrs)
-                {
-                    if (attr.Name.Equals(cond.Attribute))
-                    {
-                        ok = true;
-                        break;
-                    }
-                }
-                if (!ok)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            e.Cancel = false;
+            dataGridView1.Rows[e.RowIndex].ErrorText = null;
         }
-
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             dataGridView1.Rows[e.RowIndex].ErrorText = null;
@@ -380,7 +357,7 @@ namespace HelloForms
             }
 
             FactScheme.Argument arg = ((DataGridView)sender).Tag as FactScheme.Argument;
-            List<OntologyNode.Attribute> attrs = ((Class)arg.Tag).Attributes;
+            List<OntologyNode.Attribute> attrs = ((Class)arg.Origin).OwnAttributes;
             String cellAttrName = e.FormattedValue as String;
 
             foreach (OntologyNode.Attribute attr in attrs)
@@ -394,7 +371,7 @@ namespace HelloForms
 
             if (arg.Inheritance)
             {
-                List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)arg.Tag).InheritedAttributes;
+                List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)arg.Origin).InheritedAttributes;
                 foreach(Tuple<OntologyNode.Attribute, Class> attr in inheritedAttrs)
                 {
                     if (attr.Item2.Name.Equals(cellAttrName))
@@ -416,5 +393,7 @@ namespace HelloForms
             Layout layout = ((FactScheme)tabPage1.Tag).Layout;
             layout.AddResult(location);
         }
+
+
     }
 }

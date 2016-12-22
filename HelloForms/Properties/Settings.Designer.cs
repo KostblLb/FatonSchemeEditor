@@ -70,5 +70,17 @@ namespace HelloForms.Properties {
                 this["WndMainLPanelSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("484")]
+        public int ArgGridViewSplitter {
+            get {
+                return ((int)(this["ArgGridViewSplitter"]));
+            }
+            set {
+                this["ArgGridViewSplitter"] = value;
+            }
+        }
     }
 }

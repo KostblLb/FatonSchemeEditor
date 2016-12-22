@@ -193,7 +193,7 @@ namespace HelloForms
                 {
                     string attrName = ((XText)attrElement.FirstNode).Value; //get inner text of <attr>
                     string attrType = attrElement.Attribute("type").Value;
-                    currentClass.Attributes.Add(new OntologyNode.Attribute(attrType, attrName));
+                    currentClass.OwnAttributes.Add(new OntologyNode.Attribute(attrType, attrName));
                 }
                 if (classParents.Any())
                 {

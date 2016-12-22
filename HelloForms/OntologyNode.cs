@@ -9,6 +9,12 @@ namespace HelloForms
 {
     public class OntologyNode
     {
+        /// <summary>
+        /// The Tree-like list of Ontology nodes
+        /// </summary>
+        public static List<OntologyNode> Ontology; 
+
+
         public enum Type { Class, Relation, Domain };
         public class Attribute
         {
@@ -56,7 +62,10 @@ namespace HelloForms
         {
             attrs.Add(att);
         }
-        public List<Attribute> Attributes
+        /// <summary>
+        /// Returns ONLY own attributes
+        /// </summary>
+        public List<Attribute> OwnAttributes
         {
             get { return attrs; }
         }
@@ -81,7 +90,7 @@ namespace HelloForms
         }
         
         /// <summary>
-        /// returns ONLY attributes inherited from parents
+        /// Returns ONLY attributes inherited from parents
         /// </summary>
         public List<Tuple<Attribute, Class>> InheritedAttributes
         {
@@ -95,12 +104,29 @@ namespace HelloForms
                 while(q.Any())
                 {
                     parent = q.Dequeue();
-                    foreach (Attribute attr in parent.Attributes)
+                    foreach (Attribute attr in parent.OwnAttributes)
                         inherited.Add(new Tuple<Attribute, Class>(attr, parent));
                     foreach (Class newParent in parent._parents)
                         q.Enqueue(newParent);
                 }
                 return inherited;
+            }
+        }
+
+        /// <summary>
+        /// Returns List of Own Attributes and Inherited Attributes, in this order.
+        /// </summary>
+        public List<Attribute> AllAttributes
+        {
+            get
+            {
+                List<Attribute> allAttrs = new List<Attribute>(this.OwnAttributes);
+                List<Tuple<Attribute, Class >> inheritedAttrs = new List<Tuple<Attribute, Class>>(this.InheritedAttributes);
+                foreach(Tuple<Attribute, Class> tuple in inheritedAttrs)
+                {
+                    allAttrs.Add(tuple.Item1);
+                }
+                return allAttrs;
             }
         }
         public Class(string myName) : base(myName, Type.Class)

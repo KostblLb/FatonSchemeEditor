@@ -35,14 +35,14 @@ namespace HelloForms
         List<string> listArgumentAttributes(FactScheme.Argument arg, bool inheritance)
         {
             List<string> result = new List<string>();
-            foreach (OntologyNode.Attribute attr in ((Class)arg.Tag).Attributes)
+            foreach (OntologyNode.Attribute attr in ((Class)arg.Origin).OwnAttributes)
             {
                 result.Add(attr.Name);
                 //if(arg.)
                 //! CHANGE COLOR IF CONDITION FOR ATTR EXISTS
             }
             if (inheritance)
-                foreach (Tuple<OntologyNode.Attribute, Class> attr in ((Class)arg.Tag).InheritedAttributes)
+                foreach (Tuple<OntologyNode.Attribute, Class> attr in ((Class)arg.Origin).InheritedAttributes)
                 {
                     result.Add(attr.Item1.Name);
                 }
@@ -135,6 +135,7 @@ namespace HelloForms
         {
             FlowLayoutPanel panel = new FlowLayoutPanel();
             panel.AutoSize = true;
+            panel.FlowDirection = FlowDirection.TopDown;
 
             panel.MouseDown += new MouseEventHandler(panelMouseDown);
             panel.MouseMove += new MouseEventHandler(panelMouseMove);
@@ -148,8 +149,6 @@ namespace HelloForms
         {
             FlowLayoutPanel argumentPanel = DraggablePanel();
             argumentPanel.Size = Size.Empty;
-            argumentPanel.FlowDirection = FlowDirection.TopDown;
-            argumentPanel.AutoSize = true;
             argumentPanel.BackColor = Color.AliceBlue;
             argumentPanel.BorderStyle = BorderStyle.FixedSingle;
             argumentPanel.Controls.Add(objNameLabel(arg.Name));
@@ -159,7 +158,7 @@ namespace HelloForms
             label.Text = "arg" + arg.Order + " " + arg.TypeString;
             argumentPanel.Controls.Add(label);
 
-            if (arg.Tag.type == OntologyNode.Type.Class)
+            if (arg.Origin.type == OntologyNode.Type.Class)
             {
                 CheckBox toggleInherit = new CheckBox();
                 toggleInherit.Name = "UseInheritance";
@@ -203,16 +202,65 @@ namespace HelloForms
         }
         FlowLayoutPanel ResultPanel(FactScheme.Result res)
         {
+            Class ontologyClass = res.Reference as Class; // TODO ADD SUPPORT FOR EDIT MODE
+
             FlowLayoutPanel resultPanel = DraggablePanel();
-            resultPanel.FlowDirection = FlowDirection.TopDown;
-            Label label = new Label();
-            resultPanel.BackColor = Color.PeachPuff;
-            label = new Label();
-            label.AutoSize = true;
-            label.Name = "ObjectName";
-            //label.Text = "Some Result";
-            label.Text = res.Name;
-            resultPanel.Controls.Add(label);
+            resultPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Label resultNameLabel = new System.Windows.Forms.Label();
+            Label resultTypeLabel = new System.Windows.Forms.Label();
+            Splitter splitter1 = new System.Windows.Forms.Splitter();
+
+            resultNameLabel.AutoSize = true;
+            resultNameLabel.Font = new System.Drawing.Font("Open Sans", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            resultNameLabel.Location = new System.Drawing.Point(8, 5);
+            resultNameLabel.Name = "resultNameLabel";
+            resultNameLabel.Size = new System.Drawing.Size(164, 23);
+            //resultNameLabel.TabIndex = 0;
+            resultNameLabel.Text = res.Name;
+
+            resultTypeLabel.AutoSize = true;
+            resultTypeLabel.Font = new System.Drawing.Font("Open Sans", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            resultTypeLabel.Location = new System.Drawing.Point(8, 28);
+            resultTypeLabel.Name = "resultTypeLabel";
+            resultTypeLabel.Size = new System.Drawing.Size(164, 19);
+            //resultTypeLabel.TabIndex = 2;
+            resultTypeLabel.Text = String.Format("{0}: {1}", res.Type, ontologyClass.Name);
+
+            splitter1.BackColor = System.Drawing.Color.Black;
+            splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            splitter1.Location = new System.Drawing.Point(8, 50);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new System.Drawing.Size(50, 3);
+            //splitter1.TabIndex = 3;
+            //splitter1.TabStop = false;
+
+            resultPanel.AutoSize = true;
+            resultPanel.BackColor = System.Drawing.Color.SeaShell;
+            resultPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            resultPanel.Controls.Add(resultNameLabel);
+            resultPanel.Controls.Add(resultTypeLabel);
+            resultPanel.Controls.Add(splitter1);
+
+            
+            foreach(OntologyNode.Attribute attr in ontologyClass.AllAttributes)
+            {
+                Label resultAttrName = new System.Windows.Forms.Label();
+                resultAttrName.AutoEllipsis = true;
+                resultAttrName.Location = new System.Drawing.Point(8, 61);
+                resultAttrName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+                resultAttrName.Name = "resultAttrName";
+                resultAttrName.Size = new System.Drawing.Size(150, 17);
+                //resultAttrName.TabIndex = 4;
+                resultAttrName.Text = attr.Name;
+
+                resultPanel.Controls.Add(resultAttrName);
+            }
+            
+
+            resultPanel.Padding = new System.Windows.Forms.Padding(5);
+            resultPanel.Size = new System.Drawing.Size(201, 90);
+            //resultPanel.TabIndex = 0;
+
             return resultPanel;
         }
 

@@ -75,7 +75,7 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Layout.cs" />
-    <Compile Include="Ontology.cs" />
+    <Compile Include="OntologyNode.cs" />
     <Compile Include="OntologyBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
