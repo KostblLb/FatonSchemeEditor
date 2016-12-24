@@ -49,23 +49,18 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.layoutTabContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьРезультатToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.NewResultPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.resultNameLabel = new System.Windows.Forms.Label();
-            this.resultTypeLabel = new System.Windows.Forms.Label();
-            this.splitter1 = new System.Windows.Forms.Splitter();
-            this.resultAttrName = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.argAttrsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.conditionTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.attributeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comparisonTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.argAttrsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.добавитьУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.conditionBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -81,13 +76,11 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.layoutTabContextMenu.SuspendLayout();
-            this.NewResultPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
             this.argAttrsContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -270,7 +263,6 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
@@ -283,12 +275,11 @@
             this.tabPage1.AllowDrop = true;
             this.tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
             this.tabPage1.ContextMenuStrip = this.layoutTabContextMenu;
-            this.tabPage1.Controls.Add(this.NewResultPanel);
-            this.tabPage1.Location = new System.Drawing.Point(4, 26);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(674, 520);
+            this.tabPage1.Size = new System.Drawing.Size(674, 521);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tabPage1_MouseMove);
@@ -308,69 +299,13 @@
             this.добавитьРезультатToolStripMenuItem.Text = "Добавить результат";
             this.добавитьРезультатToolStripMenuItem.Click += new System.EventHandler(this.добавитьРезультатToolStripMenuItem_Click);
             // 
-            // NewResultPanel
-            // 
-            this.NewResultPanel.AutoSize = true;
-            this.NewResultPanel.BackColor = System.Drawing.Color.SeaShell;
-            this.NewResultPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.NewResultPanel.Controls.Add(this.resultNameLabel);
-            this.NewResultPanel.Controls.Add(this.resultTypeLabel);
-            this.NewResultPanel.Controls.Add(this.splitter1);
-            this.NewResultPanel.Controls.Add(this.resultAttrName);
-            this.NewResultPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.NewResultPanel.Location = new System.Drawing.Point(277, 23);
-            this.NewResultPanel.Name = "NewResultPanel";
-            this.NewResultPanel.Padding = new System.Windows.Forms.Padding(5);
-            this.NewResultPanel.Size = new System.Drawing.Size(201, 90);
-            this.NewResultPanel.TabIndex = 0;
-            // 
-            // resultNameLabel
-            // 
-            this.resultNameLabel.AutoSize = true;
-            this.resultNameLabel.Font = new System.Drawing.Font("Open Sans", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.resultNameLabel.Location = new System.Drawing.Point(8, 5);
-            this.resultNameLabel.Name = "resultNameLabel";
-            this.resultNameLabel.Size = new System.Drawing.Size(164, 23);
-            this.resultNameLabel.TabIndex = 0;
-            this.resultNameLabel.Text = "Новый результат";
-            // 
-            // resultTypeLabel
-            // 
-            this.resultTypeLabel.AutoSize = true;
-            this.resultTypeLabel.Font = new System.Drawing.Font("Open Sans", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.resultTypeLabel.Location = new System.Drawing.Point(8, 28);
-            this.resultTypeLabel.Name = "resultTypeLabel";
-            this.resultTypeLabel.Size = new System.Drawing.Size(164, 19);
-            this.resultTypeLabel.TabIndex = 2;
-            this.resultTypeLabel.Text = "CREATE: Деятельность";
-            // 
-            // splitter1
-            // 
-            this.splitter1.BackColor = System.Drawing.Color.Black;
-            this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(8, 50);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(183, 3);
-            this.splitter1.TabIndex = 3;
-            this.splitter1.TabStop = false;
-            // 
-            // resultAttrName
-            // 
-            this.resultAttrName.AutoEllipsis = true;
-            this.resultAttrName.Location = new System.Drawing.Point(8, 61);
-            this.resultAttrName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.resultAttrName.Name = "resultAttrName";
-            this.resultAttrName.Size = new System.Drawing.Size(183, 17);
-            this.resultAttrName.TabIndex = 4;
-            this.resultAttrName.Text = "Атрибут Деятельности пидор";
-            // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 26);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(674, 520);
+            this.tabPage2.Size = new System.Drawing.Size(674, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -410,6 +345,30 @@
             this.dataGridView1.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValidated);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
+            // argAttrsContextMenu
+            // 
+            this.argAttrsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.argAttrsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьУсловиеToolStripMenuItem});
+            this.argAttrsContextMenu.Name = "contextMenuStrip1";
+            this.argAttrsContextMenu.Size = new System.Drawing.Size(212, 30);
+            // 
+            // добавитьУсловиеToolStripMenuItem
+            // 
+            this.добавитьУсловиеToolStripMenuItem.Name = "добавитьУсловиеToolStripMenuItem";
+            this.добавитьУсловиеToolStripMenuItem.Size = new System.Drawing.Size(211, 26);
+            this.добавитьУсловиеToolStripMenuItem.Text = "Добавить условие";
+            this.добавитьУсловиеToolStripMenuItem.Click += new System.EventHandler(this.добавитьУсловиеToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            // 
             // conditionTypeDataGridViewTextBoxColumn
             // 
             this.conditionTypeDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -448,38 +407,13 @@
             this.conditionBindingSource.AllowNew = true;
             this.conditionBindingSource.DataSource = typeof(HelloForms.FactScheme.Condition);
             // 
-            // argAttrsContextMenu
-            // 
-            this.argAttrsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.argAttrsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.добавитьУсловиеToolStripMenuItem});
-            this.argAttrsContextMenu.Name = "contextMenuStrip1";
-            this.argAttrsContextMenu.Size = new System.Drawing.Size(212, 30);
-            // 
-            // добавитьУсловиеToolStripMenuItem
-            // 
-            this.добавитьУсловиеToolStripMenuItem.Name = "добавитьУсловиеToolStripMenuItem";
-            this.добавитьУсловиеToolStripMenuItem.Size = new System.Drawing.Size(211, 26);
-            this.добавитьУсловиеToolStripMenuItem.Text = "Добавить условие";
-            this.добавитьУсловиеToolStripMenuItem.Click += new System.EventHandler(this.добавитьУсловиеToolStripMenuItem_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
-            // 
             // conditionBindingSource1
             // 
             this.conditionBindingSource1.DataSource = typeof(HelloForms.FactScheme.Condition);
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(916, 722);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
@@ -505,15 +439,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.layoutTabContextMenu.ResumeLayout(false);
-            this.NewResultPanel.ResumeLayout(false);
-            this.NewResultPanel.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
             this.argAttrsContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -555,11 +485,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn valueDataGridViewTextBoxColumn;
         private System.Windows.Forms.ContextMenuStrip layoutTabContextMenu;
         private System.Windows.Forms.ToolStripMenuItem добавитьРезультатToolStripMenuItem;
-        private System.Windows.Forms.FlowLayoutPanel NewResultPanel;
-        private System.Windows.Forms.Label resultNameLabel;
-        private System.Windows.Forms.Label resultTypeLabel;
-        private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.Label resultAttrName;
     }
 }
 

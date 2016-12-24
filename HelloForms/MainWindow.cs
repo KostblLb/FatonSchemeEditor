@@ -17,6 +17,11 @@ namespace HelloForms
         public MainWindow()
         {
             InitializeComponent();
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.splitContainer1.AutoScaleMode = AutoScaleMode.Inherit;
+            this.splitContainer2.AutoScaleMode = AutoScaleMode.Inherit;
+            this.splitContainer3.AutoScaleMode = AutoScaleMode.Inherit;
+           //this.Scale(new System.Drawing.SizeF(6F, 13F));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -35,7 +40,7 @@ namespace HelloForms
             DataGridViewComboBoxColumn comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
             comparTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ComparisonType));
 
-            if(Properties.Settings.Default["OntologyPath"] != null)
+            if(!String.IsNullOrEmpty(Properties.Settings.Default["OntologyPath"] as String))
             {
                 loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
             }

@@ -50,7 +50,7 @@ namespace HelloForms
         }
         void toggleInheritClick(object sender, EventArgs e)
         {
-            FactScheme.Argument arg = ((Control)sender).Parent.Tag as FactScheme.Argument;
+            FactScheme.Argument arg = ((Control)sender).Parent.Parent.Tag as FactScheme.Argument;
             bool check = ((CheckBox)sender).Checked;
             arg.Inheritance = check;
             TreeView tv = (TreeView) ((Control)sender).Parent.Controls.Find("AttributesTree", false)[0];
@@ -74,7 +74,7 @@ namespace HelloForms
                 {
                     TreeView controlTreeView = (TreeView)owner.SourceControl;
                     TreeNode selectedNode = controlTreeView.SelectedNode;
-                    FactScheme.Argument arg = controlTreeView.Parent.Tag as FactScheme.Argument;
+                    FactScheme.Argument arg = controlTreeView.Parent.Parent.Tag as FactScheme.Argument;
                     arg.AddContition(selectedNode.Text);
                     reloadArgConditions(arg);
                 }
@@ -88,7 +88,8 @@ namespace HelloForms
         static void panelMouseMove(object sender, MouseEventArgs e)
         {
             Control control = sender as Control;
-            while (!(control is FlowLayoutPanel))
+            //while (!(control is FlowLayoutPanel))
+            while(!(control.Name.Equals("DraggablePanelBase")))
                 control = control.Parent;
             if (mousedown)
             {
@@ -119,6 +120,7 @@ namespace HelloForms
             control.MouseDown += new MouseEventHandler(panelMouseDown);
             control.MouseMove += new MouseEventHandler(panelMouseMove);
             control.MouseUp += new MouseEventHandler(panelMouseUp);
+            control.ControlAdded += new ControlEventHandler(panelControlAdded);
         }
 
         static private Label objNameLabel(string name)
@@ -135,7 +137,9 @@ namespace HelloForms
         {
             FlowLayoutPanel panel = new FlowLayoutPanel();
             panel.AutoSize = true;
-            panel.FlowDirection = FlowDirection.TopDown;
+            panel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel.Name = "DraggablePanelBase";
+            //panel.FlowDirection = FlowDirection.TopDown;
 
             panel.MouseDown += new MouseEventHandler(panelMouseDown);
             panel.MouseMove += new MouseEventHandler(panelMouseMove);
@@ -147,8 +151,12 @@ namespace HelloForms
 
         FlowLayoutPanel ArgumentPanel(FactScheme.Argument arg)
         {
-            FlowLayoutPanel argumentPanel = DraggablePanel();
+            FlowLayoutPanel basePanel = DraggablePanel();
+            FlowLayoutPanel argumentPanel = new FlowLayoutPanel();
+            argumentPanel.ControlAdded += new ControlEventHandler(panelControlAdded);
             argumentPanel.Size = Size.Empty;
+            argumentPanel.AutoSize = true;
+            argumentPanel.FlowDirection = FlowDirection.TopDown;
             argumentPanel.BackColor = Color.AliceBlue;
             argumentPanel.BorderStyle = BorderStyle.FixedSingle;
             argumentPanel.Controls.Add(objNameLabel(arg.Name));
@@ -170,19 +178,23 @@ namespace HelloForms
 
                 TreeView attrsTree = new TreeView();
                 attrsTree.Name = "AttributesTree";
-                Padding margin = new Padding(0,0,0,0);
+                Padding margin = new Padding(0, 0, 0, 0);
                 attrsTree.Margin = margin;
                 attrsTree.BackColor = argumentPanel.BackColor;
                 attrsTree.FullRowSelect = true;
                 attrsTree.BorderStyle = BorderStyle.None;
                 attrsTree.ShowLines = false;
                 attrsTree.Indent = 0;
-                
+
                 //TreeNode root = attrsTree.Nodes.Add("Атрибуты");
-                List<string>attrs = listArgumentAttributes(arg, arg.Inheritance);
-                foreach (string attr in attrs)
+                List<string> attrs = listArgumentAttributes(arg, arg.Inheritance);
+                //int numAttrs = attrs.Count;
+                //Panel outputs = new Panel();
+                foreach (string attr in attrs) { 
                     //root.Nodes.Add(attr);
+                    //outputs.Controls.Add(new Connector());
                     attrsTree.Nodes.Add(attr);
+                }
                 ContextMenuStrip cmenu = new ContextMenuStrip();
                 ToolStripMenuItem itemAddCondition = new ToolStripMenuItem("Добавить условие");
                 itemAddCondition.Click += new EventHandler(menuAddArgCondition);
@@ -196,16 +208,23 @@ namespace HelloForms
 
             //label = new Label();
 
-            argumentPanel.MouseClick += new MouseEventHandler(argumentPanelClick);
-            argumentPanel.Tag = arg;
-            return argumentPanel;
+            basePanel.MouseClick += new MouseEventHandler(argumentPanelClick);
+            basePanel.Tag = arg;
+
+            basePanel.Controls.Add(argumentPanel);
+            return basePanel;
         }
         FlowLayoutPanel ResultPanel(FactScheme.Result res)
         {
             Class ontologyClass = res.Reference as Class; // TODO ADD SUPPORT FOR EDIT MODE
 
-            FlowLayoutPanel resultPanel = DraggablePanel();
-            resultPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            FlowLayoutPanel basePanel = DraggablePanel();
+            FlowLayoutPanel resultPanel = new FlowLayoutPanel();
+            resultPanel.ControlAdded += new ControlEventHandler(panelControlAdded);
+            resultPanel.FlowDirection = FlowDirection.TopDown;
+            resultPanel.AutoSize = true;
+            resultPanel.Name = "resultPanel";
+            //resultPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             Label resultNameLabel = new System.Windows.Forms.Label();
             Label resultTypeLabel = new System.Windows.Forms.Label();
             Splitter splitter1 = new System.Windows.Forms.Splitter();
@@ -234,6 +253,8 @@ namespace HelloForms
             //splitter1.TabIndex = 3;
             //splitter1.TabStop = false;
 
+            resultPanel.Padding = new System.Windows.Forms.Padding(5);
+            resultPanel.Size = new System.Drawing.Size(201, 90);
             resultPanel.AutoSize = true;
             resultPanel.BackColor = System.Drawing.Color.SeaShell;
             resultPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -241,27 +262,41 @@ namespace HelloForms
             resultPanel.Controls.Add(resultTypeLabel);
             resultPanel.Controls.Add(splitter1);
 
-            
+            Panel input = new Panel();
+            input.Size = Size.Empty;
+            input.AutoSize = true;
+            input.Name = "inputPanel";
+
+            Panel output = new Panel();
+            output.Size = Size.Empty;
+            output.AutoSize = true;
+            output.Name = "outputPanel";
+
+            //_parentControl.Controls.Add(connectors);
             foreach(OntologyNode.Attribute attr in ontologyClass.AllAttributes)
             {
                 Label resultAttrName = new System.Windows.Forms.Label();
                 resultAttrName.AutoEllipsis = true;
-                resultAttrName.Location = new System.Drawing.Point(8, 61);
                 resultAttrName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
                 resultAttrName.Name = "resultAttrName";
                 resultAttrName.Size = new System.Drawing.Size(150, 17);
                 //resultAttrName.TabIndex = 4;
                 resultAttrName.Text = attr.Name;
-
                 resultPanel.Controls.Add(resultAttrName);
+
+                Connector cin = new Connector();
+                Connector cout = new Connector();
+                input.Controls.Add(cin);
+                output.Controls.Add(cout);
+                //cout.Location = cin.Location = resultAttrName.Location;
             }
-            
 
-            resultPanel.Padding = new System.Windows.Forms.Padding(5);
-            resultPanel.Size = new System.Drawing.Size(201, 90);
             //resultPanel.TabIndex = 0;
+            basePanel.Controls.Add(input);
+            basePanel.Controls.Add(resultPanel);
+            basePanel.Controls.Add(output);
 
-            return resultPanel;
+            return basePanel;
         }
 
         Control _parentControl;
@@ -308,6 +343,16 @@ namespace HelloForms
             Point location = _parentControl.PointToClient(point);
             panel.Location = location;
             _parentControl.Controls.Add(panel);
+
+            FlowLayoutPanel resultPanel = (FlowLayoutPanel) panel.Controls.Find("resultPanel", false)[0];
+            Panel input = (Panel)panel.Controls.Find("inputPanel", false)[0];
+            Panel output = (Panel)panel.Controls.Find("outputPanel", false)[0];
+            Control[] attrNames = resultPanel.Controls.Find("resultAttrName", false); //set proper connector positions
+            for (int i = 0; i < attrNames.Length; i++)
+            {
+                Point newLoc = new Point(0, attrNames[i].Location.Y);
+                input.Controls[i].Location = output.Controls[i].Location = newLoc;
+            }
         }
     }
 }

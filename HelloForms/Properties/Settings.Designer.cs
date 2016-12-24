@@ -73,7 +73,7 @@ namespace HelloForms.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("484")]
+        [global::System.Configuration.DefaultSettingValueAttribute("550")]
         public int ArgGridViewSplitter {
             get {
                 return ((int)(this["ArgGridViewSplitter"]));
