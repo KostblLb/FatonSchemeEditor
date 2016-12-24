@@ -32,10 +32,10 @@
             // 
             // Connector
             // 
+            this.AllowDrop = true;
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = global::HelloForms.Properties.Resources.connector;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "Connector";
             this.Size = new System.Drawing.Size(16, 16);

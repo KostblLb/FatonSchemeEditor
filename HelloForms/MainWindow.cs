@@ -167,7 +167,17 @@ namespace HelloForms
 
         private void tabPage_Paint(object sender, PaintEventArgs e)
         {
-            //TODO REMOVE
+            foreach(Control dragPanel in (sender as Control).Controls)
+            {
+                Control[] outputPanels = dragPanel.Controls.Find("outputPanel", false);
+                if(outputPanels.Length > 0)
+                {
+                   foreach(Control control in outputPanels[0].Controls)
+                    {
+                        (control as Connector).DrawConnections(sender, e);
+                    }
+                }
+            }
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)

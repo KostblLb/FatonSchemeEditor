@@ -50,14 +50,26 @@ namespace HelloForms
         }
         void toggleInheritClick(object sender, EventArgs e)
         {
-            FactScheme.Argument arg = ((Control)sender).Parent.Parent.Tag as FactScheme.Argument;
+            Control argPanel = ((Control)sender).Parent;
+            FactScheme.Argument arg = argPanel.Parent.Tag as FactScheme.Argument;
             bool check = ((CheckBox)sender).Checked;
-            arg.Inheritance = check;
-            TreeView tv = (TreeView) ((Control)sender).Parent.Controls.Find("AttributesTree", false)[0];
-            tv.Nodes.Clear();
 
-            foreach (string attr in listArgumentAttributes(arg, check))
-                tv.Nodes.Add(attr);
+            foreach(Control attr in argPanel.Controls.Find("attrNameInherited", false))
+            {
+                attr.Visible = check;
+            }
+
+            Control outputs = argPanel.Parent.Controls.Find("outputPanel", false)[0];
+            foreach (Control output in outputs.Controls.Find("outInherited", false))
+            {
+                output.Visible = check;
+            }
+
+            //argPanel.Controls.remove
+            //TreeView tv = (TreeView) ((Control)sender).Parent.Controls.Find("AttributesTree", false)[0];
+            // tv.Nodes.Clear();
+            //foreach (string attr in listArgumentAttributes(arg, check))
+            //    tv.Nodes.Add(attr);
         }
 
         private void argTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -72,14 +84,13 @@ namespace HelloForms
                 ContextMenuStrip owner = item.Owner as ContextMenuStrip;
                 if (owner != null)
                 {
-                    TreeView controlTreeView = (TreeView)owner.SourceControl;
-                    TreeNode selectedNode = controlTreeView.SelectedNode;
-                    FactScheme.Argument arg = controlTreeView.Parent.Parent.Tag as FactScheme.Argument;
-                    arg.AddContition(selectedNode.Text);
+                    Label ownerLabel = owner.SourceControl as Label;
+                    FactScheme.Argument arg = ownerLabel.Parent.Parent.Tag as FactScheme.Argument;
+                    arg.AddContition(ownerLabel.Text);
                     reloadArgConditions(arg);
                 }
                 else
-                    MessageBox.Show("Не выбран атрибут");
+                    MessageBox.Show("Не выбран атрибут"); //FIXME russian
             }
         }
 
@@ -159,12 +170,25 @@ namespace HelloForms
             argumentPanel.FlowDirection = FlowDirection.TopDown;
             argumentPanel.BackColor = Color.AliceBlue;
             argumentPanel.BorderStyle = BorderStyle.FixedSingle;
-            argumentPanel.Controls.Add(objNameLabel(arg.Name));
+            argumentPanel.Name = "argPanel";
 
+            argumentPanel.Controls.Add(objNameLabel(arg.Name));
             Label label = new Label();
             label.Name = "ObjectType";
             label.Text = "arg" + arg.Order + " " + arg.TypeString;
             argumentPanel.Controls.Add(label);
+
+            Splitter splitter1 = new Splitter();
+            splitter1.BackColor = System.Drawing.Color.Black;
+            splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            splitter1.Name = "splitter1";
+            splitter1.Size = new System.Drawing.Size(50, 1);
+            argumentPanel.Controls.Add(splitter1);
+
+            Panel output = new Panel();
+            output.Size = Size.Empty;
+            output.AutoSize = true;
+            output.Name = "outputPanel";
 
             if (arg.Origin.type == OntologyNode.Type.Class)
             {
@@ -176,34 +200,50 @@ namespace HelloForms
                 toggleInherit.Click += new EventHandler(toggleInheritClick);
                 argumentPanel.Controls.Add(toggleInherit);
 
-                TreeView attrsTree = new TreeView();
-                attrsTree.Name = "AttributesTree";
-                Padding margin = new Padding(0, 0, 0, 0);
-                attrsTree.Margin = margin;
-                attrsTree.BackColor = argumentPanel.BackColor;
-                attrsTree.FullRowSelect = true;
-                attrsTree.BorderStyle = BorderStyle.None;
-                attrsTree.ShowLines = false;
-                attrsTree.Indent = 0;
-
-                //TreeNode root = attrsTree.Nodes.Add("Атрибуты");
-                List<string> attrs = listArgumentAttributes(arg, arg.Inheritance);
-                //int numAttrs = attrs.Count;
-                //Panel outputs = new Panel();
-                foreach (string attr in attrs) { 
-                    //root.Nodes.Add(attr);
-                    //outputs.Controls.Add(new Connector());
-                    attrsTree.Nodes.Add(attr);
-                }
                 ContextMenuStrip cmenu = new ContextMenuStrip();
                 ToolStripMenuItem itemAddCondition = new ToolStripMenuItem("Добавить условие");
                 itemAddCondition.Click += new EventHandler(menuAddArgCondition);
                 cmenu.Items.Add(itemAddCondition);
-                attrsTree.ContextMenuStrip = cmenu;
 
-                attrsTree.NodeMouseClick += new TreeNodeMouseClickEventHandler(argTreeView_NodeMouseClick);
-                argumentPanel.Controls.Add(attrsTree);
-                attrsTree.Width = 200;
+                int ownAttrsCount = arg.Origin.OwnAttributes.Count;
+                List<OntologyNode.Attribute> allAttrs = (arg.Origin as Class).AllAttributes;
+                int allAttrsCount = allAttrs.Count;
+                for(int i = 0; i < allAttrsCount; i++)
+                {
+                    OntologyNode.Attribute attr = allAttrs[i];
+
+                    Connector cout = new Connector(attr, ConnectorMode.Output);
+                    output.Controls.Add(cout);
+
+                    Label resultAttrName = new System.Windows.Forms.Label();
+                    resultAttrName.AutoEllipsis = true;
+                    resultAttrName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+                    if (i < ownAttrsCount)
+                    {
+                        resultAttrName.Name = "attrName";
+                        cout.Name = "out";
+                    }
+                    else
+                    {
+                        resultAttrName.Name = "attrNameInherited";
+                        cout.Name = "outInherited";
+                    }
+                    resultAttrName.Size = new System.Drawing.Size(150, 17);
+                    //resultAttrName.TabIndex = 4;
+                    resultAttrName.Text = attr.Name;
+                    resultAttrName.ContextMenuStrip = cmenu;
+                    resultAttrName.Tag = attr;
+                    argumentPanel.Controls.Add(resultAttrName);
+                    
+                    
+                }
+
+
+                //attrsTree.ContextMenuStrip = cmenu;
+
+                //attrsTree.NodeMouseClick += new TreeNodeMouseClickEventHandler(argTreeView_NodeMouseClick);
+                //argumentPanel.Controls.Add(attrsTree);
+                //attrsTree.Width = 200;
             }
 
             //label = new Label();
@@ -212,6 +252,7 @@ namespace HelloForms
             basePanel.Tag = arg;
 
             basePanel.Controls.Add(argumentPanel);
+            basePanel.Controls.Add(output);
             return basePanel;
         }
         FlowLayoutPanel ResultPanel(FactScheme.Result res)
@@ -271,8 +312,7 @@ namespace HelloForms
             output.Size = Size.Empty;
             output.AutoSize = true;
             output.Name = "outputPanel";
-
-            //_parentControl.Controls.Add(connectors);
+            
             foreach(OntologyNode.Attribute attr in ontologyClass.AllAttributes)
             {
                 Label resultAttrName = new System.Windows.Forms.Label();
@@ -284,8 +324,8 @@ namespace HelloForms
                 resultAttrName.Text = attr.Name;
                 resultPanel.Controls.Add(resultAttrName);
 
-                Connector cin = new Connector();
-                Connector cout = new Connector();
+                Connector cin = new Connector(attr, ConnectorMode.Input);
+                Connector cout = new Connector(attr, ConnectorMode.Output);
                 input.Controls.Add(cin);
                 output.Controls.Add(cout);
                 //cout.Location = cin.Location = resultAttrName.Location;
@@ -325,12 +365,24 @@ namespace HelloForms
 
         public void AddArgument(Point point, FactScheme.Argument arg)
         {
-            FlowLayoutPanel argPanel = ArgumentPanel(arg);
-            argPanel.Location = point;
-            _panels.Add(argPanel);
-            _parentControl.Controls.Add(argPanel);
-            argumentPanelSelect(argPanel);
-            argPanel.BringToFront();
+            FlowLayoutPanel panel = ArgumentPanel(arg);
+            panel.Location = point;
+            _panels.Add(panel);
+            _parentControl.Controls.Add(panel);
+            argumentPanelSelect(panel);
+
+            FlowLayoutPanel argPanel = (FlowLayoutPanel)panel.Controls.Find("argPanel", false)[0];
+            Panel output = (Panel)panel.Controls.Find("outputPanel", false)[0];
+            Control[] attrNames = argPanel.Controls.Find("attrName", false); //set proper connector positions
+            Control[] attrNamesInherited = argPanel.Controls.Find("attrNameInherited", false);
+            Control[] z = new Control[attrNames.Length + attrNamesInherited.Length];
+            attrNames.CopyTo(z, 0);
+            attrNamesInherited.CopyTo(z, attrNames.Length);
+            for (int i = 0; i < z.Length; i++)
+            {
+                Point newLoc = new Point(0, z[i].Location.Y);
+                output.Controls[i].Location = newLoc;
+            }
         }
 
         public void AddResult(Point point, FactScheme.Result res = null)
