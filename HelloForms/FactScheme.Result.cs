@@ -12,19 +12,32 @@ namespace HelloForms
         public partial class Result
         {
             public enum RuleType { Define, Function }
-            class Rule
+            public class Rule
             {
                 RuleType _type;
-                OntologyNode.Attribute _attr; // mb OntologyNode.Attribute?
-                Argument _argFrom;
-                string _value; //int, enum also
-
-                public Rule(RuleType type, OntologyNode.Attribute attr, Argument argFrom, string value)
+                OntologyNode.Attribute _attr;
+                OntologyNode.Attribute _inputAttr;
+                object _ref;
+                //string _value; //int, enum also
+                public RuleType Type { get { return _type; } }
+                public OntologyNode.Attribute Attribute { get { return _attr; } }
+                public object Reference { get { return _ref; } }
+                public OntologyNode.Attribute InputAttribute { get { return _inputAttr; } }
+                
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <param name="type"></param>
+                /// <param name="attr"></param>
+                /// <param name="reference"></param>
+                /// <param name="inputAttr">may be null if 'reference' is a functor</param>
+                public Rule(RuleType type, OntologyNode.Attribute attr, Object reference, OntologyNode.Attribute inputAttr)
                 {
                     _type = type;
                     _attr = attr;
-                    _argFrom = argFrom;
-                    _value = value;
+                    _ref = reference;
+                    _inputAttr = inputAttr;
+                    //_value = value;
                 }
             }
 
@@ -62,9 +75,14 @@ namespace HelloForms
                 set { _reference = value; }
             }
 
-            public void AddRule(RuleType type, OntologyNode.Attribute attr, Argument argFrom, string value)
+            public List<Rule> Rules
             {
-                Rule rule = new Rule(type, attr, argFrom, value);
+                get { return _rules; }
+            }
+
+            public void AddRule(RuleType type, OntologyNode.Attribute attr, Object reference, OntologyNode.Attribute inputAttr)//, string value)
+            {
+                Rule rule = new Rule(type, attr, reference, inputAttr);
                 _rules.Add(rule);
             }
         }

@@ -52,16 +52,17 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.argAttrsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.добавитьУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.conditionTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.attributeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comparisonTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.argAttrsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.conditionBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.добавитьФункторToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -79,8 +80,8 @@
             this.layoutTabContextMenu.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.argAttrsContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
+            this.argAttrsContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -288,9 +289,10 @@
             // 
             this.layoutTabContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.layoutTabContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.добавитьРезультатToolStripMenuItem});
+            this.добавитьРезультатToolStripMenuItem,
+            this.добавитьФункторToolStripMenuItem});
             this.layoutTabContextMenu.Name = "layoutTabContextMenu";
-            this.layoutTabContextMenu.Size = new System.Drawing.Size(223, 30);
+            this.layoutTabContextMenu.Size = new System.Drawing.Size(223, 56);
             // 
             // добавитьРезультатToolStripMenuItem
             // 
@@ -345,30 +347,6 @@
             this.dataGridView1.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValidated);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
-            // argAttrsContextMenu
-            // 
-            this.argAttrsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.argAttrsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.добавитьУсловиеToolStripMenuItem});
-            this.argAttrsContextMenu.Name = "contextMenuStrip1";
-            this.argAttrsContextMenu.Size = new System.Drawing.Size(212, 30);
-            // 
-            // добавитьУсловиеToolStripMenuItem
-            // 
-            this.добавитьУсловиеToolStripMenuItem.Name = "добавитьУсловиеToolStripMenuItem";
-            this.добавитьУсловиеToolStripMenuItem.Size = new System.Drawing.Size(211, 26);
-            this.добавитьУсловиеToolStripMenuItem.Text = "Добавить условие";
-            this.добавитьУсловиеToolStripMenuItem.Click += new System.EventHandler(this.добавитьУсловиеToolStripMenuItem_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
-            // 
             // conditionTypeDataGridViewTextBoxColumn
             // 
             this.conditionTypeDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -407,9 +385,40 @@
             this.conditionBindingSource.AllowNew = true;
             this.conditionBindingSource.DataSource = typeof(HelloForms.FactScheme.Condition);
             // 
+            // argAttrsContextMenu
+            // 
+            this.argAttrsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.argAttrsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьУсловиеToolStripMenuItem});
+            this.argAttrsContextMenu.Name = "contextMenuStrip1";
+            this.argAttrsContextMenu.Size = new System.Drawing.Size(212, 30);
+            // 
+            // добавитьУсловиеToolStripMenuItem
+            // 
+            this.добавитьУсловиеToolStripMenuItem.Name = "добавитьУсловиеToolStripMenuItem";
+            this.добавитьУсловиеToolStripMenuItem.Size = new System.Drawing.Size(211, 26);
+            this.добавитьУсловиеToolStripMenuItem.Text = "Добавить условие";
+            this.добавитьУсловиеToolStripMenuItem.Click += new System.EventHandler(this.добавитьУсловиеToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            // 
             // conditionBindingSource1
             // 
             this.conditionBindingSource1.DataSource = typeof(HelloForms.FactScheme.Condition);
+            // 
+            // добавитьФункторToolStripMenuItem
+            // 
+            this.добавитьФункторToolStripMenuItem.Name = "добавитьФункторToolStripMenuItem";
+            this.добавитьФункторToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
+            this.добавитьФункторToolStripMenuItem.Text = "Добавить функтор";
+            this.добавитьФункторToolStripMenuItem.Click += new System.EventHandler(this.добавитьФункторToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -442,8 +451,8 @@
             this.layoutTabContextMenu.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.argAttrsContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
+            this.argAttrsContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -485,6 +494,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn valueDataGridViewTextBoxColumn;
         private System.Windows.Forms.ContextMenuStrip layoutTabContextMenu;
         private System.Windows.Forms.ToolStripMenuItem добавитьРезультатToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem добавитьФункторToolStripMenuItem;
     }
 }
 

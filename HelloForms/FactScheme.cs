@@ -70,6 +70,12 @@ namespace HelloForms
             return res;
         }
 
+        public Functor AddFunctor()
+        {
+            Functor func = new FunctorCat();
+            return func;
+        }
+
         public void AddArgument(string dictionaryEntry) { }
 
         public XDocument ToXml() //TODO MOVE TO LINQ?
@@ -95,6 +101,54 @@ namespace HelloForms
                     xarg.Add(xcond);
                 }
                 doc.Root.Add(xarg);
+            }
+
+            foreach (Result res in _results)
+            {
+                List<XAttribute> xattrs_ = new List<XAttribute>();
+                xattrs_.Add(new XAttribute("Name", res.Name));
+                xattrs_.Add(new XAttribute("Type", res.Type));
+                if (res.Reference is Class)
+                {
+                    xattrs_.Add(new XAttribute("ReferenceType", "Class"));
+                    xattrs_.Add(new XAttribute("Reference", (res.Reference as Class).Name));
+                }
+                else
+                {
+                    xattrs_.Add(new XAttribute("ReferenceType", "FIXMENOW"));
+                    xattrs_.Add(new XAttribute("Reference", (res.Reference as FactScheme.Argument).Name));
+                }
+                XElement xres = new XElement("Result", xattrs_);
+
+                foreach (FactScheme.Result.Rule rule in res.Rules)
+                {
+                    XElement xrul;
+                    List<XAttribute> xattrs = new List<XAttribute>();
+                    xattrs.Add(new XAttribute("Attribute", rule.Attribute.Name));
+                    xattrs.Add(new XAttribute("Type", rule.Type));
+
+                    if (rule.Type == Result.RuleType.Function)
+                    {
+                        Functor f = rule.Reference as Functor;
+                        xattrs.Add(new XAttribute("FunctorID", f.ID));
+                        xattrs.Add(new XAttribute("Default", f.DefaultValue));
+                        xrul = new XElement("Rule", xattrs);
+                        foreach(object input in f.Inputs)
+                        {
+                            xrul.Add(new XElement("input", 
+                                        new XAttribute("FIXME", "fixme"))); 
+                        }
+                    }
+                    else
+                    {
+                        xattrs.Add(new XAttribute("ArgFrom", (rule.Reference as Argument).Order));
+                        xattrs.Add(new XAttribute("AttrFrom", rule.InputAttribute.Name));
+                        xrul = new XElement("Rule", xattrs);
+                    }
+                    xres.Add(xrul);
+                }
+
+                doc.Root.Add(xres);
             }
             
             return doc;

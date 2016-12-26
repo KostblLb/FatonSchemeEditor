@@ -134,6 +134,12 @@ namespace HelloForms
             control.ControlAdded += new ControlEventHandler(panelControlAdded);
         }
 
+        static private void panelLocationChanged(object sender, EventArgs e)
+        {
+            if((sender as Control).Parent != null)
+                (sender as Control).Parent.Invalidate();
+        }
+
         static private Label objNameLabel(string name)
         {
             Label label = new Label();
@@ -150,12 +156,12 @@ namespace HelloForms
             panel.AutoSize = true;
             panel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panel.Name = "DraggablePanelBase";
-            //panel.FlowDirection = FlowDirection.TopDown;
 
             panel.MouseDown += new MouseEventHandler(panelMouseDown);
             panel.MouseMove += new MouseEventHandler(panelMouseMove);
             panel.MouseUp += new MouseEventHandler(panelMouseUp);
             panel.ControlAdded += new ControlEventHandler(panelControlAdded);
+            panel.LocationChanged += new EventHandler(panelLocationChanged);
 
             return panel;
         }
@@ -335,9 +341,92 @@ namespace HelloForms
             basePanel.Controls.Add(input);
             basePanel.Controls.Add(resultPanel);
             basePanel.Controls.Add(output);
+            basePanel.Tag = res;
 
             return basePanel;
         }
+        FlowLayoutPanel FunctorPanel(Functor func)
+        {
+            FlowLayoutPanel basePanel = DraggablePanel();
+            FlowLayoutPanel panel = new FlowLayoutPanel();
+
+            panel.ControlAdded += new ControlEventHandler(panelControlAdded);
+            panel.FlowDirection = FlowDirection.TopDown;
+            panel.AutoSize = true;
+            panel.Name = "functorPanel";
+            //resultPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Label panelName = new System.Windows.Forms.Label();
+            Splitter splitter1 = new System.Windows.Forms.Splitter();
+
+            panelName.AutoSize = true;
+            panelName.Font = new System.Drawing.Font("Open Sans", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            panelName.Location = new System.Drawing.Point(8, 5);
+            panelName.Name = "resultNameLabel";
+            panelName.Size = new System.Drawing.Size(164, 23);
+            panelName.Text = func.ID;
+
+            splitter1.BackColor = System.Drawing.Color.Black;
+            splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            splitter1.Location = new System.Drawing.Point(8, 50);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new System.Drawing.Size(50, 1);
+
+
+            panel.Padding = new System.Windows.Forms.Padding(5);
+            panel.Size = new System.Drawing.Size(201, 90);
+            panel.AutoSize = true;
+            panel.BackColor = System.Drawing.Color.SeaShell;
+            panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            panel.Controls.Add(panelName);
+            //panel.Controls.Add(resultTypeLabel);
+            panel.Controls.Add(splitter1);
+
+            Panel inputPanel = new Panel();
+            inputPanel.Size = Size.Empty;
+            inputPanel.AutoSize = true;
+            inputPanel.Name = "inputPanel";
+
+            Panel outputPanel = new Panel();
+            outputPanel.Size = Size.Empty;
+            outputPanel.AutoSize = true;
+            outputPanel.Name = "outputPanel";
+
+            Label outputLabel = new Label();
+            outputLabel.AutoEllipsis = true;
+            outputLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            outputLabel.Name = "output";
+            outputLabel.Size = new System.Drawing.Size(150, 17);
+            outputLabel.Text = "Out";
+            panel.Controls.Add(outputLabel);
+            outputPanel.Controls.Add(new Connector(func.Output, ConnectorMode.Output));
+
+            for(int i = 0; i < func.Inputs.Count + 1; i++)
+            {
+                if(func.NumArgs == -1 || i < func.NumArgs)
+                {
+                    Label inputLabel = new Label();
+                    inputLabel.AutoEllipsis = true;
+                    inputLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+                    inputLabel.Name = "input";
+                    inputLabel.Size = new System.Drawing.Size(150, 17);
+                    inputLabel.Text = "In";
+                    panel.Controls.Add(inputLabel);
+                    object tag = null;
+                    if (i < func.Inputs.Count)
+                        tag = func.Inputs[i];
+
+                    inputPanel.Controls.Add(new Connector(tag, ConnectorMode.Input));
+                }
+            }
+
+            basePanel.Controls.Add(inputPanel);
+            basePanel.Controls.Add(panel);
+            basePanel.Controls.Add(outputPanel);
+            basePanel.Tag = func;
+
+            return basePanel;
+        }
+
 
         Control _parentControl;
         DataGridView _argumentConditions;
@@ -404,6 +493,34 @@ namespace HelloForms
             {
                 Point newLoc = new Point(0, attrNames[i].Location.Y);
                 input.Controls[i].Location = output.Controls[i].Location = newLoc;
+            }
+        }
+
+        public void AddFunctor(Point point, Functor func = null)
+        {
+            if(func == null)
+            {
+                func = _scheme.AddFunctor();
+            }
+            FlowLayoutPanel panel = FunctorPanel(func);
+            Point location = _parentControl.PointToClient(point);
+            panel.Location = location;
+            _parentControl.Controls.Add(panel);
+
+            FlowLayoutPanel functorPanel = (FlowLayoutPanel)panel.Controls.Find("functorPanel", false)[0];
+            Panel input = (Panel)panel.Controls.Find("inputPanel", false)[0];
+            Panel output = (Panel)panel.Controls.Find("outputPanel", false)[0];
+            Control[] inputLabels = functorPanel.Controls.Find("input", false);
+            Control[] outputLabels = functorPanel.Controls.Find("output", false);
+            for (int i = 0; i < inputLabels.Length; i++)
+            {
+                Point newLoc = new Point(0, inputLabels[i].Location.Y);
+                input.Controls[i].Location = input.Controls[i].Location = newLoc;
+            }
+            for (int i = 0; i < outputLabels.Length; i++)
+            {
+                Point newLoc = new Point(0, outputLabels[i].Location.Y);
+                output.Controls[i].Location = output.Controls[i].Location = newLoc;
             }
         }
     }

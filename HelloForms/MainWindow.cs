@@ -409,6 +409,11 @@ namespace HelloForms
             layout.AddResult(location);
         }
 
-
+        private void добавитьФункторToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Point location = ((ToolStripMenuItem)sender).Owner.Location;
+            Layout layout = ((FactScheme)tabPage1.Tag).Layout;
+            layout.AddFunctor(location);
+        }
     }
 }
