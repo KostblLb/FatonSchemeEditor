@@ -76,15 +76,15 @@ namespace HelloForms
             attrs = new List<Attribute>();
         }
     }
-    public class Class : OntologyNode
+    public class OntologyClass : OntologyNode
     {
-        public List<Class> _parents;
-        private List<Class> _children;
-        public List<Class> Children
+        public List<OntologyClass> _parents;
+        private List<OntologyClass> _children;
+        public List<OntologyClass> Children
         {
             get { return _children; }
         }
-        public List<Class> Parents
+        public List<OntologyClass> Parents
         {
             get { return _parents; }
         }
@@ -92,21 +92,21 @@ namespace HelloForms
         /// <summary>
         /// Returns ONLY attributes inherited from parents
         /// </summary>
-        public List<Tuple<Attribute, Class>> InheritedAttributes
+        public List<Tuple<Attribute, OntologyClass>> InheritedAttributes
         {
             get
             {
-                List<Tuple<Attribute, Class>> inherited = new List<Tuple<Attribute, Class>>();
+                List<Tuple<Attribute, OntologyClass>> inherited = new List<Tuple<Attribute, OntologyClass>>();
                 if (!_parents.Any())
                     return inherited;
-                Queue<Class> q = new Queue<Class>(_parents); //BFS for parents
-                Class parent;
+                Queue<OntologyClass> q = new Queue<OntologyClass>(_parents); //BFS for parents
+                OntologyClass parent;
                 while(q.Any())
                 {
                     parent = q.Dequeue();
                     foreach (Attribute attr in parent.OwnAttributes)
-                        inherited.Add(new Tuple<Attribute, Class>(attr, parent));
-                    foreach (Class newParent in parent._parents)
+                        inherited.Add(new Tuple<Attribute, OntologyClass>(attr, parent));
+                    foreach (OntologyClass newParent in parent._parents)
                         q.Enqueue(newParent);
                 }
                 return inherited;
@@ -121,34 +121,34 @@ namespace HelloForms
             get
             {
                 List<Attribute> allAttrs = new List<Attribute>(this.OwnAttributes);
-                List<Tuple<Attribute, Class >> inheritedAttrs = new List<Tuple<Attribute, Class>>(this.InheritedAttributes);
-                foreach(Tuple<Attribute, Class> tuple in inheritedAttrs)
+                List<Tuple<Attribute, OntologyClass >> inheritedAttrs = new List<Tuple<Attribute, OntologyClass>>(this.InheritedAttributes);
+                foreach(Tuple<Attribute, OntologyClass> tuple in inheritedAttrs)
                 {
                     allAttrs.Add(tuple.Item1);
                 }
                 return allAttrs;
             }
         }
-        public Class(string myName) : base(myName, Type.Class)
+        public OntologyClass(string myName) : base(myName, Type.Class)
         {
-            _children = new List<Class>();
-            _parents = new List<Class>();
+            _children = new List<OntologyClass>();
+            _parents = new List<OntologyClass>();
         }
 
-        public void AddChild(Class c)
+        public void AddChild(OntologyClass c)
         {
             _children.Add(c);
         }
-        public void AddParent(Class p)
+        public void AddParent(OntologyClass p)
         {
             _parents.Add(p);
         }
     }
     public class Relation : OntologyNode
     {
-        Class arg1;
-        Class arg2;
-        public Relation(string myName, Class myArg1 , Class myArg2) : base(myName, Type.Relation)
+        OntologyClass arg1;
+        OntologyClass arg2;
+        public Relation(string myName, OntologyClass myArg1 , OntologyClass myArg2) : base(myName, Type.Relation)
         {
             arg1 = myArg1;
             arg2 = myArg2;

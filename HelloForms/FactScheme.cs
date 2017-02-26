@@ -46,26 +46,30 @@ namespace HelloForms
             _numArgs = 0;
         }
 
-        public void AddArgument(OntologyNode node, Point point, bool useInheritance = true)
+        public Argument AddArgument(OntologyNode node, Point point, bool useInheritance = true)
         {
             Argument arg = new Argument(node.Name, useInheritance, node);
             arg.Order = ++_numArgs;
             _arguments.Add(arg);
-            _layout.AddArgument(point, arg);
+
+            //call medium somewhere here?
+            //_layout.AddArgument(point, arg);
+            return arg;
+
         }
 
-        public Result AddResult()
+        public Result AddResult(OntologyClass ontologyClass = null)
         {
             String name = EditorConstants.RESULT_NAME_NEW;
             int defaultNamesCount = 0;
-            foreach(Result r in _results)
+            foreach (Result r in _results)
             {
                 if (r.Name.Contains(name))
                     defaultNamesCount++;
             }
             if (defaultNamesCount > 0)
                 name += string.Format("({0})", defaultNamesCount);
-            Result res = new Result(name, ResultType.Create);
+            Result res = new Result(name, ResultType.Create, ontologyClass);
             _results.Add(res);
             return res;
         }
@@ -108,10 +112,10 @@ namespace HelloForms
                 List<XAttribute> xattrs_ = new List<XAttribute>();
                 xattrs_.Add(new XAttribute("Name", res.Name));
                 xattrs_.Add(new XAttribute("Type", res.Type));
-                if (res.Reference is Class)
+                if (res.Reference is OntologyClass)
                 {
-                    xattrs_.Add(new XAttribute("ReferenceType", "Class"));
-                    xattrs_.Add(new XAttribute("Reference", (res.Reference as Class).Name));
+                    xattrs_.Add(new XAttribute("ReferenceType", "OntologyClass"));
+                    xattrs_.Add(new XAttribute("Reference", (res.Reference as OntologyClass).Name));
                 }
                 else
                 {

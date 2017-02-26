@@ -35,14 +35,14 @@ namespace HelloForms
         List<string> listArgumentAttributes(FactScheme.Argument arg, bool inheritance)
         {
             List<string> result = new List<string>();
-            foreach (OntologyNode.Attribute attr in ((Class)arg.Origin).OwnAttributes)
+            foreach (OntologyNode.Attribute attr in ((OntologyClass)arg.Origin).OwnAttributes)
             {
                 result.Add(attr.Name);
                 //if(arg.)
                 //! CHANGE COLOR IF CONDITION FOR ATTR EXISTS
             }
             if (inheritance)
-                foreach (Tuple<OntologyNode.Attribute, Class> attr in ((Class)arg.Origin).InheritedAttributes)
+                foreach (Tuple<OntologyNode.Attribute, OntologyClass> attr in ((OntologyClass)arg.Origin).InheritedAttributes)
                 {
                     result.Add(attr.Item1.Name);
                 }
@@ -212,14 +212,14 @@ namespace HelloForms
                 cmenu.Items.Add(itemAddCondition);
 
                 int ownAttrsCount = arg.Origin.OwnAttributes.Count;
-                List<OntologyNode.Attribute> allAttrs = (arg.Origin as Class).AllAttributes;
+                List<OntologyNode.Attribute> allAttrs = (arg.Origin as OntologyClass).AllAttributes;
                 int allAttrsCount = allAttrs.Count;
                 for(int i = 0; i < allAttrsCount; i++)
                 {
                     OntologyNode.Attribute attr = allAttrs[i];
 
-                    Connector cout = new Connector(attr, ConnectorMode.Output);
-                    output.Controls.Add(cout);
+                    //Connector cout = new Connector(attr, ConnectorMode.Output);
+                    //output.Controls.Add(cout);
 
                     Label resultAttrName = new System.Windows.Forms.Label();
                     resultAttrName.AutoEllipsis = true;
@@ -227,12 +227,12 @@ namespace HelloForms
                     if (i < ownAttrsCount)
                     {
                         resultAttrName.Name = "attrName";
-                        cout.Name = "out";
+                     //   cout.Name = "out";
                     }
                     else
                     {
                         resultAttrName.Name = "attrNameInherited";
-                        cout.Name = "outInherited";
+                    //    cout.Name = "outInherited";
                     }
                     resultAttrName.Size = new System.Drawing.Size(150, 17);
                     //resultAttrName.TabIndex = 4;
@@ -263,7 +263,7 @@ namespace HelloForms
         }
         FlowLayoutPanel ResultPanel(FactScheme.Result res)
         {
-            Class ontologyClass = res.Reference as Class; // TODO ADD SUPPORT FOR EDIT MODE
+            OntologyClass ontologyClass = res.Reference as OntologyClass; // TODO ADD SUPPORT FOR EDIT MODE
 
             FlowLayoutPanel basePanel = DraggablePanel();
             FlowLayoutPanel resultPanel = new FlowLayoutPanel();
@@ -330,10 +330,10 @@ namespace HelloForms
                 resultAttrName.Text = attr.Name;
                 resultPanel.Controls.Add(resultAttrName);
 
-                Connector cin = new Connector(attr, ConnectorMode.Input);
-                Connector cout = new Connector(attr, ConnectorMode.Output);
-                input.Controls.Add(cin);
-                output.Controls.Add(cout);
+               // Connector cin = new Connector(attr, ConnectorMode.Input);
+               // Connector cout = new Connector(attr, ConnectorMode.Output);
+               // input.Controls.Add(cin);
+               // output.Controls.Add(cout);
                 //cout.Location = cin.Location = resultAttrName.Location;
             }
 
@@ -398,7 +398,7 @@ namespace HelloForms
             outputLabel.Size = new System.Drawing.Size(150, 17);
             outputLabel.Text = "Out";
             panel.Controls.Add(outputLabel);
-            outputPanel.Controls.Add(new Connector(func.Output, ConnectorMode.Output));
+           // outputPanel.Controls.Add(new Connector(func.Output, ConnectorMode.Output));
 
             for(int i = 0; i < func.Inputs.Count + 1; i++)
             {
@@ -415,7 +415,7 @@ namespace HelloForms
                     if (i < func.Inputs.Count)
                         tag = func.Inputs[i];
 
-                    inputPanel.Controls.Add(new Connector(tag, ConnectorMode.Input));
+                   // inputPanel.Controls.Add(new Connector(tag, ConnectorMode.Input));
                 }
             }
 

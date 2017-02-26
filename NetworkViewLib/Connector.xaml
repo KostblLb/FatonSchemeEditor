@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="network.Connector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:network"
+             mc:Ignorable="d" 
+             d:DesignHeight="16" d:DesignWidth="16"
+             
+             AllowDrop="True"
+             DragEnter="Connector_DragEnter"
+             MouseDown="Connector_MouseDown"
+             Drop="Connector_Drop"
+             Loaded="Connector_Loaded">
+
+    <Ellipse HorizontalAlignment="Center" Height="14" VerticalAlignment="Center" Width="14" Fill="White" Stroke="Black"/>
+</UserControl>

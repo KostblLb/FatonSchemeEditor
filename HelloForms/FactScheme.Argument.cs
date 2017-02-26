@@ -44,7 +44,7 @@ namespace HelloForms
             }
 
             /// <summary>
-            /// Get Ontology Class, Domain or Relation attached to this object
+            /// Get Ontology OntologyClass, Domain or Relation attached to this object
             /// </summary>
             public OntologyNode Origin
             {

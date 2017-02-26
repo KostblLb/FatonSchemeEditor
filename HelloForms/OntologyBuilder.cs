@@ -13,10 +13,10 @@ namespace HelloForms
     {
         public static List<OntologyNode> fromXml(System.IO.Stream istream)
         {
-            List<Class> tempClasses = new List<Class>();
+            List<OntologyClass> tempClasses = new List<OntologyClass>();
             List<OntologyNode> result = new List<OntologyNode>();
-            Class parentClass = null;
-            Class currentClass = null;
+            OntologyClass parentClass = null;
+            OntologyClass currentClass = null;
             Relation currentRelation = null;
             OntologyNode currentDomain = null;
 
@@ -39,7 +39,7 @@ namespace HelloForms
                         break;
                     case "class":
                         string myName = node.Attributes["name"].Value;
-                        Class myClass = new Class(myName); //, parentClass);
+                        OntologyClass myClass = new OntologyClass(myName); //, parentClass);
                         parentClass = myClass;
                         currentClass = myClass;
                         tempClasses.Add(myClass);
@@ -115,8 +115,8 @@ namespace HelloForms
                         string myRelationName = node.Attributes["name"].Value;
                         string myArg1 = node.Attributes["arg1"].Value;
                         string myArg2 = node.Attributes["arg2"].Value;
-                        Class arg1Class = (Class)result.Find(x => x.Name == myArg1); //works if there are no classes with same name!
-                        Class arg2Class = (Class)result.Find(x => x.Name == myArg2);
+                        OntologyClass arg1Class = (OntologyClass)result.Find(x => x.Name == myArg1); //works if there are no classes with same name!
+                        OntologyClass arg2Class = (OntologyClass)result.Find(x => x.Name == myArg2);
                         Relation myRelation = new Relation(myRelationName, arg1Class, arg2Class);
                         result.Add(myRelation);
                         currentRelation = myRelation;
@@ -159,7 +159,7 @@ namespace HelloForms
                         break;
                 }
             }
-            foreach(Class tempClass in tempClasses)
+            foreach(OntologyClass tempClass in tempClasses)
             {
                 if (!tempClass.Parents.Any())
                     result.Add(tempClass);
@@ -172,7 +172,7 @@ namespace HelloForms
             StreamReader sr = new StreamReader(istream);
             string xmlString = sr.ReadToEnd();
 
-            Class currentClass = null;
+            OntologyClass currentClass = null;
             Relation currentRelation = null;
 
             XDocument doc = XDocument.Parse(xmlString);
@@ -182,7 +182,7 @@ namespace HelloForms
                           select x;
             foreach(XElement c in classes)
             {
-                currentClass = new Class(c.Attribute("name").Value);
+                currentClass = new OntologyClass(c.Attribute("name").Value);
                 var classAttrs = from x in c.Elements()
                             where x.Name.LocalName == "attr"
                             select x;
@@ -199,7 +199,7 @@ namespace HelloForms
                 {
                     foreach (XElement parentElement in classParents)
                     {
-                        Class parentClass = (Class) result.Find(x=> x.Name == ((XText)parentElement.FirstNode).Value);
+                        OntologyClass parentClass = (OntologyClass) result.Find(x=> x.Name == ((XText)parentElement.FirstNode).Value);
                         if (parentClass == null)
                             throw new Exception(String.Format("base class {0} not defined for {1}", parentElement.Attribute("name").Value, currentClass.Name));
                         parentClass.AddChild(currentClass);

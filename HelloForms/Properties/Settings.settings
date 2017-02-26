@@ -17,5 +17,8 @@
     <Setting Name="ArgGridViewSplitter" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">550</Value>
     </Setting>
+    <Setting Name="ArgMainWndVertSplitter" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">250</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

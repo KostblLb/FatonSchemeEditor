@@ -82,5 +82,17 @@ namespace HelloForms.Properties {
                 this["ArgGridViewSplitter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public int ArgMainWndVertSplitter {
+            get {
+                return ((int)(this["ArgMainWndVertSplitter"]));
+            }
+            set {
+                this["ArgMainWndVertSplitter"] = value;
+            }
+        }
     }
 }

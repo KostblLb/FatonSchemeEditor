@@ -8,6 +8,7 @@ using System.Xml;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 
 namespace HelloForms
 {
@@ -17,16 +18,18 @@ namespace HelloForms
         public MainWindow()
         {
             InitializeComponent();
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.splitContainer1.AutoScaleMode = AutoScaleMode.Inherit;
-            this.splitContainer2.AutoScaleMode = AutoScaleMode.Inherit;
-            this.splitContainer3.AutoScaleMode = AutoScaleMode.Inherit;
-           //this.Scale(new System.Drawing.SizeF(6F, 13F));
+
+            //Ontology Tree localization
+            //check MSDN's LocalizableAttribute for proper localization!
+            this.addArgumentMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_ARG;
+            this.addResultMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_RESULT;
+
+            ontologyTreeView.NodeMouseClick += (sender, args) => ontologyTreeView.SelectedNode = args.Node;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            treeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
+            ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
 
             tabPage1.AllowDrop = true;
             tabPage1.DragEnter += new DragEventHandler(tabPage_DragEnter);
@@ -64,9 +67,9 @@ namespace HelloForms
                 listView1.Columns.Add("Атрибут"); //bad hardcode
                 listView1.Columns.Add("Тип");
                 listView1.Columns.Add("Унаследован");
-                List<OntologyNode.Attribute> attrs = ((Class)node).OwnAttributes;
+                List<OntologyNode.Attribute> attrs = ((OntologyClass)node).OwnAttributes;
                 
-                List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)node).InheritedAttributes;
+                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)node).InheritedAttributes;
 
                 foreach(OntologyNode.Attribute attr in attrs)
                 {
@@ -74,7 +77,7 @@ namespace HelloForms
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
-                foreach(Tuple<OntologyNode.Attribute, Class> inheritedAtt in inheritedAttrs)
+                foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
                 {
                     string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.Type, inheritedAtt.Item2.Name};
                     ListViewItem item = new ListViewItem(values);
@@ -94,13 +97,14 @@ namespace HelloForms
             // Copy the dragged node when the left mouse button is used.
             if (e.Button == MouseButtons.Left)
             {
-                DoDragDrop(e.Item, DragDropEffects.Copy);
+                //    DoDragDrop(new MyDataObject((e.Item as TreeNode).Tag), DragDropEffects.Move);
+                DoDragDrop(new DataContainer((e.Item as TreeNode).Tag), DragDropEffects.Copy);
             }
         }
 
         private void tabPage_DragEnter(object sender, DragEventArgs e)
         {
-            e.Effect = DragDropEffects.Copy;
+            //0e.Effect = DragDropEffects.Link;
         }
 
         private void tabPage_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
@@ -137,32 +141,6 @@ namespace HelloForms
             scheme.AddArgument((OntologyNode)draggedNode.Tag, targetPoint);
             tabPage1.Invalidate();
 
-            /*
-            // Confirm that the node at the drop location is not 
-            // the dragged node or a descendant of the dragged node.
-            if (!draggedNode.Equals(targetNode) && !ContainsNode(draggedNode, targetNode))
-            {
-                // If it is a move operation, remove the node from its current 
-                // location and add it to the node at the drop location.
-                if (e.Effect == DragDropEffects.Move)
-                {
-                    draggedNode.Remove();
-                    targetNode.Nodes.Add(draggedNode);
-                }
-
-                // If it is a copy operation, clone the dragged node 
-                // and add it to the node at the drop location.
-                else if (e.Effect == DragDropEffects.Copy)
-                {
-                    targetNode.Nodes.Add((TreeNode)draggedNode.Clone());
-                }
-
-                // Expand the node at the location 
-                // to show the dropped node.
-                targetNode.Expand();
-                
-            }
-            */
         }
 
         private void tabPage_Paint(object sender, PaintEventArgs e)
@@ -174,7 +152,7 @@ namespace HelloForms
                 {
                    foreach(Control control in outputPanels[0].Controls)
                     {
-                        (control as Connector).DrawConnections(sender, e);
+                      //  (control as Connector).DrawConnections(sender, e);
                     }
                 }
             }
@@ -213,7 +191,7 @@ namespace HelloForms
             ontology.Reverse();
             Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //BFS add ontology nodes to treeview
             ontology.Reverse();
-            TreeNodeCollection baseNodeCollection = treeView.Nodes;
+            TreeNodeCollection baseNodeCollection = ontologyTreeView.Nodes;
             while (s.Any())
             {
                 OntologyNode ontNode = s.Pop();
@@ -221,7 +199,7 @@ namespace HelloForms
                 {
                     ontNode = s.Pop();
                     if (baseNodeCollection[0].Parent == null || baseNodeCollection[0].Parent.Parent == null)
-                        baseNodeCollection = treeView.Nodes;
+                        baseNodeCollection = ontologyTreeView.Nodes;
                     else
                         baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes; //get all ontNode parent's neighbors
                 }
@@ -230,11 +208,11 @@ namespace HelloForms
                 TreeNode treeNode = new TreeNode(ontNode.Name);
                 treeNode.Tag = ontNode;
                 baseNodeCollection.Add(treeNode);
-                if (ontNode.type == OntologyNode.Type.Class && ((Class)ontNode).Children.Count > 0)
+                if (ontNode.type == OntologyNode.Type.Class && ((OntologyClass)ontNode).Children.Count > 0)
                 {
                     baseNodeCollection = treeNode.Nodes;
                     s.Push(null); //trick to control baseNodeCollection
-                    foreach (Class child in ((Class)ontNode).Children)
+                    foreach (OntologyClass child in ((OntologyClass)ontNode).Children)
                     {
                         s.Push(child);
                     }
@@ -310,7 +288,6 @@ namespace HelloForms
 
         private void tabPage1_MouseMove(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("moving inside tab " + e.Location);
         }
 
         private void panel1_MouseUp(object sender, MouseEventArgs e)
@@ -337,7 +314,7 @@ namespace HelloForms
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             System.IO.Stream fstream = saveFileDialog1.OpenFile();
-            System.Xml.Linq.XDocument doc = ((FactScheme)tabControl1.SelectedTab.Tag).ToXml();
+            System.Xml.Linq.XDocument doc = ((FactScheme)schemesTabControl.SelectedTab.Tag).ToXml();
             doc.Save(fstream);
             fstream.Close();
         }
@@ -372,7 +349,7 @@ namespace HelloForms
             }
 
             FactScheme.Argument arg = ((DataGridView)sender).Tag as FactScheme.Argument;
-            List<OntologyNode.Attribute> attrs = ((Class)arg.Origin).OwnAttributes;
+            List<OntologyNode.Attribute> attrs = ((OntologyClass)arg.Origin).OwnAttributes;
             String cellAttrName = e.FormattedValue as String;
 
             foreach (OntologyNode.Attribute attr in attrs)
@@ -386,8 +363,8 @@ namespace HelloForms
 
             if (arg.Inheritance)
             {
-                List<Tuple<OntologyNode.Attribute, Class>> inheritedAttrs = ((Class)arg.Origin).InheritedAttributes;
-                foreach(Tuple<OntologyNode.Attribute, Class> attr in inheritedAttrs)
+                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)arg.Origin).InheritedAttributes;
+                foreach(Tuple<OntologyNode.Attribute, OntologyClass> attr in inheritedAttrs)
                 {
                     if (attr.Item2.Name.Equals(cellAttrName))
                     {
@@ -414,6 +391,117 @@ namespace HelloForms
             Point location = ((ToolStripMenuItem)sender).Owner.Location;
             Layout layout = ((FactScheme)tabPage1.Tag).Layout;
             layout.AddFunctor(location);
+        }
+
+        private void createSchemeTab(object sender, EventArgs e)
+        {
+            //create new fact scheme
+            FactScheme scheme = new FactScheme();
+            //scheme.Layout = 
+
+            //create new tabpage
+            TabPage tabPage = new TabPage(EditorConstants.DEFAULT_SCHEME_NAME);
+            ElementHost elementHost = new ElementHost();
+            elementHost.Dock = DockStyle.Fill;
+            elementHost.AutoSize = true;
+            elementHost.AllowDrop = true;
+            elementHost.Name = EditorConstants.TABPAGE_WPF_HOST_NAME;
+            
+            //create a networkview
+            network.NetworkView nv = new network.NetworkView();
+            elementHost.ContextMenuStrip = layoutTabContextMenu;
+            nv.ContextMenu = new System.Windows.Controls.ContextMenu();
+            nv.Drop += Nv_Drop;
+            nv.NodeAdded += NV_NodeAdded;
+            nv.ConnectionAdded += NV_ConnectionAdded;
+            elementHost.Child = nv;
+
+            //add new page to the tab control
+            tabPage.Controls.Add(elementHost);
+            schemesTabControl.Controls.Add(tabPage);
+            schemesTabControl.SelectedTab = tabPage;
+
+            //attach new scheme to the new page
+            tabPage.Tag = scheme;
+        }
+
+        private void Nv_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            TabPage tabPage = schemesTabControl.SelectedTab;
+            if (tabPage.Tag == null)
+                return;
+            network.NetworkView nv = tabPage.Controls.OfType<ElementHost>().First().Child as network.NetworkView;
+
+            // Retrieve the client coordinates of the drop location.
+            System.Windows.Point p = new System.Windows.Point(MousePosition.X, MousePosition.Y);
+            System.Windows.Point targetPoint = nv.PointFromScreen(p);
+
+            // Retrieve the node that was dragged.
+            if (!e.Data.GetDataPresent(typeof(DataContainer)))
+                return;
+            DataContainer ontologyClassContainer = (DataContainer)e.Data.GetData(typeof(DataContainer));
+            
+            OntologyClass ontologyClass = ontologyClassContainer.Data as OntologyClass;
+
+            //Layout layout;
+
+            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+
+            FactScheme.Argument arg = scheme.AddArgument(ontologyClass, new Point());
+
+            network.Node node = nv.AddNode(Medium.Convert(arg), true); 
+        }
+
+        private void NV_NodeAdded(object sender, network.NodeAddedEventArgs e)
+        {
+            return;
+        }
+
+        private void NV_ConnectionAdded(object sender, network.ConnectionAddedEventArgs e)
+        {
+            var nv = sender as network.NetworkView;
+            
+        }
+
+        private OntologyClass menuItemToClass(ToolStripMenuItem item)
+        {
+            TreeNode selectedNode = ((item.GetCurrentParent() as ContextMenuStrip).SourceControl as TreeView).SelectedNode;
+            OntologyClass ontologyClass = selectedNode.Tag as OntologyClass;
+            return ontologyClass;
+        }
+
+        private network.NetworkView getCurrentNetworkView()
+        {
+            TabPage tabPage = schemesTabControl.SelectedTab;
+            if (tabPage.Tag == null)
+                return null;
+            network.NetworkView nv = tabPage.Controls.OfType<ElementHost>().First().Child as network.NetworkView;
+            return nv;
+        }
+
+        private void addArgumentMenuItem_Click(object sender, EventArgs e)
+        {
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+
+            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
+            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+            FactScheme.Argument arg = scheme.AddArgument(ontologyClass, new Point());
+
+            network.Node node = nv.AddNode(Medium.Convert(arg), true);
+        }
+
+        private void addResultMenuItem_Click(object sender, EventArgs e)
+        {
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+
+            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
+            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+            FactScheme.Result result  = scheme.AddResult(ontologyClass);
+            network.Node node = nv.AddNode(Medium.Convert(result), true);
         }
     }
 }
