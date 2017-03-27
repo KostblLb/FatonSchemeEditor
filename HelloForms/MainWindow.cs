@@ -425,6 +425,20 @@ namespace HelloForms
             tabPage.Tag = scheme;
         }
 
+        private network.NetworkView getCurrentNetworkView()
+        {
+            TabPage tabPage = schemesTabControl.SelectedTab;
+            if (tabPage.Tag == null)
+                return null;
+            network.NetworkView nv = tabPage.Controls.OfType<ElementHost>().First().Child as network.NetworkView;
+            return nv;
+        }
+
+        private FactScheme getCurrentScheme()
+        {
+            return (FactScheme)schemesTabControl.SelectedTab.Tag;
+        }
+
         private void Nv_Drop(object sender, System.Windows.DragEventArgs e)
         {
             TabPage tabPage = schemesTabControl.SelectedTab;
@@ -457,10 +471,16 @@ namespace HelloForms
             return;
         }
 
+        void test(string str ) { Console.WriteLine("string"); }
+        void test(int i) { Console.WriteLine("int"); }
+
         private void NV_ConnectionAdded(object sender, network.ConnectionAddedEventArgs e)
         {
             var nv = sender as network.NetworkView;
-            
+            var scheme = getCurrentScheme();
+            //retreive attributes of the real fact scheme objects
+            var src = e.SourceConnector.Source;
+            var dest = e.DestConnector.Source;
         }
 
         private OntologyClass menuItemToClass(ToolStripMenuItem item)
@@ -470,14 +490,7 @@ namespace HelloForms
             return ontologyClass;
         }
 
-        private network.NetworkView getCurrentNetworkView()
-        {
-            TabPage tabPage = schemesTabControl.SelectedTab;
-            if (tabPage.Tag == null)
-                return null;
-            network.NetworkView nv = tabPage.Controls.OfType<ElementHost>().First().Child as network.NetworkView;
-            return nv;
-        }
+
 
         private void addArgumentMenuItem_Click(object sender, EventArgs e)
         {

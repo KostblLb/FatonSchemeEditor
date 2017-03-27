@@ -37,6 +37,7 @@ namespace HelloForms
             foreach(var attr in attrs)
             {
                 NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                attrInfo.Data = attr;
                 attrInfo.IsInput = false;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
@@ -69,6 +70,7 @@ namespace HelloForms
                 foreach (var attr in attrs)
                 {
                     NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                    attrInfo.Data = attr;
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = true;
                     var attrName = new Label();
