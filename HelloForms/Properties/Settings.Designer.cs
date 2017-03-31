@@ -73,7 +73,7 @@ namespace HelloForms.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("550")]
+        [global::System.Configuration.DefaultSettingValueAttribute("499")]
         public int ArgGridViewSplitter {
             get {
                 return ((int)(this["ArgGridViewSplitter"]));
@@ -85,7 +85,7 @@ namespace HelloForms.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
         public int ArgMainWndVertSplitter {
             get {
                 return ((int)(this["ArgMainWndVertSplitter"]));

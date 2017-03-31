@@ -15,6 +15,24 @@ namespace HelloForms
     public partial class MainWindow : Form
     {
 
+        Dictionary<FactScheme, ElementHost> NVHosts;
+
+        FactScheme CurrentScheme {
+            get
+            {
+                return schemeTabViewPage.Tag as FactScheme;
+            }
+            set
+            {
+                schemeTabViewPage.Controls.RemoveByKey(EditorConstants.TABPAGE_WPF_HOST_NAME);
+                schemeTabViewPage.Controls.Add(NVHosts[value]);
+                schemeTabViewPage.Tag = value;
+            }
+        }
+
+        FactSchemeBank Bank;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -25,17 +43,13 @@ namespace HelloForms
             this.addResultMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_RESULT;
 
             ontologyTreeView.NodeMouseClick += (sender, args) => ontologyTreeView.SelectedNode = args.Node;
+
+            NVHosts = new Dictionary<FactScheme, ElementHost>();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
-
-            tabPage1.AllowDrop = true;
-            tabPage1.DragEnter += new DragEventHandler(tabPage_DragEnter);
-            tabPage1.DragOver += new DragEventHandler(tabPage_DragOver);
-            tabPage1.DragDrop += new DragEventHandler(tabPage_DragDrop);
-            tabPage1.Paint += new PaintEventHandler(tabPage_Paint);
 
             DataGridViewComboBoxColumn conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
             conditionTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ConditionType));
@@ -46,6 +60,7 @@ namespace HelloForms
             if(!String.IsNullOrEmpty(Properties.Settings.Default["OntologyPath"] as String))
             {
                 loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+                createScheme();
             }
         }
 
@@ -102,62 +117,6 @@ namespace HelloForms
             }
         }
 
-        private void tabPage_DragEnter(object sender, DragEventArgs e)
-        {
-            //0e.Effect = DragDropEffects.Link;
-        }
-
-        private void tabPage_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
-        {
-            //Console.WriteLine(e.Data.GetData(typeof(TreeNode)).ToString());
-        }
-
-        private void tabPage_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
-        {
-            Console.WriteLine("DRAGGED TO TABS");
-            // Retrieve the client coordinates of the drop location.
-            Point targetPoint = tabPage1.PointToClient(new Point(e.X, e.Y));
-
-            // Retrieve the node at the drop location.
-            //TreeNode targetNode = treeView1.GetNodeAt(targetPoint);
-
-            // Retrieve the node that was dragged.
-            TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
-            Console.WriteLine(draggedNode.ToString());
-            Console.WriteLine(draggedNode.Tag.ToString());
-
-            FactScheme scheme;
-            Layout layout;
-            if (tabPage1.Tag == null)
-            {
-                scheme = new FactScheme();
-                layout = new Layout(tabPage1, dataGridView1, scheme);
-                scheme.Layout = layout;
-                tabPage1.Tag = scheme;
-            }
-            else
-                scheme = (FactScheme)tabPage1.Tag;
-
-            scheme.AddArgument((OntologyNode)draggedNode.Tag, targetPoint);
-            tabPage1.Invalidate();
-
-        }
-
-        private void tabPage_Paint(object sender, PaintEventArgs e)
-        {
-            foreach(Control dragPanel in (sender as Control).Controls)
-            {
-                Control[] outputPanels = dragPanel.Controls.Find("outputPanel", false);
-                if(outputPanels.Length > 0)
-                {
-                   foreach(Control control in outputPanels[0].Controls)
-                    {
-                      //  (control as Connector).DrawConnections(sender, e);
-                    }
-                }
-            }
-        }
-
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
@@ -185,7 +144,7 @@ namespace HelloForms
                 return;
             }
 
-            List<OntologyNode> ontology = OntologyBuilder.fromXmlTest(fstream);
+            List<OntologyNode> ontology = OntologyBuilder.fromXml(fstream);
             fstream.Close();
 
             ontology.Reverse();
@@ -228,35 +187,6 @@ namespace HelloForms
             openFileDialog1.ShowDialog();
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void listView2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void treeView1_AfterSelect_1(object sender, TreeViewEventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
         private void добавитьУсловиеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Console.WriteLine(sender.ToString());
@@ -286,25 +216,6 @@ namespace HelloForms
             }
         }
 
-        private void tabPage1_MouseMove(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void panel1_MouseUp(object sender, MouseEventArgs e)
-        {
-            mousedown = false;
-        }
-
-        private void listView2_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void treeView1_AfterSelect_2(object sender, TreeViewEventArgs e)
-        {
-
-        }
-
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = "scheme.xml";
@@ -317,11 +228,6 @@ namespace HelloForms
             System.Xml.Linq.XDocument doc = ((FactScheme)schemesTabControl.SelectedTab.Tag).ToXml();
             doc.Save(fstream);
             fstream.Close();
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
         }
 
         private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -379,34 +285,32 @@ namespace HelloForms
 
         }
 
-        private void добавитьРезультатToolStripMenuItem_Click(object sender, EventArgs e)
+        FactSchemeBank getCurrentBank()
         {
-            Point location = ((ToolStripMenuItem)sender).Owner.Location;
-            Layout layout = ((FactScheme)tabPage1.Tag).Layout;
-            layout.AddResult(location);
+            return bankListView.Tag as FactSchemeBank;
         }
 
-        private void добавитьФункторToolStripMenuItem_Click(object sender, EventArgs e)
+        private void updateBankListView()
         {
-            Point location = ((ToolStripMenuItem)sender).Owner.Location;
-            Layout layout = ((FactScheme)tabPage1.Tag).Layout;
-            layout.AddFunctor(location);
+            if (Bank == null)
+                return;
+            bankListView.Items.Clear();
+            foreach (FactScheme fs in Bank.Schemes)
+            {
+                ListViewItem listItem = new ListViewItem(fs.Name);
+                listItem.Tag = fs;
+                bankListView.Items.Add(listItem);
+            }
         }
 
-        private void createSchemeTab(object sender, EventArgs e)
+        void initNVHost(FactScheme scheme)
         {
-            //create new fact scheme
-            FactScheme scheme = new FactScheme();
-            //scheme.Layout = 
-
-            //create new tabpage
-            TabPage tabPage = new TabPage(EditorConstants.DEFAULT_SCHEME_NAME);
             ElementHost elementHost = new ElementHost();
             elementHost.Dock = DockStyle.Fill;
             elementHost.AutoSize = true;
             elementHost.AllowDrop = true;
             elementHost.Name = EditorConstants.TABPAGE_WPF_HOST_NAME;
-            
+
             //create a networkview
             network.NetworkView nv = new network.NetworkView();
             elementHost.ContextMenuStrip = layoutTabContextMenu;
@@ -416,13 +320,56 @@ namespace HelloForms
             nv.ConnectionAdded += NV_ConnectionAdded;
             elementHost.Child = nv;
 
-            //add new page to the tab control
-            tabPage.Controls.Add(elementHost);
-            schemesTabControl.Controls.Add(tabPage);
-            schemesTabControl.SelectedTab = tabPage;
+            NVHosts.Add(scheme, elementHost);
 
-            //attach new scheme to the new page
-            tabPage.Tag = scheme;
+            //add new page to the tab control
+            //schemesTabControl.Controls.Add(tabPage);
+            //schemesTabControl.SelectedTab = tabPage;
+        }
+
+        private void handleCreateSchemeToolstrip(object sender, EventArgs e)
+        {
+            createScheme();
+        }
+        private void createScheme()
+        {
+            //create new fact scheme
+            FactScheme scheme = new FactScheme(EditorConstants.DEFAULT_SCHEME_NAME);
+            if (Bank == null)
+            {
+                Bank = new FactSchemeBank(EditorConstants.DEFAULT_BANK_NAME);
+                bankListView.Tag = Bank;
+            }
+            getCurrentBank().Schemes.Add(scheme);
+            updateBankListView();
+
+            ////create new tabpage
+            //TabPage tabPage = new TabPage(EditorConstants.DEFAULT_SCHEME_NAME);
+            //ElementHost elementHost = new ElementHost();
+            //elementHost.Dock = DockStyle.Fill;
+            //elementHost.AutoSize = true;
+            //elementHost.AllowDrop = true;
+            //elementHost.Name = EditorConstants.TABPAGE_WPF_HOST_NAME;
+            
+            ////create a networkview
+            //network.NetworkView nv = new network.NetworkView();
+            //elementHost.ContextMenuStrip = layoutTabContextMenu;
+            //nv.ContextMenu = new System.Windows.Controls.ContextMenu();
+            //nv.Drop += Nv_Drop;
+            //nv.NodeAdded += NV_NodeAdded;
+            //nv.ConnectionAdded += NV_ConnectionAdded;
+            //elementHost.Child = nv;
+
+            ////add new page to the tab control
+            //tabPage.Controls.Add(elementHost);
+            //schemesTabControl.Controls.Add(tabPage);
+            //schemesTabControl.SelectedTab = tabPage;
+
+            ////attach new scheme to the new page
+            //tabPage.Tag = scheme;
+
+            initNVHost(scheme);
+            CurrentScheme = scheme;
         }
 
         private network.NetworkView getCurrentNetworkView()
@@ -432,11 +379,6 @@ namespace HelloForms
                 return null;
             network.NetworkView nv = tabPage.Controls.OfType<ElementHost>().First().Child as network.NetworkView;
             return nv;
-        }
-
-        private FactScheme getCurrentScheme()
-        {
-            return (FactScheme)schemesTabControl.SelectedTab.Tag;
         }
 
         private void Nv_Drop(object sender, System.Windows.DragEventArgs e)
@@ -471,16 +413,14 @@ namespace HelloForms
             return;
         }
 
-        void test(string str ) { Console.WriteLine("string"); }
-        void test(int i) { Console.WriteLine("int"); }
-
         private void NV_ConnectionAdded(object sender, network.ConnectionAddedEventArgs e)
         {
             var nv = sender as network.NetworkView;
-            var scheme = getCurrentScheme();
             //retreive attributes of the real fact scheme objects
-            var src = e.SourceConnector.Source;
-            var dest = e.DestConnector.Source;
+            var src = e.SourceConnector;
+            var dest = e.DestConnector;
+
+            Medium.AddSchemeConnection(CurrentScheme, src, dest);
         }
 
         private OntologyClass menuItemToClass(ToolStripMenuItem item)
@@ -515,6 +455,18 @@ namespace HelloForms
             FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
             FactScheme.Result result  = scheme.AddResult(ontologyClass);
             network.Node node = nv.AddNode(Medium.Convert(result), true);
+        }
+
+        private void bankListView_DoubleClick(object sender, EventArgs e)
+        {
+            CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as FactScheme);
+        }
+
+        private void schemesTabControl_Selected(object sender, TabControlEventArgs e)
+        {
+            if (e.TabPage == schemeTabXMLPage)
+                schemeXMLTextBox.Text = CurrentScheme.ToXml().ToString();
+            XMLHighlight.HighlightRTF(schemeXMLTextBox);
         }
     }
 }

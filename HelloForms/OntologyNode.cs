@@ -18,12 +18,18 @@ namespace HelloForms
         public enum Type { Class, Relation, Domain };
         public class Attribute
         {
+            readonly OntologyNode parent;
             string type;
             string name;
             public Attribute(string myType, string myValue)
             {
+                parent = null;
                 type = myType;
                 name = myValue;
+            }
+            public Attribute(OntologyNode myParent, string myType, string myValue) : this(myType, myValue)
+            {
+                parent = myParent;
             }
             public string Type
             {

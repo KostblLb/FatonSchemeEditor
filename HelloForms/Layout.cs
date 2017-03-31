@@ -345,7 +345,7 @@ namespace HelloForms
 
             return basePanel;
         }
-        FlowLayoutPanel FunctorPanel(Functor func)
+        FlowLayoutPanel FunctorPanel(FactScheme.Functor func)
         {
             FlowLayoutPanel basePanel = DraggablePanel();
             FlowLayoutPanel panel = new FlowLayoutPanel();
@@ -496,7 +496,7 @@ namespace HelloForms
             }
         }
 
-        public void AddFunctor(Point point, Functor func = null)
+        public void AddFunctor(Point point, FactScheme.Functor func = null)
         {
             if(func == null)
             {

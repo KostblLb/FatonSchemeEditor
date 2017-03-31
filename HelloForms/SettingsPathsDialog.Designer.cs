@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.browseOntologyButton = new System.Windows.Forms.Button();
             this.browseGramtabButton = new System.Windows.Forms.Button();
-            this.textBoxGramtabPath = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBoxSomethingPath = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.textBoxOntologyPath = new System.Windows.Forms.TextBox();
-            this.browseOntologyButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxGramtabPath = new System.Windows.Forms.TextBox();
+            this.textBoxSomethingPath = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.openOntologyDialog = new System.Windows.Forms.OpenFileDialog();
@@ -72,6 +72,27 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(763, 107);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(33, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 17);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Онтология:";
+            // 
+            // browseOntologyButton
+            // 
+            this.browseOntologyButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.browseOntologyButton.Location = new System.Drawing.Point(685, 3);
+            this.browseOntologyButton.Name = "browseOntologyButton";
+            this.browseOntologyButton.Size = new System.Drawing.Size(75, 29);
+            this.browseOntologyButton.TabIndex = 1;
+            this.browseOntologyButton.Text = "Обзор...";
+            this.browseOntologyButton.UseVisualStyleBackColor = true;
+            this.browseOntologyButton.Click += new System.EventHandler(this.browseOntologyButton_Click);
+            // 
             // browseGramtabButton
             // 
             this.browseGramtabButton.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -82,44 +103,6 @@
             this.browseGramtabButton.Text = "Обзор...";
             this.browseGramtabButton.UseVisualStyleBackColor = true;
             this.browseGramtabButton.Click += new System.EventHandler(this.browseGramtabButton_Click);
-            // 
-            // textBoxGramtabPath
-            // 
-            this.textBoxGramtabPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxGramtabPath.Location = new System.Drawing.Point(122, 41);
-            this.textBoxGramtabPath.Name = "textBoxGramtabPath";
-            this.textBoxGramtabPath.Size = new System.Drawing.Size(557, 22);
-            this.textBoxGramtabPath.TabIndex = 5;
-            this.textBoxGramtabPath.TextChanged += new System.EventHandler(this.textBoxGramtabPath_TextChanged);
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(113, 17);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Морф. таблица:";
-            // 
-            // label3
-            // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(29, 79);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(87, 17);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Ещё что-то:";
-            // 
-            // textBoxSomethingPath
-            // 
-            this.textBoxSomethingPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxSomethingPath.Location = new System.Drawing.Point(122, 76);
-            this.textBoxSomethingPath.Name = "textBoxSomethingPath";
-            this.textBoxSomethingPath.Size = new System.Drawing.Size(557, 22);
-            this.textBoxSomethingPath.TabIndex = 6;
-            this.textBoxSomethingPath.TextChanged += new System.EventHandler(this.textBoxSomethingPath_TextChanged);
             // 
             // button3
             // 
@@ -141,29 +124,47 @@
             this.textBoxOntologyPath.TabIndex = 4;
             this.textBoxOntologyPath.TextChanged += new System.EventHandler(this.textBoxOntologyPath_TextChanged);
             // 
-            // browseOntologyButton
+            // textBoxGramtabPath
             // 
-            this.browseOntologyButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.browseOntologyButton.Location = new System.Drawing.Point(685, 3);
-            this.browseOntologyButton.Name = "browseOntologyButton";
-            this.browseOntologyButton.Size = new System.Drawing.Size(75, 29);
-            this.browseOntologyButton.TabIndex = 1;
-            this.browseOntologyButton.Text = "Обзор...";
-            this.browseOntologyButton.UseVisualStyleBackColor = true;
-            this.browseOntologyButton.Click += new System.EventHandler(this.browseOntologyButton_Click);
+            this.textBoxGramtabPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBoxGramtabPath.Location = new System.Drawing.Point(122, 41);
+            this.textBoxGramtabPath.Name = "textBoxGramtabPath";
+            this.textBoxGramtabPath.Size = new System.Drawing.Size(557, 22);
+            this.textBoxGramtabPath.TabIndex = 5;
+            this.textBoxGramtabPath.TextChanged += new System.EventHandler(this.textBoxGramtabPath_TextChanged);
             // 
-            // label1
+            // textBoxSomethingPath
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(33, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 17);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Онтология:";
+            this.textBoxSomethingPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBoxSomethingPath.Location = new System.Drawing.Point(122, 76);
+            this.textBoxSomethingPath.Name = "textBoxSomethingPath";
+            this.textBoxSomethingPath.Size = new System.Drawing.Size(557, 22);
+            this.textBoxSomethingPath.TabIndex = 6;
+            this.textBoxSomethingPath.TextChanged += new System.EventHandler(this.textBoxSomethingPath_TextChanged);
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(113, 17);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Морф. таблица:";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(29, 79);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(87, 17);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Ещё что-то:";
             // 
             // cancelButton
             // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.Location = new System.Drawing.Point(697, 126);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 30);
@@ -200,8 +201,7 @@
             // SettingsPathsDialog
             // 
             this.AcceptButton = this.okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(792, 165);
             this.Controls.Add(this.okButton);

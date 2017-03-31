@@ -46,7 +46,8 @@ namespace network
 
         public Node(NodeInfo info) : this()
         {
-            //this.pName.Content = info.Header.Name;
+            this.Tag = info.Tag;
+
             this.pInfo.Content = info.Header.InfoPanel;
 
             foreach(NodeInfo.AttributeInfo attrInfo in info.Attributes)
@@ -195,6 +196,8 @@ namespace network
 
     public struct NodeInfo
     {
+        public object Tag;
+
         public struct HeaderInfo
         {
             public string Name;
@@ -211,5 +214,7 @@ namespace network
             public FrameworkElement AttributePanel;
         }
         public List<AttributeInfo> Attributes;
+
+        public FrameworkElement Footer;
     }
 }

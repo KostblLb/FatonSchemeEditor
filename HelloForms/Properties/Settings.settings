@@ -15,10 +15,10 @@
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="ArgGridViewSplitter" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">550</Value>
+      <Value Profile="(Default)">499</Value>
     </Setting>
     <Setting Name="ArgMainWndVertSplitter" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">250</Value>
+      <Value Profile="(Default)">25</Value>
     </Setting>
   </Settings>
 </SettingsFile>

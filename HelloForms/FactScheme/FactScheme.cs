@@ -14,12 +14,17 @@ namespace HelloForms
         public partial class Condition { }
         public partial class Result { }
 
+        string _name;
         List<Argument> _arguments;
         List<Condition> _conditions;
         List<Result> _results;
         uint _numArgs;
         Layout _layout;
 
+        XDocument _xml;
+        bool _saved;
+
+        public string Name { get { return _name; } }
         public List<Argument> Arguments
         {
             get { return _arguments; }
@@ -44,10 +49,17 @@ namespace HelloForms
             _conditions = new List<Condition>();
             _results = new List<Result>();
             _numArgs = 0;
+            _saved = false;
+        }
+
+        public FactScheme(string name) : this()
+        {
+            _name = name;
         }
 
         public Argument AddArgument(OntologyNode node, Point point, bool useInheritance = true)
         {
+            _saved = false;
             Argument arg = new Argument(node.Name, useInheritance, node);
             arg.Order = ++_numArgs;
             _arguments.Add(arg);
@@ -60,6 +72,7 @@ namespace HelloForms
 
         public Result AddResult(OntologyClass ontologyClass = null)
         {
+            _saved = false;
             String name = EditorConstants.RESULT_NAME_NEW;
             int defaultNamesCount = 0;
             foreach (Result r in _results)
@@ -76,6 +89,7 @@ namespace HelloForms
 
         public Functor AddFunctor()
         {
+            _saved = false;
             Functor func = new FunctorCat();
             return func;
         }
@@ -84,8 +98,11 @@ namespace HelloForms
 
         public XDocument ToXml() //TODO MOVE TO LINQ?
         {
+            if (_saved)
+                return _xml;
+
             XDocument doc = new XDocument();
-            doc.Add(new XElement("root"));
+            doc.Add(new XElement(_name.Replace(' ', '_')));
             foreach(Argument arg in _arguments)
             {
                 XElement xarg =
@@ -154,10 +171,23 @@ namespace HelloForms
 
                 doc.Root.Add(xres);
             }
-            
+
+            _xml = doc;
+            _saved = true;
             return doc;
         }
     }
 
+    public class FactSchemeBank
+    {
+        public string Name;
+        public List<FactScheme> Schemes;
+        
+        public FactSchemeBank(string name = "new_bank")
+        {
+            Schemes = new List<FactScheme>();
+            Name = name;
+        }
+    }
     
 }

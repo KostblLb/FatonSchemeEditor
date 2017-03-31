@@ -13,12 +13,13 @@ namespace HelloForms
         public static int CONDITION_DATAGRID_COMPAR_COL = 2;
         public static int CONDITION_DATAGRID_VALUES_COL = 3;
 
-        public static string TABPAGE_WPF_HOST_NAME = "TABPAGE_WPF_HOST";
+        public const string TABPAGE_WPF_HOST_NAME = "TABPAGE_WPF_HOST";
 
-        public static string CONDITION_DATAGRID_ERROR_ATT_NAME = "Такого атрибута не существует";
+        public const string CONDITION_DATAGRID_ERROR_ATT_NAME = "Такого атрибута не существует";
 
         public const string RESULT_NAME_NEW = "Новый результат";
 
         public const string DEFAULT_SCHEME_NAME = "Новая схема";
+        public const string DEFAULT_BANK_NAME = "Новый банк";
     }
 }

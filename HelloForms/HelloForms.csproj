@@ -71,11 +71,11 @@
     <Compile Include="DataContainer.cs" />
     <Compile Include="DataObject.cs" />
     <Compile Include="EditorConstants.cs" />
-    <Compile Include="FactScheme.Condition.cs" />
-    <Compile Include="FactScheme.cs" />
-    <Compile Include="FactScheme.Result.cs" />
+    <Compile Include="FactScheme\Condition.cs" />
+    <Compile Include="FactScheme\FactScheme.cs" />
+    <Compile Include="FactScheme\Result.cs" />
     <Compile Include="FatonConstants.cs" />
-    <Compile Include="Functor.cs" />
+    <Compile Include="FactScheme\Functor.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -99,6 +99,7 @@
     <Compile Include="SettingsPathsDialog.Designer.cs">
       <DependentUpon>SettingsPathsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="XMLHighlight.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,9 +116,7 @@
     <EmbeddedResource Include="SettingsPathsDialog.resx">
       <DependentUpon>SettingsPathsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
-    <Compile Include="FactScheme.Argument.cs" />
+    <Compile Include="FactScheme\Argument.cs" />
     <None Include="Properties\DataSources\FactScheme.Condition.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <Argument Order="1" Type="CLASS" ClassName="Деятельность" AllowInheritance="true" />
-  <Result Name="Новый результат" Type="Create" ReferenceType="Class" Reference="Деятельность">
-    <Rule Attribute="Пол" Type="Function" FunctorID="F_CONCAT" Default="">
-      <input FIXME="fixme" />
-      <input FIXME="fixme" />
-    </Rule>
+  <Result Name="Новый результат" Type="Create" ReferenceType="OntologyClass" Reference="Организация">
+    <Rule Attribute="Название" Type="Define" ArgFrom="1" AttrFrom="Пол" />
   </Result>
 </root>

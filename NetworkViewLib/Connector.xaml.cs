@@ -73,12 +73,7 @@ namespace network
         /// <summary>
         /// node panel that hosts this connector
         /// </summary>
-        public object ParentNode { get; set; }
-
-        /// <summary>
-        /// node attribute this connector is attached to
-        /// </summary>
-        public object Source { get; }
+        public Node ParentNode { get; set; }
 
         public Connector()
         {
@@ -87,10 +82,10 @@ namespace network
             this.ParentNode = null;
         }
 
-        public Connector(ConnectorMode mode, object source) : this()
+        public Connector(ConnectorMode mode, object tag) : this()
         {
             this.Mode = mode;
-            this.Source = source;
+            this.Tag = tag;
         }
 
         /// <summary>

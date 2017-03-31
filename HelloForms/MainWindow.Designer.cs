@@ -50,44 +50,54 @@
             this.ontologyTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addArgumentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addResultMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.schemesListBinding = new System.Windows.Forms.BindingSource(this.components);
+            this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.ontologyTreeView = new System.Windows.Forms.TreeView();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.tabsAndBankContainer = new System.Windows.Forms.SplitContainer();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.bankListView = new System.Windows.Forms.ListView();
+            this.nvAndConditionsContainer = new System.Windows.Forms.SplitContainer();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
+            this.schemeTabViewPage = new System.Windows.Forms.TabPage();
+            this.schemeTabXMLPage = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.conditionTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.attributeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comparisonTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.layoutTabContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
             this.argAttrsContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).BeginInit();
             this.ontologyTreeMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.schemesListBinding)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+            this.mainContainer.Panel1.SuspendLayout();
+            this.mainContainer.Panel2.SuspendLayout();
+            this.mainContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).BeginInit();
+            this.tabsAndBankContainer.Panel1.SuspendLayout();
+            this.tabsAndBankContainer.Panel2.SuspendLayout();
+            this.tabsAndBankContainer.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).BeginInit();
+            this.nvAndConditionsContainer.Panel1.SuspendLayout();
+            this.nvAndConditionsContainer.Panel2.SuspendLayout();
+            this.nvAndConditionsContainer.SuspendLayout();
             this.schemesTabControl.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.schemeTabXMLPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -137,7 +147,7 @@
             this.mainToolStripNewScheme.Name = "mainToolStripNewScheme";
             this.mainToolStripNewScheme.Size = new System.Drawing.Size(193, 26);
             this.mainToolStripNewScheme.Text = "Новая схема";
-            this.mainToolStripNewScheme.Click += new System.EventHandler(this.createSchemeTab);
+            this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
             // menuStrip1
             // 
@@ -151,7 +161,6 @@
             this.menuStrip1.Size = new System.Drawing.Size(906, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // настройкиToolStripMenuItem
             // 
@@ -182,14 +191,12 @@
             this.добавитьРезультатToolStripMenuItem.Name = "добавитьРезультатToolStripMenuItem";
             this.добавитьРезультатToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
             this.добавитьРезультатToolStripMenuItem.Text = "Добавить результат";
-            this.добавитьРезультатToolStripMenuItem.Click += new System.EventHandler(this.добавитьРезультатToolStripMenuItem_Click);
             // 
             // добавитьФункторToolStripMenuItem
             // 
             this.добавитьФункторToolStripMenuItem.Name = "добавитьФункторToolStripMenuItem";
             this.добавитьФункторToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
             this.добавитьФункторToolStripMenuItem.Text = "Добавить функтор";
-            this.добавитьФункторToolStripMenuItem.Click += new System.EventHandler(this.добавитьФункторToolStripMenuItem_Click);
             // 
             // conditionBindingSource
             // 
@@ -231,42 +238,41 @@
             this.addArgumentMenuItem,
             this.addResultMenuItem});
             this.ontologyTreeMenuStrip.Name = "ontologyTreeMenuStrip";
-            this.ontologyTreeMenuStrip.Size = new System.Drawing.Size(182, 84);
+            this.ontologyTreeMenuStrip.Size = new System.Drawing.Size(118, 56);
             // 
             // addArgumentMenuItem
             // 
             this.addArgumentMenuItem.Name = "addArgumentMenuItem";
-            this.addArgumentMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.addArgumentMenuItem.Size = new System.Drawing.Size(117, 26);
             this.addArgumentMenuItem.Text = "dgsg";
             this.addArgumentMenuItem.Click += new System.EventHandler(this.addArgumentMenuItem_Click);
             // 
             // addResultMenuItem
             // 
             this.addResultMenuItem.Name = "addResultMenuItem";
-            this.addResultMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.addResultMenuItem.Size = new System.Drawing.Size(117, 26);
             this.addResultMenuItem.Text = "asdf";
             this.addResultMenuItem.Click += new System.EventHandler(this.addResultMenuItem_Click);
             // 
-            // splitContainer1
+            // mainContainer
             // 
-            this.splitContainer1.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::HelloForms.Properties.Settings.Default, "ArgMainWndVertSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(5, 33);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4);
-            this.splitContainer1.Name = "splitContainer1";
+            this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.mainContainer.Location = new System.Drawing.Point(5, 33);
+            this.mainContainer.Margin = new System.Windows.Forms.Padding(4);
+            this.mainContainer.Name = "mainContainer";
             // 
-            // splitContainer1.Panel1
+            // mainContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.mainContainer.Panel1.Controls.Add(this.splitContainer2);
             // 
-            // splitContainer1.Panel2
+            // mainContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(906, 684);
-            this.splitContainer1.SplitterDistance = global::HelloForms.Properties.Settings.Default.ArgMainWndVertSplitter;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 1;
+            this.mainContainer.Panel2.Controls.Add(this.tabsAndBankContainer);
+            this.mainContainer.Size = new System.Drawing.Size(906, 684);
+            this.mainContainer.SplitterDistance = 150;
+            this.mainContainer.SplitterWidth = 5;
+            this.mainContainer.TabIndex = 1;
             // 
             // splitContainer2
             // 
@@ -284,7 +290,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listView1);
-            this.splitContainer2.Size = new System.Drawing.Size(250, 684);
+            this.splitContainer2.Size = new System.Drawing.Size(150, 684);
             this.splitContainer2.SplitterDistance = 338;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
@@ -297,7 +303,7 @@
             this.ontologyTreeView.Location = new System.Drawing.Point(0, 0);
             this.ontologyTreeView.Margin = new System.Windows.Forms.Padding(4);
             this.ontologyTreeView.Name = "ontologyTreeView";
-            this.ontologyTreeView.Size = new System.Drawing.Size(250, 338);
+            this.ontologyTreeView.Size = new System.Drawing.Size(150, 338);
             this.ontologyTreeView.TabIndex = 0;
             this.ontologyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -313,11 +319,10 @@
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Margin = new System.Windows.Forms.Padding(4);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(250, 341);
+            this.listView1.Size = new System.Drawing.Size(150, 341);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -334,76 +339,106 @@
             this.columnHeader3.Text = "Унаследован";
             this.columnHeader3.Width = 99;
             // 
-            // splitContainer3
+            // tabsAndBankContainer
             // 
-            this.splitContainer3.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::HelloForms.Properties.Settings.Default, "ArgGridViewSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Margin = new System.Windows.Forms.Padding(4);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.tabsAndBankContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabsAndBankContainer.Location = new System.Drawing.Point(0, 0);
+            this.tabsAndBankContainer.Name = "tabsAndBankContainer";
             // 
-            // splitContainer3.Panel1
+            // tabsAndBankContainer.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.schemesTabControl);
+            this.tabsAndBankContainer.Panel1.Controls.Add(this.groupBox2);
+            this.tabsAndBankContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
-            // splitContainer3.Panel2
+            // tabsAndBankContainer.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer3.Size = new System.Drawing.Size(651, 684);
-            this.splitContainer3.SplitterDistance = global::HelloForms.Properties.Settings.Default.ArgGridViewSplitter;
-            this.splitContainer3.SplitterWidth = 5;
-            this.splitContainer3.TabIndex = 1;
+            this.tabsAndBankContainer.Panel2.Controls.Add(this.nvAndConditionsContainer);
+            this.tabsAndBankContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.tabsAndBankContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.tabsAndBankContainer.Size = new System.Drawing.Size(751, 684);
+            this.tabsAndBankContainer.SplitterDistance = 150;
+            this.tabsAndBankContainer.TabIndex = 1;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.bankListView);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.groupBox2.Size = new System.Drawing.Size(150, 684);
+            this.groupBox2.TabIndex = 0;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Банк";
+            // 
+            // bankListView
+            // 
+            this.bankListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bankListView.FullRowSelect = true;
+            this.bankListView.GridLines = true;
+            this.bankListView.Location = new System.Drawing.Point(3, 18);
+            this.bankListView.Name = "bankListView";
+            this.bankListView.Size = new System.Drawing.Size(144, 663);
+            this.bankListView.TabIndex = 0;
+            this.bankListView.UseCompatibleStateImageBehavior = false;
+            this.bankListView.View = System.Windows.Forms.View.List;
+            this.bankListView.DoubleClick += new System.EventHandler(this.bankListView_DoubleClick);
+            // 
+            // nvAndConditionsContainer
+            // 
+            this.nvAndConditionsContainer.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::HelloForms.Properties.Settings.Default, "ArgGridViewSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.nvAndConditionsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.nvAndConditionsContainer.Location = new System.Drawing.Point(0, 0);
+            this.nvAndConditionsContainer.Margin = new System.Windows.Forms.Padding(4);
+            this.nvAndConditionsContainer.Name = "nvAndConditionsContainer";
+            this.nvAndConditionsContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // nvAndConditionsContainer.Panel1
+            // 
+            this.nvAndConditionsContainer.Panel1.Controls.Add(this.schemesTabControl);
+            this.nvAndConditionsContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // nvAndConditionsContainer.Panel2
+            // 
+            this.nvAndConditionsContainer.Panel2.Controls.Add(this.groupBox1);
+            this.nvAndConditionsContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.nvAndConditionsContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.nvAndConditionsContainer.Size = new System.Drawing.Size(597, 684);
+            this.nvAndConditionsContainer.SplitterDistance = global::HelloForms.Properties.Settings.Default.ArgGridViewSplitter;
+            this.nvAndConditionsContainer.SplitterWidth = 5;
+            this.nvAndConditionsContainer.TabIndex = 1;
             // 
             // schemesTabControl
             // 
-            this.schemesTabControl.Controls.Add(this.tabPage1);
-            this.schemesTabControl.Controls.Add(this.tabPage2);
+            this.schemesTabControl.Controls.Add(this.schemeTabViewPage);
+            this.schemesTabControl.Controls.Add(this.schemeTabXMLPage);
             this.schemesTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.schemesTabControl.Location = new System.Drawing.Point(0, 0);
             this.schemesTabControl.Margin = new System.Windows.Forms.Padding(4);
             this.schemesTabControl.Name = "schemesTabControl";
             this.schemesTabControl.SelectedIndex = 0;
-            this.schemesTabControl.Size = new System.Drawing.Size(651, 550);
+            this.schemesTabControl.Size = new System.Drawing.Size(597, 499);
             this.schemesTabControl.TabIndex = 0;
+            this.schemesTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.schemesTabControl_Selected);
             // 
-            // tabPage1
+            // schemeTabViewPage
             // 
-            this.tabPage1.AllowDrop = true;
-            this.tabPage1.BackColor = System.Drawing.Color.Gray;
-            this.tabPage1.ContextMenuStrip = this.layoutTabContextMenu;
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(643, 521);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tabPage1_MouseMove);
+            this.schemeTabViewPage.Location = new System.Drawing.Point(4, 25);
+            this.schemeTabViewPage.Name = "schemeTabViewPage";
+            this.schemeTabViewPage.Size = new System.Drawing.Size(589, 470);
+            this.schemeTabViewPage.TabIndex = 0;
+            this.schemeTabViewPage.Text = "Сеть";
+            this.schemeTabViewPage.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // schemeTabXMLPage
             // 
-            this.tabPage2.Controls.Add(this.elementHost1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(643, 521);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // elementHost1
-            // 
-            this.elementHost1.AutoSize = true;
-            this.elementHost1.BackColor = System.Drawing.Color.Turquoise;
-            this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.elementHost1.Location = new System.Drawing.Point(4, 4);
-            this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(635, 513);
-            this.elementHost1.TabIndex = 0;
-            this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Child = null;
+            this.schemeTabXMLPage.Controls.Add(this.schemeXMLTextBox);
+            this.schemeTabXMLPage.Location = new System.Drawing.Point(4, 25);
+            this.schemeTabXMLPage.Name = "schemeTabXMLPage";
+            this.schemeTabXMLPage.Size = new System.Drawing.Size(589, 470);
+            this.schemeTabXMLPage.TabIndex = 1;
+            this.schemeTabXMLPage.Text = "XML";
+            this.schemeTabXMLPage.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -413,7 +448,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(651, 129);
+            this.groupBox1.Size = new System.Drawing.Size(597, 180);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Ограничения аргумента";
@@ -435,7 +470,7 @@
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(643, 106);
+            this.dataGridView1.Size = new System.Drawing.Size(589, 157);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValidated);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
@@ -473,11 +508,24 @@
             this.valueDataGridViewTextBoxColumn.HeaderText = "Value";
             this.valueDataGridViewTextBoxColumn.Name = "valueDataGridViewTextBoxColumn";
             // 
+            // schemeXMLTextBox
+            // 
+            this.schemeXMLTextBox.AcceptsTab = true;
+            this.schemeXMLTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.schemeXMLTextBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
+            this.schemeXMLTextBox.Name = "schemeXMLTextBox";
+            this.schemeXMLTextBox.Size = new System.Drawing.Size(589, 470);
+            this.schemeXMLTextBox.TabIndex = 0;
+            this.schemeXMLTextBox.Text = "";
+            this.schemeXMLTextBox.WordWrap = false;
+            // 
             // MainWindow
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 722);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.mainContainer);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -493,21 +541,26 @@
             this.argAttrsContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource1)).EndInit();
             this.ontologyTreeMenuStrip.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.schemesListBinding)).EndInit();
+            this.mainContainer.Panel1.ResumeLayout(false);
+            this.mainContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
+            this.mainContainer.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
+            this.tabsAndBankContainer.Panel1.ResumeLayout(false);
+            this.tabsAndBankContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).EndInit();
+            this.tabsAndBankContainer.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.nvAndConditionsContainer.Panel1.ResumeLayout(false);
+            this.nvAndConditionsContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).EndInit();
+            this.nvAndConditionsContainer.ResumeLayout(false);
             this.schemesTabControl.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.schemeTabXMLPage.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
@@ -521,11 +574,9 @@
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem закрытьToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer mainContainer;
         private System.Windows.Forms.TreeView ontologyTreeView;
         private System.Windows.Forms.TabControl schemesTabControl;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem онтологиюToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -533,7 +584,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer nvAndConditionsContainer;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource conditionBindingSource;
@@ -551,11 +602,17 @@
         private System.Windows.Forms.ContextMenuStrip layoutTabContextMenu;
         private System.Windows.Forms.ToolStripMenuItem добавитьРезультатToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem добавитьФункторToolStripMenuItem;
-        private System.Windows.Forms.Integration.ElementHost elementHost1;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripNewScheme;
         private System.Windows.Forms.ContextMenuStrip ontologyTreeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem addArgumentMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addResultMenuItem;
+        private System.Windows.Forms.SplitContainer tabsAndBankContainer;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ListView bankListView;
+        private System.Windows.Forms.BindingSource schemesListBinding;
+        private System.Windows.Forms.TabPage schemeTabViewPage;
+        private System.Windows.Forms.TabPage schemeTabXMLPage;
+        private System.Windows.Forms.RichTextBox schemeXMLTextBox;
     }
 }
 

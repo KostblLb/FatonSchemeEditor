@@ -16,11 +16,47 @@ namespace HelloForms
     /// </summary>
     public class Medium
     {
+        public static void AddSchemeConnection(FactScheme scheme, Connector src, Connector dst)
+        {
+            if (dst.Tag == null || src.Tag == null)
+                throw new Exception("connector not attached to attribute");
+
+            if (dst.ParentNode.Tag is FactScheme.Result)
+            {
+                var dstAttr = dst.Tag as OntologyNode.Attribute;
+                var srcAttr = src.Tag as OntologyNode.Attribute;
+                var result = dst.ParentNode.Tag as FactScheme.Result;
+                if (src.ParentNode.Tag is FactScheme.Argument)
+                    result.AddRule(FactScheme.Result.RuleType.Define,
+                        dstAttr,
+                        src.ParentNode.Tag,
+                        srcAttr);
+                else if (src.ParentNode.Tag is FactScheme.Functor)
+                    result.AddRule(FactScheme.Result.RuleType.Function,
+                        dstAttr,
+                        src.ParentNode.Tag,
+                        srcAttr);
+            }
+
+            if (dst.ParentNode.Tag is FactScheme.Functor)
+            {
+                var functor = dst.ParentNode.Tag as FactScheme.Functor;
+                functor.SetInput(src.Tag, 
+                    src.ParentNode.Tag, 
+                    dst.Tag as FactScheme.Functor.FunctorInput);
+            }
+
+
+        }
+
         ///convert factscheme argument into nv node
         ///
         public static NodeInfo Convert(FactScheme.Argument argument)  
         {
             NodeInfo info = new NodeInfo();
+
+            info.Tag = argument;
+
             info.Attributes = new List<NodeInfo.AttributeInfo>(); 
 
             info.Header.Name = argument.Name;
@@ -52,6 +88,9 @@ namespace HelloForms
         public static NodeInfo Convert(FactScheme.Result result)
         {
             NodeInfo info = new NodeInfo();
+
+            info.Tag = result;
+
             info.Attributes = new List<NodeInfo.AttributeInfo>();
 
             info.Header.Name = result.Name;
@@ -81,6 +120,39 @@ namespace HelloForms
             }
 
             return info;
+        }
+
+        public static NodeInfo Convert(FactScheme.Functor functor)
+        {
+            var info = new NodeInfo();
+            info.Tag = functor;
+
+            info.Header.Name = functor.ID;
+
+            info.Attributes = new List<NodeInfo.AttributeInfo>();
+            NodeInfo.AttributeInfo output = new NodeInfo.AttributeInfo();
+            output.IsInput = false;
+            output.IsOutput = true;
+            var outputLabel = new Label();
+            outputLabel.Content = "Output";
+            output.AttributePanel = outputLabel;
+            info.Attributes.Add(output);
+
+            if (functor.NumArgs > 0) 
+                for (int i = 0; i < functor.NumArgs; i++)
+                {
+                    NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                    attrInfo.IsInput = true;
+                    attrInfo.IsOutput = false;
+                    attrInfo.Data = functor.Inputs[i].param;
+                    //var attrName = new Label();
+                    //attrName.Content = attr.Name;
+                    //attrInfo.AttributePanel = attrName;
+                    info.Attributes.Add(attrInfo);
+                }
+            //else
+            //    Button
+            return info; 
         }
 
         private static Style typeNameStyle;
