@@ -19,7 +19,6 @@ namespace HelloForms
         List<Condition> _conditions;
         List<Result> _results;
         uint _numArgs;
-        Layout _layout;
 
         XDocument _xml;
         bool _saved;
@@ -36,11 +35,6 @@ namespace HelloForms
         public List<Result> Results
         {
             get { return _results; }
-        }
-        public Layout Layout
-        {
-            get { return _layout; }
-            set { _layout = value; }
         }
 
         public FactScheme()
@@ -96,7 +90,7 @@ namespace HelloForms
 
         public void AddArgument(string dictionaryEntry) { }
 
-        public XDocument ToXml() //TODO MOVE TO LINQ?
+        public XDocument ToXml()
         {
             if (_saved)
                 return _xml;
@@ -178,16 +172,5 @@ namespace HelloForms
         }
     }
 
-    public class FactSchemeBank
-    {
-        public string Name;
-        public List<FactScheme> Schemes;
-        
-        public FactSchemeBank(string name = "new_bank")
-        {
-            Schemes = new List<FactScheme>();
-            Name = name;
-        }
-    }
     
 }

@@ -216,7 +216,13 @@ namespace HelloForms
             }
         }
 
-        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveAsXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.FileName = "scheme.xml";
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void saveAsMarkedXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = "scheme.xml";
             saveFileDialog1.ShowDialog();
@@ -225,7 +231,7 @@ namespace HelloForms
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             System.IO.Stream fstream = saveFileDialog1.OpenFile();
-            System.Xml.Linq.XDocument doc = ((FactScheme)schemesTabControl.SelectedTab.Tag).ToXml();
+            System.Xml.Linq.XDocument doc = Bank.ToXml();
             doc.Save(fstream);
             fstream.Close();
         }
@@ -342,31 +348,6 @@ namespace HelloForms
             }
             getCurrentBank().Schemes.Add(scheme);
             updateBankListView();
-
-            ////create new tabpage
-            //TabPage tabPage = new TabPage(EditorConstants.DEFAULT_SCHEME_NAME);
-            //ElementHost elementHost = new ElementHost();
-            //elementHost.Dock = DockStyle.Fill;
-            //elementHost.AutoSize = true;
-            //elementHost.AllowDrop = true;
-            //elementHost.Name = EditorConstants.TABPAGE_WPF_HOST_NAME;
-            
-            ////create a networkview
-            //network.NetworkView nv = new network.NetworkView();
-            //elementHost.ContextMenuStrip = layoutTabContextMenu;
-            //nv.ContextMenu = new System.Windows.Controls.ContextMenu();
-            //nv.Drop += Nv_Drop;
-            //nv.NodeAdded += NV_NodeAdded;
-            //nv.ConnectionAdded += NV_ConnectionAdded;
-            //elementHost.Child = nv;
-
-            ////add new page to the tab control
-            //tabPage.Controls.Add(elementHost);
-            //schemesTabControl.Controls.Add(tabPage);
-            //schemesTabControl.SelectedTab = tabPage;
-
-            ////attach new scheme to the new page
-            //tabPage.Tag = scheme;
 
             initNVHost(scheme);
             CurrentScheme = scheme;

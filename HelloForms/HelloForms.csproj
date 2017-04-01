@@ -68,8 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentCondition.cs" />
-    <Compile Include="DataContainer.cs" />
-    <Compile Include="DataObject.cs" />
+    <Compile Include="FactScheme\FactSchemeBank.cs" />
+    <Compile Include="misc\DataContainer.cs" />
+    <Compile Include="misc\DataObject.cs" />
     <Compile Include="EditorConstants.cs" />
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\FactScheme.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Layout.cs" />
     <Compile Include="Medium.cs" />
     <Compile Include="OntologyNode.cs" />
     <Compile Include="OntologyBuilder.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="SettingsPathsDialog.Designer.cs">
       <DependentUpon>SettingsPathsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="XMLHighlight.cs" />
+    <Compile Include="misc\XMLHighlight.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>

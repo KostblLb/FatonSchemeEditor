@@ -136,6 +136,8 @@ namespace network
                 Console.WriteLine("same parent node");
                 return false;
             }
+            if (this.Connections.Contains(other) || other.Connections.Contains(this))
+                return false;
             return true;
         }
 

@@ -32,8 +32,9 @@
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.онтологиюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.закрытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.сохранитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsMarkedXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,13 +66,13 @@
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
             this.schemeTabXMLPage = new System.Windows.Forms.TabPage();
+            this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.conditionTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.attributeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comparisonTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.layoutTabContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
@@ -106,8 +107,7 @@
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.открытьToolStripMenuItem,
-            this.закрытьToolStripMenuItem,
-            this.сохранитьToolStripMenuItem,
+            this.saveToolStripMenuItem,
             this.mainToolStripNewScheme});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
@@ -118,7 +118,7 @@
             this.открытьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.онтологиюToolStripMenuItem});
             this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
+            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.открытьToolStripMenuItem.Text = "Открыть...";
             this.открытьToolStripMenuItem.Click += new System.EventHandler(this.открытьToolStripMenuItem_Click);
             // 
@@ -129,23 +129,33 @@
             this.онтологиюToolStripMenuItem.Text = "Онтологию";
             this.онтологиюToolStripMenuItem.Click += new System.EventHandler(this.онтологиюToolStripMenuItem_Click);
             // 
-            // закрытьToolStripMenuItem
+            // saveToolStripMenuItem
             // 
-            this.закрытьToolStripMenuItem.Name = "закрытьToolStripMenuItem";
-            this.закрытьToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
-            this.закрытьToolStripMenuItem.Text = "Закрыть";
+            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveAsXMLToolStripMenuItem,
+            this.saveAsMarkedXMLToolStripMenuItem});
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.saveToolStripMenuItem.Text = "Сохранить...";
             // 
-            // сохранитьToolStripMenuItem
+            // saveAsXMLToolStripMenuItem
             // 
-            this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
-            this.сохранитьToolStripMenuItem.Text = "Сохранить как...";
-            this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.сохранитьToolStripMenuItem_Click);
+            this.saveAsXMLToolStripMenuItem.Name = "saveAsXMLToolStripMenuItem";
+            this.saveAsXMLToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.saveAsXMLToolStripMenuItem.Text = "Обычный XML";
+            this.saveAsXMLToolStripMenuItem.Click += new System.EventHandler(this.saveAsXMLToolStripMenuItem_Click);
+            // 
+            // saveAsMarkedXMLToolStripMenuItem
+            // 
+            this.saveAsMarkedXMLToolStripMenuItem.Name = "saveAsMarkedXMLToolStripMenuItem";
+            this.saveAsMarkedXMLToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.saveAsMarkedXMLToolStripMenuItem.Text = "С разметкой редактора";
+            this.saveAsMarkedXMLToolStripMenuItem.Click += new System.EventHandler(this.saveAsMarkedXMLToolStripMenuItem_Click);
             // 
             // mainToolStripNewScheme
             // 
             this.mainToolStripNewScheme.Name = "mainToolStripNewScheme";
-            this.mainToolStripNewScheme.Size = new System.Drawing.Size(193, 26);
+            this.mainToolStripNewScheme.Size = new System.Drawing.Size(181, 26);
             this.mainToolStripNewScheme.Text = "Новая схема";
             this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
@@ -440,6 +450,18 @@
             this.schemeTabXMLPage.Text = "XML";
             this.schemeTabXMLPage.UseVisualStyleBackColor = true;
             // 
+            // schemeXMLTextBox
+            // 
+            this.schemeXMLTextBox.AcceptsTab = true;
+            this.schemeXMLTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.schemeXMLTextBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
+            this.schemeXMLTextBox.Name = "schemeXMLTextBox";
+            this.schemeXMLTextBox.Size = new System.Drawing.Size(589, 470);
+            this.schemeXMLTextBox.TabIndex = 0;
+            this.schemeXMLTextBox.Text = "";
+            this.schemeXMLTextBox.WordWrap = false;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.dataGridView1);
@@ -508,18 +530,6 @@
             this.valueDataGridViewTextBoxColumn.HeaderText = "Value";
             this.valueDataGridViewTextBoxColumn.Name = "valueDataGridViewTextBoxColumn";
             // 
-            // schemeXMLTextBox
-            // 
-            this.schemeXMLTextBox.AcceptsTab = true;
-            this.schemeXMLTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.schemeXMLTextBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
-            this.schemeXMLTextBox.Name = "schemeXMLTextBox";
-            this.schemeXMLTextBox.Size = new System.Drawing.Size(589, 470);
-            this.schemeXMLTextBox.TabIndex = 0;
-            this.schemeXMLTextBox.Text = "";
-            this.schemeXMLTextBox.WordWrap = false;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -572,7 +582,6 @@
 
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem закрытьToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.SplitContainer mainContainer;
         private System.Windows.Forms.TreeView ontologyTreeView;
@@ -590,7 +599,7 @@
         private System.Windows.Forms.BindingSource conditionBindingSource;
         private System.Windows.Forms.ContextMenuStrip argAttrsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem добавитьУсловиеToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem сохранитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pathsToolStripMenuItem;
@@ -613,6 +622,8 @@
         private System.Windows.Forms.TabPage schemeTabViewPage;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
+        private System.Windows.Forms.ToolStripMenuItem saveAsXMLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsMarkedXMLToolStripMenuItem;
     }
 }
 
