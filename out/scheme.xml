@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<FATON_SCHEMES_BANK>
-  <Новая_схема>
-    <Argument Order="1" Type="CLASS" ClassName="Интернет-ресурсы" AllowInheritance="true" />
-  </Новая_схема>
-  <Новая_схема>
-    <Argument Order="1" Type="CLASS" ClassName="Персона" AllowInheritance="true" />
-    <Result Name="Новый результат" Type="Create" ReferenceType="OntologyClass" Reference="Организация">
-      <Rule Attribute="Название" Type="Define" ArgFrom="1" AttrFrom="Имя" />
-      <Rule Attribute="Аббревиатура" Type="Define" ArgFrom="1" AttrFrom="Инициалы" />
-    </Result>
-  </Новая_схема>
-</FATON_SCHEMES_BANK>
+<FATON_EDITOR_FILE>
+  <FATON_SCHEMES_BANK>
+    <Новая_схема>
+      <Result Name="Новый результат" Type="Create" ReferenceType="OntologyClass" Reference="ФИО" />
+    </Новая_схема>
+  </FATON_SCHEMES_BANK>
+  <FATON_EDITOR_MARKUP>
+    <Новая_схема>
+      <node name="Новый результат" left="172" top="55.2" />
+    </Новая_схема>
+  </FATON_EDITOR_MARKUP>
+</FATON_EDITOR_FILE>

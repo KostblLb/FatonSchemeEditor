@@ -29,7 +29,7 @@ namespace network
     /// </summary>
     public partial class NetworkView : Canvas
     {
-        private IEnumerable<Node> Nodes
+        public IEnumerable<Node> Nodes
         {
             get { return this.Children.OfType<Node>(); }
         }

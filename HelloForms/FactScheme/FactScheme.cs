@@ -10,7 +10,7 @@ namespace HelloForms
 {
     public partial class FactScheme
     {
-        public partial class Argument { } //TODO add dictionary entry argument type
+        public partial class Argument { }
         public partial class Condition { }
         public partial class Result { }
 
@@ -24,6 +24,8 @@ namespace HelloForms
         bool _saved;
 
         public string Name { get { return _name; } }
+        public string XMLName { get { return _name.Replace(' ', '_'); } }
+
         public List<Argument> Arguments
         {
             get { return _arguments; }

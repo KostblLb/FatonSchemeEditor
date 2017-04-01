@@ -32,9 +32,7 @@
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.онтологиюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsMarkedXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,7 +105,7 @@
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.открытьToolStripMenuItem,
-            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
             this.mainToolStripNewScheme});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
@@ -129,28 +127,12 @@
             this.онтологиюToolStripMenuItem.Text = "Онтологию";
             this.онтологиюToolStripMenuItem.Click += new System.EventHandler(this.онтологиюToolStripMenuItem_Click);
             // 
-            // saveToolStripMenuItem
+            // saveAsToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAsXMLToolStripMenuItem,
-            this.saveAsMarkedXMLToolStripMenuItem});
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-            this.saveToolStripMenuItem.Text = "Сохранить...";
-            // 
-            // saveAsXMLToolStripMenuItem
-            // 
-            this.saveAsXMLToolStripMenuItem.Name = "saveAsXMLToolStripMenuItem";
-            this.saveAsXMLToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
-            this.saveAsXMLToolStripMenuItem.Text = "Обычный XML";
-            this.saveAsXMLToolStripMenuItem.Click += new System.EventHandler(this.saveAsXMLToolStripMenuItem_Click);
-            // 
-            // saveAsMarkedXMLToolStripMenuItem
-            // 
-            this.saveAsMarkedXMLToolStripMenuItem.Name = "saveAsMarkedXMLToolStripMenuItem";
-            this.saveAsMarkedXMLToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
-            this.saveAsMarkedXMLToolStripMenuItem.Text = "С разметкой редактора";
-            this.saveAsMarkedXMLToolStripMenuItem.Click += new System.EventHandler(this.saveAsMarkedXMLToolStripMenuItem_Click);
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.saveAsToolStripMenuItem.Text = "Сохранить...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // mainToolStripNewScheme
             // 
@@ -599,7 +581,7 @@
         private System.Windows.Forms.BindingSource conditionBindingSource;
         private System.Windows.Forms.ContextMenuStrip argAttrsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem добавитьУсловиеToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pathsToolStripMenuItem;
@@ -622,8 +604,6 @@
         private System.Windows.Forms.TabPage schemeTabViewPage;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
-        private System.Windows.Forms.ToolStripMenuItem saveAsXMLToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsMarkedXMLToolStripMenuItem;
     }
 }
 

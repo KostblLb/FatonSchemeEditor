@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Xml.Linq;
 
 namespace HelloForms
 {
@@ -216,22 +217,42 @@ namespace HelloForms
             }
         }
 
-        private void saveAsXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = "scheme.xml";
-            saveFileDialog1.ShowDialog();
-        }
-
-        private void saveAsMarkedXMLToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.FileName = "scheme.xml";
+            saveFileDialog1.Filter = "Simple XML|*.xml|Editor XML with markup|*.xml";
             saveFileDialog1.ShowDialog();
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
+            var dialog = sender as SaveFileDialog;
             System.IO.Stream fstream = saveFileDialog1.OpenFile();
-            System.Xml.Linq.XDocument doc = Bank.ToXml();
+            System.Xml.Linq.XDocument doc = new XDocument();
+            XElement xbank = Bank.ToXml().Root;
+            if (dialog.FilterIndex == EditorConstants.EDITOR_XML)
+            {
+                doc.Add(new XElement(EditorConstants.XML_ROOT_NAME));
+                doc.Root.Add(xbank);
+                XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
+                foreach (FactScheme scheme in Bank.Schemes)
+                {
+                    XElement xscheme = new XElement(scheme.XMLName);
+                    network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
+                    foreach (network.Node node in nv.Nodes)
+                    {
+                        XElement xnode = new XElement("node", 
+                            new XAttribute("name", node.TagName),
+                            new XAttribute("left", node.Margin.Left),
+                            new XAttribute("top", node.Margin.Top));
+                        xscheme.Add(xnode);
+                    }
+                    xmarkup.Add(xscheme);
+                }
+                doc.Root.Add(xmarkup);
+            }
+            else
+                doc.Add(xbank);
             doc.Save(fstream);
             fstream.Close();
         }
@@ -440,6 +461,8 @@ namespace HelloForms
 
         private void bankListView_DoubleClick(object sender, EventArgs e)
         {
+            if ((sender as ListView).SelectedItems.Count == 0)
+                return;
             CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as FactScheme);
         }
 

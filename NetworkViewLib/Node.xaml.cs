@@ -36,6 +36,7 @@ namespace network
                 typeof(RoutedEventHandler),
                 typeof(Node));
 
+        public string TagName { get { return pName.Content.ToString(); } }
         public Node()
         {
             InitializeComponent();
@@ -48,6 +49,7 @@ namespace network
         {
             this.Tag = info.Tag;
 
+            this.pName.Content = info.Header.Name;
             this.pInfo.Content = info.Header.InfoPanel;
 
             foreach(NodeInfo.AttributeInfo attrInfo in info.Attributes)

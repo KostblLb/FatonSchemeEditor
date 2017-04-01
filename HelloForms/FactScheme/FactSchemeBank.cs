@@ -21,12 +21,12 @@ namespace HelloForms
         public XDocument ToXml()
         {
             XDocument doc = new XDocument();
-            doc.Add(new XElement("FATON_SCHEMES_BANK"));
-
-            foreach(FactScheme scheme in Schemes)
+            XElement xbank = new XElement(FatonConstants.XML_BANK_NAME);
+            foreach (FactScheme scheme in Schemes)
             {
-                doc.Root.Add(scheme.ToXml().Root);
+                xbank.Add(scheme.ToXml().Root);
             }
+            doc.Add(xbank);
 
             return doc;
         }

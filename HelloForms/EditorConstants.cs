@@ -21,5 +21,10 @@ namespace HelloForms
 
         public const string DEFAULT_SCHEME_NAME = "Новая схема";
         public const string DEFAULT_BANK_NAME = "Новый банк";
+
+        public static string XML_ROOT_NAME = "FATON_EDITOR_FILE";
+        public static string XML_EDITOR_MARKUP = "FATON_EDITOR_MARKUP";
+
+        public static int SIMPLE_XML = 1, EDITOR_XML = 2;
     }
 }
