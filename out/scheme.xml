@@ -2,12 +2,16 @@
 <FATON_EDITOR_FILE>
   <FATON_SCHEMES_BANK>
     <Новая_схема>
-      <Result Name="Новый результат" Type="Create" ReferenceType="OntologyClass" Reference="ФИО" />
+      <Argument Order="1" Name="arggggg" ClassName="Деятельность" AllowInheritance="true" />
+      <Result Name="Новый asf4" Type="Create" ReferenceType="OntologyClass" Reference="Персона">
+        <Rule Attribute="Ученая степень" Type="Define" ArgFrom="1" AttrFrom="Пол" />
+      </Result>
     </Новая_схема>
   </FATON_SCHEMES_BANK>
   <FATON_EDITOR_MARKUP>
     <Новая_схема>
-      <node name="Новый результат" left="172" top="55.2" />
+      <node name="arggggg" left="64.800000000000011" top="58.400000000000006" />
+      <node name="Новый asf4" left="452.8" top="96.8" />
     </Новая_схема>
   </FATON_EDITOR_MARKUP>
 </FATON_EDITOR_FILE>

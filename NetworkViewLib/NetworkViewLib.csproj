@@ -53,6 +53,7 @@
     <Compile Include="Node.xaml.cs">
       <DependentUpon>Node.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NodeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

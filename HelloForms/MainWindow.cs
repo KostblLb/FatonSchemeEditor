@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Xml.Linq;
+using System.IO;
 
 namespace HelloForms
 {
@@ -118,14 +119,40 @@ namespace HelloForms
             }
         }
 
-        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
+            System.IO.FileStream fstream = null;
+            try
+            {
+                fstream = System.IO.File.Open((sender as OpenFileDialog).FileName, System.IO.FileMode.Open);
+            }
+            catch (System.IO.FileNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            catch (System.IO.DirectoryNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            StreamReader sr = new StreamReader(fstream);
+            string xmlString = sr.ReadToEnd();
 
-            //ontologyNodes = OntologyNode
+            XDocument doc = XDocument.Parse(xmlString);
+
+            XElement xbank = doc.Root.Element(FatonConstants.XML_BANK_NAME);
+            if (xbank == null)
+                return;
+            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology); //assuming ontology is loaded
+            
+
+            if (doc.Element(EditorConstants.XML_EDITOR_ROOT_NAME) != null)
+            {
+
+            }
+
+            fstream.Close();
         }
 
         private void loadOntologyTree(String filename)
@@ -181,10 +208,14 @@ namespace HelloForms
             OntologyNode.Ontology = ontology;
         }
 
-        private void онтологиюToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("open file");
-            openFileDialog1.FileName = "ontology.xml";
+            if (OntologyNode.Ontology == null || OntologyNode.Ontology.Count == 0)
+            {
+                MessageBox.Show(Locale.ERR_ONTOLOGY_NOT_LOADED);
+                return;
+            }
+            openFileDialog1.FileName = "scheme.xml";
             openFileDialog1.ShowDialog();
         }
 
@@ -192,35 +223,11 @@ namespace HelloForms
         {
             Console.WriteLine(sender.ToString());
         }
-
-        bool mousedown = false;
-        Point motionstart = Point.Empty;
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            Console.WriteLine(e.Location);
-            if (mousedown)
-            {
-                Point loc = ((Panel)sender).Location;
-                Point mousedelta = new Point(-motionstart.X +  e.X, -motionstart.Y + e.Y);
-                loc.X += mousedelta.X;
-                loc.Y += mousedelta.Y;
-                ((Panel)sender).Location = loc;
-            }
-        }
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (!mousedown)
-            {
-                mousedown = true;
-                motionstart = e.Location;
-            }
-        }
-
+        
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = "scheme.xml";
-            saveFileDialog1.Filter = "Simple XML|*.xml|Editor XML with markup|*.xml";
+            saveFileDialog1.Filter = Locale.FILE_FORMAT_FILTER;
             saveFileDialog1.ShowDialog();
         }
 
@@ -232,7 +239,7 @@ namespace HelloForms
             XElement xbank = Bank.ToXml().Root;
             if (dialog.FilterIndex == EditorConstants.EDITOR_XML)
             {
-                doc.Add(new XElement(EditorConstants.XML_ROOT_NAME));
+                doc.Add(new XElement(EditorConstants.XML_EDITOR_ROOT_NAME));
                 doc.Root.Add(xbank);
                 XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
                 foreach (FactScheme scheme in Bank.Schemes)
@@ -282,7 +289,7 @@ namespace HelloForms
             }
 
             FactScheme.Argument arg = ((DataGridView)sender).Tag as FactScheme.Argument;
-            List<OntologyNode.Attribute> attrs = ((OntologyClass)arg.Origin).OwnAttributes;
+            List<OntologyNode.Attribute> attrs = arg.Klass.OwnAttributes;
             String cellAttrName = e.FormattedValue as String;
 
             foreach (OntologyNode.Attribute attr in attrs)
@@ -296,7 +303,7 @@ namespace HelloForms
 
             if (arg.Inheritance)
             {
-                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)arg.Origin).InheritedAttributes;
+                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = arg.Klass.InheritedAttributes;
                 foreach(Tuple<OntologyNode.Attribute, OntologyClass> attr in inheritedAttrs)
                 {
                     if (attr.Item2.Name.Equals(cellAttrName))
@@ -405,7 +412,7 @@ namespace HelloForms
 
             FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
 
-            FactScheme.Argument arg = scheme.AddArgument(ontologyClass, new Point());
+            FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
 
             network.Node node = nv.AddNode(Medium.Convert(arg), true); 
         }
@@ -442,7 +449,7 @@ namespace HelloForms
 
             OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
             FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
-            FactScheme.Argument arg = scheme.AddArgument(ontologyClass, new Point());
+            FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
 
             network.Node node = nv.AddNode(Medium.Convert(arg), true);
         }

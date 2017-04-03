@@ -57,18 +57,21 @@ namespace HelloForms
 
             info.Tag = argument;
 
-            info.Attributes = new List<NodeInfo.AttributeInfo>(); 
+            info.Attributes = new List<NodeInfo.AttributeInfo>();
 
-            info.Header.Name = argument.Name;
+            info.NodeNameProperty = argument.Name;
+            info.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == "NodeNameProperty")
+                    argument.Name = (sender as NodeInfo).NodeNameProperty;
+            };
             info.Header.InfoPanel = ArgumentInfoPanel(argument);
 
-            var attrs = new List<OntologyNode.Attribute>(argument.Origin.OwnAttributes);
-            if(argument.Origin.type == OntologyNode.Type.Class)
-            {
-                var inheritedAttrs = (argument.Origin as OntologyClass).InheritedAttributes.Select(i => i.Item1);
-                foreach(var inheritedAttr in inheritedAttrs)
-                    attrs.Add(inheritedAttr as OntologyNode.Attribute); 
-            }
+            var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
+
+            var inheritedAttrs = argument.Klass.InheritedAttributes.Select(i => i.Item1);
+            foreach(var inheritedAttr in inheritedAttrs)
+                attrs.Add(inheritedAttr as OntologyNode.Attribute); 
 
             foreach(var attr in attrs)
             {
@@ -93,7 +96,13 @@ namespace HelloForms
 
             info.Attributes = new List<NodeInfo.AttributeInfo>();
 
-            info.Header.Name = result.Name;
+            info.NodeNameProperty = result.Name;
+            info.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == "NodeNameProperty")
+                    result.Name = (sender as NodeInfo).NodeNameProperty;
+            };
+
             info.Header.InfoPanel = ResultInfoPanel(result);
 
             if (result.Reference is OntologyClass)
@@ -127,7 +136,7 @@ namespace HelloForms
             var info = new NodeInfo();
             info.Tag = functor;
 
-            info.Header.Name = functor.ID;
+            info.NodeNameProperty = functor.ID;
 
             info.Attributes = new List<NodeInfo.AttributeInfo>();
             NodeInfo.AttributeInfo output = new NodeInfo.AttributeInfo();

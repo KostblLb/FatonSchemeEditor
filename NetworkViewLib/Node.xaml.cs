@@ -48,8 +48,11 @@ namespace network
         public Node(NodeInfo info) : this()
         {
             this.Tag = info.Tag;
-
-            this.pName.Content = info.Header.Name;
+            
+            Binding bind = new Binding("NodeNameProperty");
+            bind.Source = info;
+            bind.Mode = BindingMode.TwoWay;
+            this.pName.SetBinding(Label.ContentProperty, bind);
             this.pInfo.Content = info.Header.InfoPanel;
 
             foreach(NodeInfo.AttributeInfo attrInfo in info.Attributes)
@@ -194,29 +197,5 @@ namespace network
         }
 
 
-    }
-
-    public struct NodeInfo
-    {
-        public object Tag;
-
-        public struct HeaderInfo
-        {
-            public string Name;
-            public object Data;
-            public FrameworkElement InfoPanel;
-        }
-        public HeaderInfo Header;
-
-        public struct AttributeInfo
-        {
-            public bool IsInput;
-            public bool IsOutput;
-            public object Data;
-            public FrameworkElement AttributePanel;
-        }
-        public List<AttributeInfo> Attributes;
-
-        public FrameworkElement Footer;
     }
 }

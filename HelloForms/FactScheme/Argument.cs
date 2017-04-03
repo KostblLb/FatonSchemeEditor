@@ -10,20 +10,20 @@ namespace HelloForms
     {
 		public partial class Argument
         {
-            string _objectName;
+            string _name;
+            OntologyClass _klass;
             bool _useInheritance;
-            protected uint _order; //just in case
-            OntologyNode _tag; //attach real object to argument
+            protected uint _order; 
             List<Condition> _conditions;
 
-            public string TypeString
+            public OntologyClass Klass
             {
-                get { return _tag.TypeString; }
+                get { return _klass; }
             }
-
             public string Name
             {
-                get { return _objectName; }
+                get { return _name; }
+                set { _name = value; }
             }
 
             public bool Inheritance
@@ -43,19 +43,12 @@ namespace HelloForms
                 get { return _conditions; }
             }
 
-            /// <summary>
-            /// Get Ontology OntologyClass, Domain or Relation attached to this object
-            /// </summary>
-            public OntologyNode Origin
+            public Argument(OntologyClass klass, string name = null, bool inherit = true)
             {
-                get { return _tag; }
-            }
-
-            public Argument(string myName, bool myInherit, OntologyNode myTag = null)
-            {
-                _objectName = myName;
-                _useInheritance = myInherit;
-                _tag = myTag;
+                _klass = klass;
+                _name = name != null ? name : klass.Name; // default name
+                _useInheritance = inherit;
+                //_tag = tag;
                 _conditions = new List<Condition>();
             }
 			

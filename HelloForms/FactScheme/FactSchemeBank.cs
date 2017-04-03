@@ -30,5 +30,42 @@ namespace HelloForms
 
             return doc;
         }
+
+        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology)
+        {
+            FactSchemeBank bank = new FactSchemeBank();
+            foreach(XElement xscheme in root.Elements())
+            {
+                FactScheme scheme = new FactScheme(xscheme.Name.LocalName);
+                var arguments = from x in xscheme.Elements()
+                              where x.Name.LocalName == "Argument"
+                              select x;
+                var results = from x in xscheme.Elements()
+                              where x.Name.LocalName == "Result"
+                              select x;
+                var functors = from x in xscheme.Elements()
+                              where x.Name.LocalName == "Functor"
+                              select x;
+                var relations = from x in xscheme.Elements()
+                              where x.Name.LocalName == "Relation"
+                              select x;
+                foreach (XElement xarg in arguments)
+                {
+                    OntologyClass argKlass;
+                    //scheme.AddArgument()
+                    foreach(OntologyClass klass in ontology)
+                    {
+                        argKlass = klass.Search(xarg.Attribute("ClassName").Value);
+                        if (argKlass == null)
+                            break;
+                        scheme.AddArgument(argKlass);
+                    }
+                }
+
+                bank.Schemes.Add(scheme);
+            }
+
+            return bank; 
+        }
     }
 }

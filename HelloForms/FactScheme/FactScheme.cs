@@ -53,15 +53,13 @@ namespace HelloForms
             _name = name;
         }
 
-        public Argument AddArgument(OntologyNode node, Point point, bool useInheritance = true)
+        public Argument AddArgument(OntologyClass klass, bool useInheritance = true)
         {
             _saved = false;
-            Argument arg = new Argument(node.Name, useInheritance, node);
+            Argument arg = new Argument(klass, klass.Name);
             arg.Order = ++_numArgs;
             _arguments.Add(arg);
 
-            //call medium somewhere here?
-            //_layout.AddArgument(point, arg);
             return arg;
 
         }
@@ -89,13 +87,12 @@ namespace HelloForms
             Functor func = new FunctorCat();
             return func;
         }
-
-        public void AddArgument(string dictionaryEntry) { }
+        
 
         public XDocument ToXml()
         {
-            if (_saved)
-                return _xml;
+            //if (_saved)
+            //    return _xml;
 
             XDocument doc = new XDocument();
             doc.Add(new XElement(_name.Replace(' ', '_')));
@@ -104,8 +101,8 @@ namespace HelloForms
                 XElement xarg =
                     new XElement("Argument",
                         new XAttribute("Order", arg.Order),
-                        new XAttribute("Type", arg.TypeString),
-                        new XAttribute("ClassName", arg.Name),
+                        new XAttribute("Name", arg.Name),
+                        new XAttribute("ClassName", arg.Klass.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
                 foreach(Condition cond in arg.Conditions)
                 {

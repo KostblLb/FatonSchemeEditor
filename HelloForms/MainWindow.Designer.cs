@@ -30,8 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.онтологиюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -104,40 +103,32 @@
             // файлToolStripMenuItem
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.открытьToolStripMenuItem,
+            this.openToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.mainToolStripNewScheme});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
             this.файлToolStripMenuItem.Text = "Файл";
             // 
-            // открытьToolStripMenuItem
+            // openToolStripMenuItem
             // 
-            this.открытьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.онтологиюToolStripMenuItem});
-            this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-            this.открытьToolStripMenuItem.Text = "Открыть...";
-            this.открытьToolStripMenuItem.Click += new System.EventHandler(this.открытьToolStripMenuItem_Click);
-            // 
-            // онтологиюToolStripMenuItem
-            // 
-            this.онтологиюToolStripMenuItem.Name = "онтологиюToolStripMenuItem";
-            this.онтологиюToolStripMenuItem.Size = new System.Drawing.Size(163, 26);
-            this.онтологиюToolStripMenuItem.Text = "Онтологию";
-            this.онтологиюToolStripMenuItem.Click += new System.EventHandler(this.онтологиюToolStripMenuItem_Click);
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.openToolStripMenuItem.Text = "Открыть...";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
             this.saveAsToolStripMenuItem.Text = "Сохранить...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // mainToolStripNewScheme
             // 
             this.mainToolStripNewScheme.Name = "mainToolStripNewScheme";
-            this.mainToolStripNewScheme.Size = new System.Drawing.Size(181, 26);
+            this.mainToolStripNewScheme.Size = new System.Drawing.Size(217, 26);
             this.mainToolStripNewScheme.Text = "Новая схема";
             this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
@@ -563,13 +554,12 @@
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.SplitContainer mainContainer;
         private System.Windows.Forms.TreeView ontologyTreeView;
         private System.Windows.Forms.TabControl schemesTabControl;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.ToolStripMenuItem онтологиюToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;

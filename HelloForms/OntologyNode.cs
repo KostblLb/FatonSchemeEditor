@@ -149,6 +149,36 @@ namespace HelloForms
         {
             _parents.Add(p);
         }
+
+        public OntologyClass Search(string name)
+        {
+            OntologyClass klass = null;
+            HashSet<OntologyClass> viewed = new HashSet<OntologyClass>();
+            Stack<OntologyClass> s = new Stack<OntologyClass>();
+            s.Push(this);
+            while (s.Any())
+            {
+                OntologyClass currentKlass = s.Pop();
+                if (currentKlass.Name == name)
+                {
+                    klass = currentKlass;
+                    break;
+                }
+                if (currentKlass.Children.Count > 0)
+                {
+                    var currentKlassViewed = true;
+                    foreach (OntologyClass child in currentKlass.Children)
+                        if (!viewed.Contains(child))
+                        {
+                            s.Push(child);
+                            currentKlassViewed = false;
+                        }
+                    if (currentKlassViewed)
+                        viewed.Add(currentKlass);
+                }
+            }
+            return klass;
+        }
     }
     public class Relation : OntologyNode
     {
