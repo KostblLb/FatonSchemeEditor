@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HelloForms
+namespace FactScheme
 {
-    public partial class FactScheme
-    {
+    //public partial class FactScheme
+    //{
 
         public enum ConditionType { Semantic, Morphologic, Syntactic }
         public enum ConditionPosition { Any, Preposition, Postposition }
@@ -61,5 +61,5 @@ namespace HelloForms
                 _parentArgument = arg;
             }
         }
-    }
+    //}
 }

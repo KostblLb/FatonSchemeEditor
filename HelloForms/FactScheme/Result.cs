@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ontology;
 
-namespace HelloForms
+namespace FactScheme
 {
-    public partial class FactScheme
-    {
+    //public partial class FactScheme
+    //{
         public enum ResultType { Create, Edit }
         public partial class Result
         {
@@ -86,5 +87,5 @@ namespace HelloForms
                 _rules.Add(rule);
             }
         }
-    }
+    //}
 }

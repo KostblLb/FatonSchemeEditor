@@ -69,11 +69,12 @@
   <ItemGroup>
     <Compile Include="ArgumentCondition.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
+    <Compile Include="FactScheme\Relation.cs" />
     <Compile Include="misc\DataContainer.cs" />
     <Compile Include="misc\DataObject.cs" />
     <Compile Include="EditorConstants.cs" />
     <Compile Include="FactScheme\Condition.cs" />
-    <Compile Include="FactScheme\FactScheme.cs" />
+    <Compile Include="FactScheme\Scheme.cs" />
     <Compile Include="FactScheme\Result.cs" />
     <Compile Include="FatonConstants.cs" />
     <Compile Include="FactScheme\Functor.cs" />
@@ -118,6 +119,7 @@
     </EmbeddedResource>
     <Compile Include="FactScheme\Argument.cs" />
     <None Include="Properties\DataSources\FactScheme.Condition.datasource" />
+    <None Include="Properties\DataSources\FactScheme.Condition1.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

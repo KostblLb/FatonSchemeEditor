@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Faton;
 
-
-namespace HelloForms
+namespace Ontology
 {
     public class OntologyNode
     {
@@ -180,17 +180,6 @@ namespace HelloForms
             return klass;
         }
     }
-    public class Relation : OntologyNode
-    {
-        OntologyClass arg1;
-        OntologyClass arg2;
-        public Relation(string myName, OntologyClass myArg1 , OntologyClass myArg2) : base(myName, Type.Relation)
-        {
-            arg1 = myArg1;
-            arg2 = myArg2;
-        }
-    }
-
     
 }
 

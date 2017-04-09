@@ -4,17 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using FactScheme;
+using Faton;
+using Ontology;
 
 namespace HelloForms
 { 
     public class FactSchemeBank
     {
         public string Name;
-        public List<FactScheme> Schemes;
+        public List<Scheme> Schemes;
 
         public FactSchemeBank(string name = "new_bank")
         {
-            Schemes = new List<FactScheme>();
+            Schemes = new List<Scheme>();
             Name = name;
         }
 
@@ -22,7 +25,7 @@ namespace HelloForms
         {
             XDocument doc = new XDocument();
             XElement xbank = new XElement(FatonConstants.XML_BANK_NAME);
-            foreach (FactScheme scheme in Schemes)
+            foreach (Scheme scheme in Schemes)
             {
                 xbank.Add(scheme.ToXml().Root);
             }
@@ -36,7 +39,7 @@ namespace HelloForms
             FactSchemeBank bank = new FactSchemeBank();
             foreach(XElement xscheme in root.Elements())
             {
-                FactScheme scheme = new FactScheme(xscheme.Name.LocalName);
+                Scheme scheme = new Scheme(xscheme.Name.LocalName);
                 var arguments = from x in xscheme.Elements()
                               where x.Name.LocalName == "Argument"
                               select x;
@@ -58,8 +61,14 @@ namespace HelloForms
                         argKlass = klass.Search(xarg.Attribute("ClassName").Value);
                         if (argKlass == null)
                             break;
-                        scheme.AddArgument(argKlass);
+                        FactScheme.Argument arg = scheme.AddArgument(argKlass);
+                        arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
                     }
+                }
+
+                foreach (XElement xres in results)
+                {
+                    scheme.AddResult();
                 }
 
                 bank.Schemes.Add(scheme);

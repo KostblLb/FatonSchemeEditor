@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using network;
 using System.Windows;
 using System.Windows.Controls;
+using FactScheme;
+using Ontology;
 
 namespace HelloForms
 {
@@ -16,7 +18,7 @@ namespace HelloForms
     /// </summary>
     public class Medium
     {
-        public static void AddSchemeConnection(FactScheme scheme, Connector src, Connector dst)
+        public static void AddSchemeConnection(Scheme scheme, Connector src, Connector dst)
         {
             if (dst.Tag == null || src.Tag == null)
                 throw new Exception("connector not attached to attribute");

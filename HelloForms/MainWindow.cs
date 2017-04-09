@@ -11,18 +11,21 @@ using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Xml.Linq;
 using System.IO;
+using Faton;
+using Ontology;
+using FactScheme;
 
 namespace HelloForms
 {
     public partial class MainWindow : Form
     {
 
-        Dictionary<FactScheme, ElementHost> NVHosts;
+        Dictionary<Scheme, ElementHost> NVHosts;
 
-        FactScheme CurrentScheme {
+        Scheme CurrentScheme {
             get
             {
-                return schemeTabViewPage.Tag as FactScheme;
+                return schemeTabViewPage.Tag as Scheme;
             }
             set
             {
@@ -46,7 +49,7 @@ namespace HelloForms
 
             ontologyTreeView.NodeMouseClick += (sender, args) => ontologyTreeView.SelectedNode = args.Node;
 
-            NVHosts = new Dictionary<FactScheme, ElementHost>();
+            NVHosts = new Dictionary<Scheme, ElementHost>();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -54,10 +57,10 @@ namespace HelloForms
             ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
 
             DataGridViewComboBoxColumn conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
-            conditionTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ConditionType));
+            conditionTypeColumn.DataSource = Enum.GetValues(typeof(ConditionType));
 
             DataGridViewComboBoxColumn comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
-            comparTypeColumn.DataSource = Enum.GetValues(typeof(FactScheme.ComparisonType));
+            comparTypeColumn.DataSource = Enum.GetValues(typeof(ComparisonType));
 
             if(!String.IsNullOrEmpty(Properties.Settings.Default["OntologyPath"] as String))
             {
@@ -242,7 +245,7 @@ namespace HelloForms
                 doc.Add(new XElement(EditorConstants.XML_EDITOR_ROOT_NAME));
                 doc.Root.Add(xbank);
                 XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
-                foreach (FactScheme scheme in Bank.Schemes)
+                foreach (Scheme scheme in Bank.Schemes)
                 {
                     XElement xscheme = new XElement(scheme.XMLName);
                     network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
@@ -329,7 +332,7 @@ namespace HelloForms
             if (Bank == null)
                 return;
             bankListView.Items.Clear();
-            foreach (FactScheme fs in Bank.Schemes)
+            foreach (Scheme fs in Bank.Schemes)
             {
                 ListViewItem listItem = new ListViewItem(fs.Name);
                 listItem.Tag = fs;
@@ -337,7 +340,7 @@ namespace HelloForms
             }
         }
 
-        void initNVHost(FactScheme scheme)
+        void initNVHost(Scheme scheme)
         {
             ElementHost elementHost = new ElementHost();
             elementHost.Dock = DockStyle.Fill;
@@ -368,7 +371,7 @@ namespace HelloForms
         private void createScheme()
         {
             //create new fact scheme
-            FactScheme scheme = new FactScheme(EditorConstants.DEFAULT_SCHEME_NAME);
+            Scheme scheme = new Scheme(EditorConstants.DEFAULT_SCHEME_NAME);
             if (Bank == null)
             {
                 Bank = new FactSchemeBank(EditorConstants.DEFAULT_BANK_NAME);
@@ -410,7 +413,7 @@ namespace HelloForms
 
             //Layout layout;
 
-            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
 
             FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
 
@@ -448,7 +451,7 @@ namespace HelloForms
                 return;
 
             OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
-            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
             FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
 
             network.Node node = nv.AddNode(Medium.Convert(arg), true);
@@ -461,7 +464,7 @@ namespace HelloForms
                 return;
 
             OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
-            FactScheme scheme = (FactScheme)schemesTabControl.SelectedTab.Tag;
+            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
             FactScheme.Result result  = scheme.AddResult(ontologyClass);
             network.Node node = nv.AddNode(Medium.Convert(result), true);
         }
@@ -470,7 +473,7 @@ namespace HelloForms
         {
             if ((sender as ListView).SelectedItems.Count == 0)
                 return;
-            CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as FactScheme);
+            CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as Scheme);
         }
 
         private void schemesTabControl_Selected(object sender, TabControlEventArgs e)

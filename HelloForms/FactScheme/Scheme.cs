@@ -5,15 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Xml.Linq;
+using Ontology;
 
-namespace HelloForms
+namespace FactScheme
 {
-    public partial class FactScheme
+    public class Scheme
     {
-        public partial class Argument { }
-        public partial class Condition { }
-        public partial class Result { }
-
         string _name;
         List<Argument> _arguments;
         List<Condition> _conditions;
@@ -39,7 +36,7 @@ namespace HelloForms
             get { return _results; }
         }
 
-        public FactScheme()
+        public Scheme()
         {
             _arguments = new List<Argument>();
             _conditions = new List<Condition>();
@@ -48,7 +45,7 @@ namespace HelloForms
             _saved = false;
         }
 
-        public FactScheme(string name) : this()
+        public Scheme(string name) : this()
         {
             _name = name;
         }
@@ -67,7 +64,7 @@ namespace HelloForms
         public Result AddResult(OntologyClass ontologyClass = null)
         {
             _saved = false;
-            String name = EditorConstants.RESULT_NAME_NEW;
+            String name = Faton.FatonConstants.RESULT_NAME_NEW;
             int defaultNamesCount = 0;
             foreach (Result r in _results)
             {
@@ -86,6 +83,12 @@ namespace HelloForms
             _saved = false;
             Functor func = new FunctorCat();
             return func;
+        }
+
+        public Relation AddRelation()
+        {
+            Relation rel = new Relation();
+            return rel;
         }
         
 
@@ -130,11 +133,11 @@ namespace HelloForms
                 else
                 {
                     xattrs_.Add(new XAttribute("ReferenceType", "FIXMENOW"));
-                    xattrs_.Add(new XAttribute("Reference", (res.Reference as FactScheme.Argument).Name));
+                    xattrs_.Add(new XAttribute("Reference", (res.Reference as Argument).Name));
                 }
                 XElement xres = new XElement("Result", xattrs_);
 
-                foreach (FactScheme.Result.Rule rule in res.Rules)
+                foreach (Result.Rule rule in res.Rules)
                 {
                     XElement xrul;
                     List<XAttribute> xattrs = new List<XAttribute>();

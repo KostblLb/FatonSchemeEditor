@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Ontology;
 
 namespace HelloForms
 {
@@ -18,7 +19,6 @@ namespace HelloForms
             string xmlString = sr.ReadToEnd();
 
             OntologyClass currentClass = null;
-            Relation currentRelation = null;
 
             XDocument doc = XDocument.Parse(xmlString);
             var ontology = doc.Element("ontology"); // aka Root

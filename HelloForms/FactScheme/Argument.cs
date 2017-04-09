@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ontology;
 
-namespace HelloForms
+namespace FactScheme
 {
-    public partial class FactScheme
-    {
+    //public partial class FactScheme
+    //{
 		public partial class Argument
         {
             string _name;
@@ -59,5 +60,5 @@ namespace HelloForms
                 return cond;
             }
         }
-    }
+    //}
 }
