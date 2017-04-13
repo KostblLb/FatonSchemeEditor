@@ -92,10 +92,12 @@ namespace network
         /// two-way connection
         /// </summary>
         /// <param name="other"></param>
-        public void Connect(Connector other)
+        public void Connect(Connector other, bool raiseEvent = true)
         {
             this.Connections.Add(other);
             other.Connections.Add(this);
+            if (!raiseEvent)
+                return;
             if (this.Mode == ConnectorMode.Output)
                 //RaiseConnectionAddedEvent(this, other);
                 RaiseEvent(new ConnectionAddedEventArgs(ConnectionAddedEvent, this, other));

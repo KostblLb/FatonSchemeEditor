@@ -15,6 +15,7 @@ namespace FactScheme
         List<Argument> _arguments;
         List<Condition> _conditions;
         List<Result> _results;
+        List<Functor> _functors;
         uint _numArgs;
 
         XDocument _xml;
@@ -35,12 +36,17 @@ namespace FactScheme
         {
             get { return _results; }
         }
+        public List<Functor> Functors
+        {
+            get { return _functors; }
+        }
 
         public Scheme()
         {
             _arguments = new List<Argument>();
             _conditions = new List<Condition>();
             _results = new List<Result>();
+            _functors = new List<Functor>();
             _numArgs = 0;
             _saved = false;
         }
@@ -61,10 +67,11 @@ namespace FactScheme
 
         }
 
-        public Result AddResult(OntologyClass ontologyClass = null)
+        public Result AddResult(OntologyClass ontologyClass, string name = null)
         {
             _saved = false;
-            String name = Faton.FatonConstants.RESULT_NAME_NEW;
+            if (name == null)
+                name = Faton.FatonConstants.RESULT_NAME_NEW;
             int defaultNamesCount = 0;
             foreach (Result r in _results)
             {
@@ -104,7 +111,6 @@ namespace FactScheme
                 XElement xarg =
                     new XElement("Argument",
                         new XAttribute("Order", arg.Order),
-                        new XAttribute("Name", arg.Name),
                         new XAttribute("ClassName", arg.Klass.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
                 foreach(Condition cond in arg.Conditions)
@@ -125,16 +131,10 @@ namespace FactScheme
                 List<XAttribute> xattrs_ = new List<XAttribute>();
                 xattrs_.Add(new XAttribute("Name", res.Name));
                 xattrs_.Add(new XAttribute("Type", res.Type));
-                if (res.Reference is OntologyClass)
-                {
-                    xattrs_.Add(new XAttribute("ReferenceType", "OntologyClass"));
-                    xattrs_.Add(new XAttribute("Reference", (res.Reference as OntologyClass).Name));
-                }
-                else
-                {
-                    xattrs_.Add(new XAttribute("ReferenceType", "FIXMENOW"));
-                    xattrs_.Add(new XAttribute("Reference", (res.Reference as Argument).Name));
-                }
+
+                xattrs_.Add(new XAttribute("ReferenceType", "OntologyClass"));
+                xattrs_.Add(new XAttribute("ClassName", (res.Reference as OntologyClass).Name));
+
                 XElement xres = new XElement("Result", xattrs_);
 
                 foreach (Result.Rule rule in res.Rules)
@@ -144,7 +144,7 @@ namespace FactScheme
                     xattrs.Add(new XAttribute("Attribute", rule.Attribute.Name));
                     xattrs.Add(new XAttribute("Type", rule.Type));
 
-                    if (rule.Type == Result.RuleType.Function)
+                    if (rule.Type == Result.RuleType.FUNC)
                     {
                         Functor f = rule.Reference as Functor;
                         xattrs.Add(new XAttribute("FunctorID", f.ID));

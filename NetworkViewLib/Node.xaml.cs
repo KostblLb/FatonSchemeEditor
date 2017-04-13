@@ -77,6 +77,13 @@ namespace network
                 attrInfo.AttributePanel.SetValue(Grid.ColumnProperty, 1);
                 pAttributesGrid.Children.Add(attrInfo.AttributePanel);
             }
+            foreach (Connector c in pAttributesGrid.Children.OfType<Connector>().Union(
+                pNameGrid.Children.OfType<Connector>()))
+            {
+                c.ParentNode = this;
+                if (!Connectors.Contains(c)) //remove mb?
+                    Connectors.Add(c);
+            }
         }
 
         #region UI

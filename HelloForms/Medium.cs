@@ -29,12 +29,12 @@ namespace HelloForms
                 var srcAttr = src.Tag as OntologyNode.Attribute;
                 var result = dst.ParentNode.Tag as FactScheme.Result;
                 if (src.ParentNode.Tag is FactScheme.Argument)
-                    result.AddRule(FactScheme.Result.RuleType.Define,
+                    result.AddRule(FactScheme.Result.RuleType.DEF,
                         dstAttr,
                         src.ParentNode.Tag,
                         srcAttr);
                 else if (src.ParentNode.Tag is FactScheme.Functor)
-                    result.AddRule(FactScheme.Result.RuleType.Function,
+                    result.AddRule(FactScheme.Result.RuleType.FUNC,
                         dstAttr,
                         src.ParentNode.Tag,
                         srcAttr);
@@ -61,12 +61,8 @@ namespace HelloForms
 
             info.Attributes = new List<NodeInfo.AttributeInfo>();
 
-            info.NodeNameProperty = argument.Name;
-            info.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == "NodeNameProperty")
-                    argument.Name = (sender as NodeInfo).NodeNameProperty;
-            };
+            info.NodeNameProperty = "";
+
             info.Header.InfoPanel = ArgumentInfoPanel(argument);
 
             var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
@@ -155,7 +151,7 @@ namespace HelloForms
                     NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = false;
-                    attrInfo.Data = functor.Inputs[i].param;
+                    attrInfo.Data = functor.Inputs[i];
                     //var attrName = new Label();
                     //attrName.Content = attr.Name;
                     //attrInfo.AttributePanel = attrName;
@@ -173,7 +169,7 @@ namespace HelloForms
         {
             WrapPanel wrapPanel = new WrapPanel();
             Label typeName = new Label();
-            typeName.Content = argument.Name;
+            typeName.Content = argument.Klass.Name;
             typeName.Style = typeNameStyle;
             Label infoText = new Label();
             infoText.Content = "arg" + argument.Order;
@@ -233,6 +229,38 @@ namespace HelloForms
         public static void NV_ConnectionAdded(object sender, ConnectionAddedEventArgs e)
         {
 
+        }
+
+        //connect nodes by hand
+        public static void UpdateViewFromScheme(NetworkView nv, Scheme scheme)
+        {
+            var nodes = nv.Nodes;
+            foreach(Result res in scheme.Results)
+            {
+                var dstNode = nodes.First(x => x.Tag == res);
+                foreach(Result.Rule rule in res.Rules)
+                {
+                    var srcNode = nodes.First(x => x.Tag == rule.Reference);
+                    var srcConn = srcNode.Connectors.First(x => 
+                        x.Tag == rule.InputAttribute &&
+                        x.Mode == Connector.ConnectorMode.Output);
+                    var dstConn = dstNode.Connectors.First(x => x.Tag == rule.Attribute);
+                    nv.AddConnection(srcConn, dstConn, false);
+                }
+                //Node dstNode = nv.Nodes.First(x => x.Tag == res);
+                //var inputs = res.Up();
+                //foreach(ISchemeComponent input in inputs)
+                //{
+                //    Node srcNode = nv.Nodes.First(x => x.Tag == input);
+                //    //List<Connection> conns = res.Connections(input);
+                //    foreach(Connection conn in conns)
+                //    {
+                //        nv.AddConnection(
+                //            srcNode.Connectors.First(x => x.Tag == conn.src),
+                //            dstNode.Connectors.First(x => x.Tag == conn.dst));
+                //    }
+                //}
+            }
         }
     }
 }

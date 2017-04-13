@@ -148,13 +148,47 @@ namespace HelloForms
             if (xbank == null)
                 return;
             Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology); //assuming ontology is loaded
-            
 
-            if (doc.Element(EditorConstants.XML_EDITOR_ROOT_NAME) != null)
+            XElement xmarkup = doc.Root.Element(EditorConstants.XML_EDITOR_MARKUP);
+            if (xmarkup != null)
             {
-
+                foreach(Scheme scheme in Bank.Schemes)
+                {
+                    XElement xscheme = xmarkup.Element(scheme.Name);
+                    ElementHost host = initNVHost(scheme);
+                    network.NetworkView nv = host.Child as network.NetworkView;
+                    foreach (XElement xel in xscheme.Elements())
+                    {
+                        network.Node node = null;
+                        System.Windows.Thickness margin = new System.Windows.Thickness();
+                        if (xel.Attribute("type").Value == typeof(Argument).ToString())
+                        {
+                            Argument arg = scheme.Arguments.First(x => x.Order == int.Parse(xel.Attribute("id").Value));
+                            node = nv.AddNode(Medium.Convert(arg));
+                        }
+                        else if (xel.Attribute("type").Value == typeof(Result).ToString())
+                        {
+                            Result res = scheme.Results.First(x => x.Name == xel.Attribute("id").Value);
+                            node = nv.AddNode(Medium.Convert(res));
+                        }
+                        else if (xel.Attribute("type").Value == typeof(Functor).ToString())
+                        {
+                            Functor f = scheme.Functors.First(x => x.ID == xel.Attribute("id").Value);
+                            node = nv.AddNode(Medium.Convert(f));
+                        }
+                        else
+                            continue;
+                        int left = int.Parse(xel.Attribute("left").Value);
+                        int top = int.Parse(xel.Attribute("top").Value);
+                        margin.Left = left;
+                        margin.Top = top;
+                        node.Margin = margin;
+                    }
+                    Medium.UpdateViewFromScheme(nv, scheme);
+                    //nv.DrawConnections();
+                }
             }
-
+            updateBankListView();
             fstream.Close();
         }
 
@@ -179,7 +213,7 @@ namespace HelloForms
             fstream.Close();
 
             ontology.Reverse();
-            Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //BFS add ontology nodes to treeview
+            Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //DFS add ontology nodes to treeview
             ontology.Reverse();
             TreeNodeCollection baseNodeCollection = ontologyTreeView.Nodes;
             while (s.Any())
@@ -251,10 +285,16 @@ namespace HelloForms
                     network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
                     foreach (network.Node node in nv.Nodes)
                     {
-                        XElement xnode = new XElement("node", 
-                            new XAttribute("name", node.TagName),
-                            new XAttribute("left", node.Margin.Left),
-                            new XAttribute("top", node.Margin.Top));
+                        string id;
+                        if (node.Tag is Argument)
+                            id = (node.Tag as Argument).Order.ToString();
+                        else
+                            id = (node.TagName);
+                        XElement xnode = new XElement("node",
+                            new XAttribute("type", node.Tag.GetType().ToString()),
+                            new XAttribute("id", id),
+                            new XAttribute("left", (int)node.Margin.Left),
+                            new XAttribute("top", (int)node.Margin.Top));
                         xscheme.Add(xnode);
                     }
                     xmarkup.Add(xscheme);
@@ -340,7 +380,7 @@ namespace HelloForms
             }
         }
 
-        void initNVHost(Scheme scheme)
+        ElementHost initNVHost(Scheme scheme)
         {
             ElementHost elementHost = new ElementHost();
             elementHost.Dock = DockStyle.Fill;
@@ -359,9 +399,7 @@ namespace HelloForms
 
             NVHosts.Add(scheme, elementHost);
 
-            //add new page to the tab control
-            //schemesTabControl.Controls.Add(tabPage);
-            //schemesTabControl.SelectedTab = tabPage;
+            return elementHost;
         }
 
         private void handleCreateSchemeToolstrip(object sender, EventArgs e)
@@ -481,6 +519,12 @@ namespace HelloForms
             if (e.TabPage == schemeTabXMLPage)
                 schemeXMLTextBox.Text = CurrentScheme.ToXml().ToString();
             XMLHighlight.HighlightRTF(schemeXMLTextBox);
+        }
+
+        private void window_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if ((sender as SplitContainer).DataBindings["SplitterDistance"] != null)
+                (sender as SplitContainer).DataBindings["SplitterDistance"].WriteValue();
         }
     }
 }

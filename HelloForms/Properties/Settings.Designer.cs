@@ -73,7 +73,7 @@ namespace HelloForms.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("499")]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
         public int ArgGridViewSplitter {
             get {
                 return ((int)(this["ArgGridViewSplitter"]));
@@ -92,6 +92,42 @@ namespace HelloForms.Properties {
             }
             set {
                 this["ArgMainWndVertSplitter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("140")]
+        public int TabsAndBankSplitter {
+            get {
+                return ((int)(this["TabsAndBankSplitter"]));
+            }
+            set {
+                this["TabsAndBankSplitter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int MainSplitter {
+            get {
+                return ((int)(this["MainSplitter"]));
+            }
+            set {
+                this["MainSplitter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("337")]
+        public int OntologyAndAttributesSplitter {
+            get {
+                return ((int)(this["OntologyAndAttributesSplitter"]));
+            }
+            set {
+                this["OntologyAndAttributesSplitter"] = value;
             }
         }
     }

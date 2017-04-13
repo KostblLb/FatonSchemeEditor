@@ -55,20 +55,48 @@ namespace HelloForms
                 foreach (XElement xarg in arguments)
                 {
                     OntologyClass argKlass;
-                    //scheme.AddArgument()
                     foreach(OntologyClass klass in ontology)
                     {
                         argKlass = klass.Search(xarg.Attribute("ClassName").Value);
                         if (argKlass == null)
-                            break;
-                        FactScheme.Argument arg = scheme.AddArgument(argKlass);
+                            continue;
+                        Argument arg = scheme.AddArgument(argKlass);
                         arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
+                        arg.Order = uint.Parse(xarg.Attribute("Order").Value);
+                        break;
                     }
                 }
-
                 foreach (XElement xres in results)
                 {
-                    scheme.AddResult();
+                    OntologyClass resKlass = null;
+                    Result result;
+                    foreach(OntologyClass klass in ontology)
+                    {
+                        resKlass = klass.Search(xres.Attribute("ClassName").Value);
+                        if (resKlass != null)
+                            break;
+                    }
+                    if (resKlass == null)
+                        continue;
+                    result = scheme.AddResult(resKlass, xres.Attribute("Name").Value);
+                    foreach(XElement xrul in xres.Elements())
+                    {
+                        Result.RuleType ruleType = (Result.RuleType) Enum.Parse(typeof(Result.RuleType),
+                            xrul.Attribute("Type").Value);
+                        if (ruleType == Result.RuleType.DEF)
+                        {
+                            Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute("ArgFrom").Value));
+                            OntologyNode.Attribute inputAttr = arg.Klass.AllAttributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
+                            OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute("Attribute").Value);
+                            result.AddRule(ruleType, attr, arg, inputAttr);
+                        }
+                        
+                        if(ruleType == Result.RuleType.FUNC)
+                        {
+
+                        }
+
+                    }
                 }
 
                 bank.Schemes.Add(scheme);

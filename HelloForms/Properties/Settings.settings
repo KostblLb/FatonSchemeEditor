@@ -15,10 +15,19 @@
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="ArgGridViewSplitter" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">499</Value>
+      <Value Profile="(Default)">500</Value>
     </Setting>
     <Setting Name="ArgMainWndVertSplitter" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="TabsAndBankSplitter" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">140</Value>
+    </Setting>
+    <Setting Name="MainSplitter" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">200</Value>
+    </Setting>
+    <Setting Name="OntologyAndAttributesSplitter" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">337</Value>
     </Setting>
   </Settings>
 </SettingsFile>

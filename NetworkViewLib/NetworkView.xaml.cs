@@ -29,52 +29,14 @@ namespace network
     /// </summary>
     public partial class NetworkView : Canvas
     {
-        public IEnumerable<Node> Nodes
+        public List<Node> Nodes
         {
-            get { return this.Children.OfType<Node>(); }
+            get { return this.Children.OfType<Node>().ToList(); }
         }
 
         private Node _selectedNode;
         public Node SelectedNode { get { return _selectedNode; } }
-
-        /// <summary>
-        /// This event is raised when a drag-n-drop operation is started 
-        /// within a connector
-        /// </summary>
-        public event RoutedEventHandler ConnectorDrag
-        {
-            add { AddHandler(Connector.ConnectorDragEvent, value); }
-            remove { RemoveHandler(Connector.ConnectorDragEvent, value); }
-        }
-
-        public event Connector.ConnectionAddedEventHandler ConnectionAdded
-        {
-            add { AddHandler(Connector.ConnectionAddedEvent, value); }
-            remove { RemoveHandler(Connector.ConnectionAddedEvent, value); }
-        }
-
-        /// <summary>
-        /// This event is raised continuously when a node panel is being moved
-        /// </summary>
-        public event RoutedEventHandler NodeMoved
-        {
-            add { AddHandler(Node.NodeMovedEvent, value); }
-            remove { RemoveHandler(Node.NodeMovedEvent, value); }
-        }
-
-        /// <summary>
-        /// This event is raised when a node is clicked
-        /// </summary>
-        public event RoutedEventHandler NodeSelected
-        {
-            add { AddHandler(Node.NodeSelectedEvent, value); }
-            remove { RemoveHandler(Node.NodeSelectedEvent, value); }
-        }
-
-
-        public delegate void NodeAddedEventHandler(object sender, NodeAddedEventArgs e);
-
-        public event NodeAddedEventHandler NodeAdded;
+        
 
         #region UI drawing
         private Path connectorToMouseCurve;
@@ -160,6 +122,46 @@ namespace network
                 drawnConnections.Remove(t);
             }
         }
+        #endregion
+
+        #region events
+        /// <summary>
+        /// This event is raised when a drag-n-drop operation is started 
+        /// within a connector
+        /// </summary>
+        public event RoutedEventHandler ConnectorDrag
+        {
+            add { AddHandler(Connector.ConnectorDragEvent, value); }
+            remove { RemoveHandler(Connector.ConnectorDragEvent, value); }
+        }
+
+        public event Connector.ConnectionAddedEventHandler ConnectionAdded
+        {
+            add { AddHandler(Connector.ConnectionAddedEvent, value); }
+            remove { RemoveHandler(Connector.ConnectionAddedEvent, value); }
+        }
+
+        /// <summary>
+        /// This event is raised continuously when a node panel is being moved
+        /// </summary>
+        public event RoutedEventHandler NodeMoved
+        {
+            add { AddHandler(Node.NodeMovedEvent, value); }
+            remove { RemoveHandler(Node.NodeMovedEvent, value); }
+        }
+
+        /// <summary>
+        /// This event is raised when a node is clicked
+        /// </summary>
+        public event RoutedEventHandler NodeSelected
+        {
+            add { AddHandler(Node.NodeSelectedEvent, value); }
+            remove { RemoveHandler(Node.NodeSelectedEvent, value); }
+        }
+
+        public delegate void NodeAddedEventHandler(object sender, NodeAddedEventArgs e);
+
+        public event NodeAddedEventHandler NodeAdded;
 
         private void somequery(object sender, QueryContinueDragEventArgs e)
         {
@@ -328,7 +330,7 @@ namespace network
         }
         #endregion Zoom&Pan
 
-        public Node AddNode(NodeInfo info, bool select)
+        public Node AddNode(NodeInfo info, bool select = false)
         {
             Node node = new Node(info);
             this.Children.Add(node);
@@ -359,6 +361,12 @@ namespace network
                     conn.Disconnect(other);
                 }
             }
+        }
+
+        public void AddConnection(Connector src, Connector dst, bool raiseEvent = true)
+        {
+            if (src.ValidateConnection(dst))
+                src.Connect(dst, raiseEvent);
         }
 
         public NetworkView()
