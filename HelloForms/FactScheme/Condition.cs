@@ -63,10 +63,15 @@ namespace FactScheme
 
         public List<ISchemeComponent> Up()
         {
-            return new List<ISchemeComponent>();
+            throw new NotImplementedException();
         }
 
         public void RemoveUpper(ISchemeComponent component)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Free(object attribute)
         {
             throw new NotImplementedException();
         }

@@ -21,5 +21,8 @@ namespace FactScheme
         List<ISchemeComponent> Up();
 
         void RemoveUpper(ISchemeComponent component);
+
+        // free component's attribute from incoming connection
+        void Free(object attribute);
     }
 }

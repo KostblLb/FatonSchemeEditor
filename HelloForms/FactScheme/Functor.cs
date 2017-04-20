@@ -15,7 +15,7 @@ namespace FactScheme
         {
             //public object defaultValue;
             public object value;
-            public object source;
+            public OntologyNode.Attribute source;
             public object param;
         }
 
@@ -48,7 +48,7 @@ namespace FactScheme
                 _inputs.Add(new FunctorInput());
         }
 
-        public void SetInput(object attr, object attrSource, FunctorInput input)
+        public void SetInput(object attr, OntologyNode.Attribute attrSource, FunctorInput input)
         {
             input.value = attr;
             input.source = attrSource;
@@ -63,6 +63,11 @@ namespace FactScheme
         }
 
         public void RemoveUpper(ISchemeComponent component)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Free(object attribute)
         {
             throw new NotImplementedException();
         }

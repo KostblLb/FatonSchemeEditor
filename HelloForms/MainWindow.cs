@@ -381,6 +381,7 @@ namespace HelloForms
             nv.NodeAdded += NV_NodeAdded;
             nv.NodeRemoving += NV_NodeRemoving;
             nv.ConnectionAdded += NV_ConnectionAdded;
+            nv.ConnectionRemoved += NV_ConnectionRemoved;
             nv.ContextMenu = NVViewContextMenu;
             elementHost.Child = nv;
 
@@ -465,14 +466,18 @@ namespace HelloForms
             Console.WriteLine("NV_NodeRemoving!");
         }
 
-        private void NV_ConnectionAdded(object sender, network.ConnectionAddedEventArgs e)
+        private void NV_ConnectionAdded(object sender, network.ConnectionEventArgs e)
         {
             var nv = sender as network.NetworkView;
-            //retreive attributes of the real fact scheme objects
             var src = e.SourceConnector;
             var dest = e.DestConnector;
 
             Medium.AddSchemeConnection(CurrentScheme, src, dest);
+        }
+
+        void NV_ConnectionRemoved(object sender, network.ConnectionEventArgs e)
+        {
+            Medium.RemoveSchemeConnection(e.SourceConnector, e.DestConnector);
         }
 
         private OntologyClass menuItemToClass(ToolStripMenuItem item)

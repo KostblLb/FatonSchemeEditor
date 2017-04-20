@@ -102,6 +102,16 @@ namespace FactScheme
                 if (rule.Reference == upper)
                     Rules.Remove(rule);
         }
+
+        public void Free(object attribute)
+        {
+            //find rule with specified attribute and remove it
+            var attr = attribute as OntologyNode.Attribute;
+            if (attr == null)
+                return;
+            var rule = Rules.Find(x => x.Attribute == attr);
+            Rules.Remove(rule);
+        }
         #endregion
     }
     //}

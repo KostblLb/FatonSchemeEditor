@@ -42,13 +42,22 @@ namespace HelloForms
 
             if (dst.ParentNode.Tag is FactScheme.Functor)
             {
-                var functor = dst.ParentNode.Tag as FactScheme.Functor;
-                functor.SetInput(src.Tag, 
-                    src.ParentNode.Tag, 
-                    dst.Tag as FactScheme.Functor.FunctorInput);
+                //wont work
+                //var functor = dst.ParentNode.Tag as FactScheme.Functor;
+                //functor.SetInput(src.Tag, 
+                //    src.ParentNode.Tag, 
+                //    dst.Tag as FactScheme.Functor.FunctorInput);
             }
+        }
 
-
+        public static void RemoveSchemeConnection(Connector src, Connector dst)
+        {
+            ISchemeComponent dstComponent = dst.ParentNode.Tag as ISchemeComponent;
+            if(dst.Tag is OntologyNode.Attribute)
+                dstComponent.Free(dst.Tag as OntologyNode.Attribute);
+            else
+            { ///
+            }
         }
 
         ///convert factscheme argument into nv node
@@ -67,8 +76,6 @@ namespace HelloForms
                 if (e.PropertyName == "Order")
                     info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
             };
-
-            //info.Header.InfoPanel = ArgumentInfoPanel(argument);
 
             var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
 
@@ -158,9 +165,6 @@ namespace HelloForms
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = false;
                     attrInfo.Data = functor.Inputs[i];
-                    //var attrName = new Label();
-                    //attrName.Content = attr.Name;
-                    //attrInfo.AttributePanel = attrName;
                     info.Attributes.Add(attrInfo);
                 }
             //else
@@ -170,23 +174,6 @@ namespace HelloForms
 
         private static Style typeNameStyle;
         private static Style infoTextStyle;
-
-        private static FrameworkElement ArgumentInfoPanel(FactScheme.Argument argument)
-        {
-            WrapPanel wrapPanel = new WrapPanel();
-            Label typeName = new Label();
-            typeName.Content = argument.Klass.Name;
-            typeName.Style = typeNameStyle;
-            //Label infoText = new Label();
-            //infoText.DataContext = argument;
-            //infoText.SetBinding(Label.ContentProperty, "Order");
-            //infoText.Style = infoTextStyle;
-            //infoText.
-            //wrapPanel.Children.Add(infoText);
-            wrapPanel.Children.Add(typeName);
-
-            return wrapPanel;
-        }
 
         private static FrameworkElement ResultInfoPanel(FactScheme.Result result)
         {
@@ -216,27 +203,6 @@ namespace HelloForms
 
             return stackPanel;
         }
-
-
-        public static void NV_NodeAdded(NetworkView nv, Node node)
-        {
-            foreach(Connector connector in node.Connectors)
-            {
-                connector.ConnectionAdded += NV_ConnectionAdded;
-            }
-        }
-
-        public static void NV_NodeRemoving(NetworkView nv, Node node)
-        {
-
-        }
-
-        //public static void NV_ConnectionAdded(NetworkView nv, )
-        public static void NV_ConnectionAdded(object sender, ConnectionAddedEventArgs e)
-        {
-
-        }
-
 
         //connect nodes by hand
         public static void LoadViewFromScheme(NetworkView nv, Scheme scheme)

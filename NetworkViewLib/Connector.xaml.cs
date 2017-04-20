@@ -15,9 +15,14 @@ using System.Windows.Shapes;
 
 namespace network
 {
-    public class ConnectionAddedEventArgs : RoutedEventArgs
+    public class ConnectionEventArgs : RoutedEventArgs
     {
-        public ConnectionAddedEventArgs(RoutedEvent e, Connector src, Connector dst) : base(e)
+        public ConnectionEventArgs(RoutedEvent e, Connector src, Connector dst) : base(e)
+        {
+            SourceConnector = src;
+            DestConnector = dst;
+        }
+        public ConnectionEventArgs(Connector src, Connector dst) : base()
         {
             SourceConnector = src;
             DestConnector = dst;
@@ -40,9 +45,14 @@ namespace network
             set { SetValue(ModeProperty, value); }
         }
 
-        public delegate void ConnectionAddedEventHandler(object sender, ConnectionAddedEventArgs e);
+        public delegate void ConnectionEventHandler(object sender, ConnectionEventArgs e);
 
-        public event ConnectionAddedEventHandler ConnectionAdded;
+        public event ConnectionEventHandler ConnectionAdded;
+
+        /// <summary>
+        /// event is raised before establishing a valid connection
+        /// </summary>
+        public event ConnectionEventHandler ConnectionBeforeAdd;
 
         protected virtual void RaiseConnectionAddedEvent(Connector src, Connector dst)
         {
@@ -50,11 +60,18 @@ namespace network
             //ConnectionAdded?.Invoke(this, new ConnectionAddedEventArgs(src, dst));
         }
 
+        public static readonly RoutedEvent ConnectionBeforeAddEvent =
+            EventManager.RegisterRoutedEvent(
+                "ConnectionBeforeAdd",
+                RoutingStrategy.Bubble,
+                typeof(ConnectionEventHandler),
+                typeof(Connector));
+
         public static readonly RoutedEvent ConnectionAddedEvent = 
             EventManager.RegisterRoutedEvent(
                 "ConnectionAdded",
                 RoutingStrategy.Bubble,
-                typeof(ConnectionAddedEventHandler),
+                typeof(ConnectionEventHandler),
                 typeof(Connector));
 
         public static readonly RoutedEvent ConnectorDragEvent =
@@ -100,10 +117,10 @@ namespace network
                 return;
             if (this.Mode == ConnectorMode.Output)
                 //RaiseConnectionAddedEvent(this, other);
-                RaiseEvent(new ConnectionAddedEventArgs(ConnectionAddedEvent, this, other));
+                RaiseEvent(new ConnectionEventArgs(ConnectionAddedEvent, this, other));
             else
                 //RaiseConnectionAddedEvent(other, this);
-                RaiseEvent(new ConnectionAddedEventArgs(ConnectionAddedEvent, other, this));
+                RaiseEvent(new ConnectionEventArgs(ConnectionAddedEvent, other, this));
         }
 
         /// <summary>
@@ -126,11 +143,6 @@ namespace network
             if (other.Mode == this.Mode)
             {
                 Console.WriteLine("same mode");
-                return false;
-            }
-            if (other.Mode == ConnectorMode.Input && other.Connections.Count > 0)
-            {
-                Console.WriteLine("other is not input");
                 return false;
             }
             if (this.ParentNode == other.ParentNode)
@@ -157,7 +169,10 @@ namespace network
             Connector other = e.Data.GetData(typeof(Connector)) as Connector;
             if (!ValidateConnection(other))
                 return;
-            Connect(other);
+            if (other.Mode == ConnectorMode.Output)
+                RaiseEvent(new ConnectionEventArgs(ConnectionBeforeAddEvent, other, this));
+            else
+                RaiseEvent(new ConnectionEventArgs(ConnectionBeforeAddEvent, this, other));
         }
 
         private void Connector_MouseDown(object sender, MouseButtonEventArgs e)

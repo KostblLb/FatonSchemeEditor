@@ -135,10 +135,18 @@ namespace network
             remove { RemoveHandler(Connector.ConnectorDragEvent, value); }
         }
 
-        public event Connector.ConnectionAddedEventHandler ConnectionAdded
+        public event Connector.ConnectionEventHandler ConnectionAdded
         {
             add { AddHandler(Connector.ConnectionAddedEvent, value); }
             remove { RemoveHandler(Connector.ConnectionAddedEvent, value); }
+        }
+
+        public event Connector.ConnectionEventHandler ConnectionRemoved;
+
+        public event Connector.ConnectionEventHandler ConnectionBeforeAdd
+        {
+            add { AddHandler(Connector.ConnectionBeforeAddEvent, value); }
+            remove { RemoveHandler(Connector.ConnectionBeforeAddEvent, value); }
         }
 
         /// <summary>
@@ -189,59 +197,33 @@ namespace network
             connectorToMouseCurve.Data = DrawBezier(start, end).Data;
         }
 
-        private bool ValidateConnection(Connector src, Connector dest)
+        private bool ValidateInputsCount(Connector src, Connector dest)
         {
-            if (src.Mode == dest.Mode)
-                return false;
-            if (src.ParentNode == dest.ParentNode)
+            if (dest.Connections.Count > 0)
                 return false;
             return true;
         }
-        private void ConnectorDrop(object sender, DragEventArgs e)
+
+        void NVConnectionBeforeAdd(object sender, ConnectionEventArgs e)
         {
-            if (!(e.Source is Connector) || draggedConnector == null)
-                return;
-            if(e.Source is Connector)
-            {
-                Connector src, dest;
-                Path p = new Path();
-                p.Data = connectorToMouseCurve.Data;
-                if(draggedConnector.Mode == Connector.ConnectorMode.Output)
-                {
-                    src = draggedConnector;
-                    dest = e.Source as Connector;
-                }
-                else
-                {
-                    dest = draggedConnector;
-                    src = e.Source as Connector;
-                }
-                if (this.ValidateConnection(src, dest))
-                {
-                    this.AddConnectionPath(src, dest);
-                }
-                draggedConnector = null;
-            }
+            Console.WriteLine("before connection");
+            Path p = new Path();
+            p.Data = connectorToMouseCurve.Data;
+            if (!this.ValidateInputsCount(e.SourceConnector, e.DestConnector))
+                RemoveConnection(e.DestConnector.Connections.First(), e.DestConnector);
+            e.SourceConnector.Connect(e.DestConnector);
+            this.AddConnectionPath(e.SourceConnector, e.DestConnector);
+
+            draggedConnector = null;
         }
+
         private void NetworkViewConnectorDragStarted(object sender, RoutedEventArgs e)
         {
             draggedConnector = e.Source as Connector;
-            //we're gonna highlight all valid connectors
-            //foreach(Node node in Nodes)
-            //{
-            //    var conns = node.Connectors.Where(x => 
-            //        x.Mode != draggedConnector.Mode && 
-            //        x.ValidateConnection(draggedConnector));
-            //    foreach(Connector conn in conns)
-            //    {
-            //        conn.Style = (Style)conn.Resources["Highlighted"];
-            //    }
-            //}
-
             connectorToMouseCurve.Visibility = Visibility.Visible;
         }
 
-        private void NetworkViewConnectionAdded(object sender, ConnectionAddedEventArgs e)
+        private void NetworkViewConnectionAdded(object sender, ConnectionEventArgs e)
         {
             
         }
@@ -402,11 +384,19 @@ namespace network
                 src.Connect(dst, raiseEvent);
         }
 
+        public void RemoveConnection(Connector src, Connector dst, bool raiseEvent = true)
+        {
+            this.RemoveConnectionPath(src, dst);
+            dst.Disconnect(src);
+            ConnectionRemoved?.Invoke(this, new ConnectionEventArgs(src, dst));
+        }
+
         public NetworkView()
         {
             InitializeComponent();
             this.ConnectorDrag += NetworkViewConnectorDragStarted;
             this.ConnectionAdded += NetworkViewConnectionAdded;
+            this.ConnectionBeforeAdd += NVConnectionBeforeAdd;
             this.NodeMoved += NetworkViewNodeMoved;
             this.NodeSelected += NVNodeSelected;
 

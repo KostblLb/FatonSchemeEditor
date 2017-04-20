@@ -66,6 +66,10 @@ namespace FactScheme
         {
             return new List<Connection>();
         }
+        public void Free(object attr)
+        {
+            return;
+        }
         #endregion
         
         public event PropertyChangedEventHandler PropertyChanged;
