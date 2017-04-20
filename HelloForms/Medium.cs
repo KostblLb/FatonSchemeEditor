@@ -31,12 +31,12 @@ namespace HelloForms
                 if (src.ParentNode.Tag is FactScheme.Argument)
                     result.AddRule(FactScheme.Result.RuleType.DEF,
                         dstAttr,
-                        src.ParentNode.Tag,
+                        src.ParentNode.Tag as ISchemeComponent,
                         srcAttr);
                 else if (src.ParentNode.Tag is FactScheme.Functor)
                     result.AddRule(FactScheme.Result.RuleType.FUNC,
                         dstAttr,
-                        src.ParentNode.Tag,
+                        src.ParentNode.Tag as ISchemeComponent,
                         srcAttr);
             }
 
@@ -61,9 +61,14 @@ namespace HelloForms
 
             info.Attributes = new List<NodeInfo.AttributeInfo>();
 
-            info.NodeNameProperty = "";
+            info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
+            argument.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Order")
+                    info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
+            };
 
-            info.Header.InfoPanel = ArgumentInfoPanel(argument);
+            //info.Header.InfoPanel = ArgumentInfoPanel(argument);
 
             var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
 
@@ -94,6 +99,7 @@ namespace HelloForms
 
             info.Attributes = new List<NodeInfo.AttributeInfo>();
 
+            info.Header.NameChangeable = true;
             info.NodeNameProperty = result.Name;
             info.PropertyChanged += (sender, e) =>
             {
@@ -171,10 +177,12 @@ namespace HelloForms
             Label typeName = new Label();
             typeName.Content = argument.Klass.Name;
             typeName.Style = typeNameStyle;
-            Label infoText = new Label();
-            infoText.Content = "arg" + argument.Order;
-            infoText.Style = infoTextStyle;
-            wrapPanel.Children.Add(infoText);
+            //Label infoText = new Label();
+            //infoText.DataContext = argument;
+            //infoText.SetBinding(Label.ContentProperty, "Order");
+            //infoText.Style = infoTextStyle;
+            //infoText.
+            //wrapPanel.Children.Add(infoText);
             wrapPanel.Children.Add(typeName);
 
             return wrapPanel;
@@ -206,17 +214,9 @@ namespace HelloForms
             };
             cb.SelectedValue = FactScheme.ResultType.Create;
 
-            //Label typeName = new Label();
-            //typeName.Content = argument.Name;
-            //typeName.Style = typeNameStyle;
-            //Label infoText = new Label();
-            //infoText.Content = "arg" + argument.Order;
-            //infoText.Style = infoTextStyle;
-            //wrapPanel.Children.Add(infoText);
-            //wrapPanel.Children.Add(typeName);
-
             return stackPanel;
         }
+
 
         public static void NV_NodeAdded(NetworkView nv, Node node)
         {
@@ -225,14 +225,21 @@ namespace HelloForms
                 connector.ConnectionAdded += NV_ConnectionAdded;
             }
         }
+
+        public static void NV_NodeRemoving(NetworkView nv, Node node)
+        {
+
+        }
+
         //public static void NV_ConnectionAdded(NetworkView nv, )
         public static void NV_ConnectionAdded(object sender, ConnectionAddedEventArgs e)
         {
 
         }
 
+
         //connect nodes by hand
-        public static void UpdateViewFromScheme(NetworkView nv, Scheme scheme)
+        public static void LoadViewFromScheme(NetworkView nv, Scheme scheme)
         {
             var nodes = nv.Nodes;
             foreach(Result res in scheme.Results)
@@ -247,20 +254,10 @@ namespace HelloForms
                     var dstConn = dstNode.Connectors.First(x => x.Tag == rule.Attribute);
                     nv.AddConnection(srcConn, dstConn, false);
                 }
-                //Node dstNode = nv.Nodes.First(x => x.Tag == res);
-                //var inputs = res.Up();
-                //foreach(ISchemeComponent input in inputs)
-                //{
-                //    Node srcNode = nv.Nodes.First(x => x.Tag == input);
-                //    //List<Connection> conns = res.Connections(input);
-                //    foreach(Connection conn in conns)
-                //    {
-                //        nv.AddConnection(
-                //            srcNode.Connectors.First(x => x.Tag == conn.src),
-                //            dstNode.Connectors.First(x => x.Tag == conn.dst));
-                //    }
-                //}
+                //add functors and conditions
             }
         }
+
+        
     }
 }

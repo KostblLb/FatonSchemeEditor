@@ -18,11 +18,11 @@ namespace FactScheme
             RuleType _type;
             OntologyNode.Attribute _attr;
             OntologyNode.Attribute _inputAttr;
-            object _ref;
+            ISchemeComponent _ref;
             //string _value; //int, enum also
             public RuleType Type { get { return _type; } }
             public OntologyNode.Attribute Attribute { get { return _attr; } }
-            public object Reference { get { return _ref; } }
+            public ISchemeComponent Reference { get { return _ref; } }
             public OntologyNode.Attribute InputAttribute { get { return _inputAttr; } }
 
             /// <summary>
@@ -32,7 +32,7 @@ namespace FactScheme
             /// <param name="attr"></param>
             /// <param name="reference"></param>
             /// <param name="inputAttr">may be null if 'reference' is a functor</param>
-            public Rule(RuleType type, OntologyNode.Attribute attr, object reference, OntologyNode.Attribute inputAttr)
+            public Rule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)
             {
                 _type = type;
                 _attr = attr;
@@ -77,12 +77,13 @@ namespace FactScheme
             get { return _rules; }
         }
 
-        public void AddRule(RuleType type, OntologyNode.Attribute attr, object reference, OntologyNode.Attribute inputAttr)//, string value)
+        public void AddRule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)//, string value)
         {
             Rule rule = new Rule(type, attr, reference, inputAttr);
             _rules.Add(rule);
         }
 
+        #region ISchemeComponent implementation
         public List<ISchemeComponent> Up()
         {
             var components =  new List<ISchemeComponent>();
@@ -93,16 +94,15 @@ namespace FactScheme
             return components;
         }
 
-        public List<Connection> Connections(ISchemeComponent src)
+        public void RemoveUpper(ISchemeComponent upper)
         {
-            var conns = new List<Connection>();
-            var rules = Rules.FindAll(x => x.Reference == src);
-            foreach(Rule rule in Rules)
-            {
-                conns.Add(new Connection(rule.InputAttribute, rule.Attribute));
-            }
-            return conns;
+            var rulesCopy = new List<Rule>();
+            rulesCopy.AddRange(Rules);
+            foreach (var rule in rulesCopy)
+                if (rule.Reference == upper)
+                    Rules.Remove(rule);
         }
+        #endregion
     }
     //}
 }

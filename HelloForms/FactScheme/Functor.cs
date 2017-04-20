@@ -61,6 +61,11 @@ namespace FactScheme
                 components.Add(input.source as ISchemeComponent); //need to guarantee that sources are always IschemeComponents
             return components;
         }
+
+        public void RemoveUpper(ISchemeComponent component)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 public class FunctorIncrement : FactScheme.Functor

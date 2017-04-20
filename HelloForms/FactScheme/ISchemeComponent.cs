@@ -18,8 +18,8 @@ namespace FactScheme
     public interface ISchemeComponent
     {
         //go up in objects tree
-        List<ISchemeComponent> Up(); 
-        //see connections coming from src
-        //List<Connection> Connections(ISchemeComponent src);
+        List<ISchemeComponent> Up();
+
+        void RemoveUpper(ISchemeComponent component);
     }
 }

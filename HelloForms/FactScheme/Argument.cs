@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace FactScheme
 {
     //public partial class FactScheme
     //{
-    public class Argument : ISchemeComponent
+    public class Argument : ISchemeComponent, INotifyPropertyChanged
     {
         OntologyClass _klass;
         bool _useInheritance;
@@ -29,7 +30,10 @@ namespace FactScheme
         public uint Order
         {
             get { return _order; }
-            set { _order = value; }
+            set {
+                _order = value;
+                NotifyPropertyChanged("Order");
+            }
         }
 
         public List<Condition> Conditions
@@ -52,14 +56,24 @@ namespace FactScheme
             return cond;
         }
 
+        #region ISchemeComponent implementation
         public List<ISchemeComponent> Up()
         {
             return new List<ISchemeComponent>(); // return empty list for arguments cant have inputs
         }
+        public void RemoveUpper(ISchemeComponent upper) { }
         public List<Connection> Connections(ISchemeComponent other)
         {
             return new List<Connection>();
         }
+        #endregion
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
     //}
 }

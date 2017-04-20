@@ -26,5 +26,8 @@ namespace HelloForms
         public static string XML_EDITOR_MARKUP = "FATON_EDITOR_MARKUP";
 
         public static int SIMPLE_XML = 1, EDITOR_XML = 2;
+
+        public static string NV_CMENU_NODE_RM = "Удалить узел";
+
     }
 }

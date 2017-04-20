@@ -24,22 +24,39 @@ namespace FactScheme
         public string Name { get { return _name; } }
         public string XMLName { get { return _name.Replace(' ', '_'); } }
 
+        public readonly HashSet<ISchemeComponent> Components;
         public List<Argument> Arguments
         {
-            get { return _arguments; }
+            get { return Components.OfType<Argument>().ToList(); }
         }
         public List<Condition> Conditions
         {
-            get { return _conditions; }
+            get { return Components.OfType<Condition>().ToList(); }
         }
         public List<Result> Results
         {
-            get { return _results; }
+            get { return Components.OfType<Result>().ToList(); }
         }
         public List<Functor> Functors
         {
-            get { return _functors; }
+            get { return Components.OfType<Functor>().ToList(); }
         }
+        //public List<Argument> Arguments
+        //{
+        //    get { return _arguments; }
+        //}
+        //public List<Condition> Conditions
+        //{
+        //    get { return _conditions; }
+        //}
+        //public List<Result> Results
+        //{
+        //    get { return _results; }
+        //}
+        //public List<Functor> Functors
+        //{
+        //    get { return _functors; }
+        //}
 
         public Scheme()
         {
@@ -47,6 +64,7 @@ namespace FactScheme
             _conditions = new List<Condition>();
             _results = new List<Result>();
             _functors = new List<Functor>();
+            Components = new HashSet<ISchemeComponent>();
             _numArgs = 0;
             _saved = false;
         }
@@ -62,6 +80,7 @@ namespace FactScheme
             Argument arg = new Argument(klass, klass.Name);
             arg.Order = ++_numArgs;
             _arguments.Add(arg);
+            Components.Add(arg);
 
             return arg;
 
@@ -81,14 +100,19 @@ namespace FactScheme
             if (defaultNamesCount > 0)
                 name += string.Format("({0})", defaultNamesCount);
             Result res = new Result(name, ResultType.Create, ontologyClass);
+
             _results.Add(res);
+            Components.Add(res);
+
             return res;
         }
 
         public Functor AddFunctor()
         {
             _saved = false;
-            Functor func = new FunctorCat();
+            Functor func = new Functor();
+
+            Components.Add(func);
             return func;
         }
 
@@ -98,6 +122,23 @@ namespace FactScheme
             return rel;
         }
         
+        public void RemoveComponent(ISchemeComponent component)
+        {
+            if (!Components.Contains(component))
+                return;
+            if(component is Argument)
+            { //fix arguments order
+                var argument = component as Argument;
+                var argsGreater = from x in Arguments
+                                  where x.Order > argument.Order
+                                  select x;
+                foreach (var arg in argsGreater)
+                    arg.Order -= 1;
+                _numArgs -= 1;
+            }
+            Components.Remove(component);
+        }
+        
 
         public XDocument ToXml()
         {
@@ -105,8 +146,8 @@ namespace FactScheme
             //    return _xml;
 
             XDocument doc = new XDocument();
-            doc.Add(new XElement(_name.Replace(' ', '_')));
-            foreach(Argument arg in _arguments)
+            doc.Add(new XElement(XMLName));
+            foreach(Argument arg in Arguments)
             {
                 XElement xarg =
                     new XElement("Argument",
@@ -126,7 +167,7 @@ namespace FactScheme
                 doc.Root.Add(xarg);
             }
 
-            foreach (Result res in _results)
+            foreach (Result res in Results)
             {
                 List<XAttribute> xattrs_ = new List<XAttribute>();
                 xattrs_.Add(new XAttribute("Name", res.Name));

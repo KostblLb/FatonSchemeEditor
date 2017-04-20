@@ -159,6 +159,18 @@ namespace network
             remove { RemoveHandler(Node.NodeSelectedEvent, value); }
         }
 
+        public static readonly RoutedEvent NodeRemovingEvent =
+        EventManager.RegisterRoutedEvent(
+            "NodeRemovingEvent",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(Node));
+        public event RoutedEventHandler NodeRemoving;
+        //{
+        //    add { AddHandler(Node.NodeSelectedEvent, value); }
+        //    remove { RemoveHandler(Node.NodeSelectedEvent, value); }
+        //}
+
         public delegate void NodeAddedEventHandler(object sender, NodeAddedEventArgs e);
 
         public event NodeAddedEventHandler NodeAdded;
@@ -214,6 +226,18 @@ namespace network
         private void NetworkViewConnectorDragStarted(object sender, RoutedEventArgs e)
         {
             draggedConnector = e.Source as Connector;
+            //we're gonna highlight all valid connectors
+            //foreach(Node node in Nodes)
+            //{
+            //    var conns = node.Connectors.Where(x => 
+            //        x.Mode != draggedConnector.Mode && 
+            //        x.ValidateConnection(draggedConnector));
+            //    foreach(Connector conn in conns)
+            //    {
+            //        conn.Style = (Style)conn.Resources["Highlighted"];
+            //    }
+            //}
+
             connectorToMouseCurve.Visibility = Visibility.Visible;
         }
 
@@ -336,12 +360,20 @@ namespace network
             this.Children.Add(node);
             if (select)
                 node.Select();
+
+            var removeOpt = new MenuItem();
+            removeOpt.Header = "Remove Node";
+            removeOpt.Click += (s, e) => { this.RemoveNode(node); };
+            node.ContextMenu.Items.Add(removeOpt);
+
             NodeAdded?.Invoke(this, new NodeAddedEventArgs(node));
             return node;
         }
 
         public void RemoveNode(Node node)
         {
+            NodeRemoving?.Invoke(this, new RoutedEventArgs(NodeRemovingEvent, node));
+
             if (node == null)
                 return;
             if (this._selectedNode == node)
@@ -361,6 +393,7 @@ namespace network
                     conn.Disconnect(other);
                 }
             }
+
         }
 
         public void AddConnection(Connector src, Connector dst, bool raiseEvent = true)

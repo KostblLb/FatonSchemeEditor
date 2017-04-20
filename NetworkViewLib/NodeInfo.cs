@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace network
 {
@@ -15,6 +16,7 @@ namespace network
         public struct HeaderInfo
         {
             public string Name;
+            public bool NameChangeable;
             public object Data;
             public FrameworkElement InfoPanel;
         }
@@ -41,5 +43,7 @@ namespace network
         public List<AttributeInfo> Attributes;
 
         public FrameworkElement Footer;
+
+        public ContextMenu Menu;
     }
 }

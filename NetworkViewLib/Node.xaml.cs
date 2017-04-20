@@ -22,6 +22,31 @@ namespace network
     {
         public HashSet<Connector> Connectors { get; }
 
+        HashSet<Node> neighbors(bool incoming)
+        {
+            var neighbors = new HashSet<Node>();
+            var connections = from x in Connectors
+                              where x.Mode == (incoming ? Connector.ConnectorMode.Input : Connector.ConnectorMode.Output)
+                              select x.Connections;
+            foreach (var connection in connections)
+            {
+                var nodes = from x in connection
+                            select x.ParentNode;
+                foreach (Node node in nodes)
+                    if (!neighbors.Contains(node))
+                        neighbors.Add(node);
+            }
+            return neighbors;
+        }
+        public HashSet<Node> IncomingNeighbors
+        {
+            get { return neighbors(true); }
+        }
+
+        public HashSet<Node> OutgoingNeighbors
+        {
+            get { return neighbors(false); }
+        }
         public static readonly RoutedEvent NodeMovedEvent =
             EventManager.RegisterRoutedEvent(
                 "NodeMoved",
@@ -48,14 +73,18 @@ namespace network
         public Node(NodeInfo info) : this()
         {
             this.Tag = info.Tag;
-            
+
+            if (info.Header.NameChangeable)
+            {
+                this.pName.MouseDoubleClick += NameLabelDClick;
+            }
             Binding bind = new Binding("NodeNameProperty");
             bind.Source = info;
             bind.Mode = BindingMode.TwoWay;
             this.pName.SetBinding(Label.ContentProperty, bind);
             this.pInfo.Content = info.Header.InfoPanel;
 
-            foreach(NodeInfo.AttributeInfo attrInfo in info.Attributes)
+            foreach (NodeInfo.AttributeInfo attrInfo in info.Attributes)
             {
                 int numRows = pAttributesGrid.RowDefinitions.Count;
                 pAttributesGrid.RowDefinitions.Add(new RowDefinition());
@@ -84,6 +113,12 @@ namespace network
                 if (!Connectors.Contains(c)) //remove mb?
                     Connectors.Add(c);
             }
+
+            if (info.Menu == null)
+                this.ContextMenu = new ContextMenu();
+            else
+                this.ContextMenu = info.Menu;
+
         }
 
         #region UI
@@ -165,7 +200,7 @@ namespace network
             newMargin.Left += dx;
             newMargin.Top += dy;
             this.Margin = newMargin;
-            
+
             panelDragStartMargin = newMargin;
             RaiseEvent(new RoutedEventArgs(NodeMovedEvent));
         }
@@ -181,7 +216,7 @@ namespace network
                 pNameGrid.Children.OfType<Connector>()))
             {
                 c.ParentNode = this;
-                if(!Connectors.Contains(c)) //remove mb?
+                if (!Connectors.Contains(c)) //remove mb?
                     Connectors.Add(c);
             }
         }

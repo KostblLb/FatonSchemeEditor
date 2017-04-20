@@ -12,6 +12,13 @@
              MouseDown="Connector_MouseDown"
              Drop="Connector_Drop"
              Loaded="Connector_Loaded">
-
-    <Ellipse HorizontalAlignment="Center" Height="14" VerticalAlignment="Center" Width="14" Fill="White" Stroke="Black"/>
+    <UserControl.Resources>
+        <Style x:Key="Common">
+            <Setter Property="Ellipse.Stroke" Value="Black"/>
+        </Style>
+        <Style x:Key="Highlighted">
+            <Setter Property="Ellipse.Stroke" Value="Green"/>
+        </Style>
+    </UserControl.Resources>
+    <Ellipse HorizontalAlignment="Center" Height="14" VerticalAlignment="Center" Width="14" Fill="White" Style="{StaticResource Common}"/>
 </UserControl>

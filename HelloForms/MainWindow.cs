@@ -21,12 +21,10 @@ namespace HelloForms
     {
 
         Dictionary<Scheme, ElementHost> NVHosts;
+        System.Windows.Controls.ContextMenu NVViewContextMenu;
 
         Scheme CurrentScheme {
-            get
-            {
-                return schemeTabViewPage.Tag as Scheme;
-            }
+            get {return schemeTabViewPage.Tag as Scheme;}
             set
             {
                 schemeTabViewPage.Controls.RemoveByKey(EditorConstants.TABPAGE_WPF_HOST_NAME);
@@ -50,6 +48,9 @@ namespace HelloForms
             ontologyTreeView.NodeMouseClick += (sender, args) => ontologyTreeView.SelectedNode = args.Node;
 
             NVHosts = new Dictionary<Scheme, ElementHost>();
+
+            NVViewContextMenu = new System.Windows.Controls.ContextMenu();
+            NVViewContextMenu.Items.Add("N.View context menu");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -67,16 +68,6 @@ namespace HelloForms
                 loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
                 createScheme();
             }
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -184,8 +175,7 @@ namespace HelloForms
                         margin.Top = top;
                         node.Margin = margin;
                     }
-                    Medium.UpdateViewFromScheme(nv, scheme);
-                    //nv.DrawConnections();
+                    Medium.LoadViewFromScheme(nv, scheme);
                 }
             }
             updateBankListView();
@@ -255,11 +245,7 @@ namespace HelloForms
             openFileDialog1.FileName = "scheme.xml";
             openFileDialog1.ShowDialog();
         }
-
-        private void добавитьУсловиеToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine(sender.ToString());
-        }
+        
         
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -390,11 +376,12 @@ namespace HelloForms
 
             //create a networkview
             network.NetworkView nv = new network.NetworkView();
-            elementHost.ContextMenuStrip = layoutTabContextMenu;
-            nv.ContextMenu = new System.Windows.Controls.ContextMenu();
+            
             nv.Drop += Nv_Drop;
             nv.NodeAdded += NV_NodeAdded;
+            nv.NodeRemoving += NV_NodeRemoving;
             nv.ConnectionAdded += NV_ConnectionAdded;
+            nv.ContextMenu = NVViewContextMenu;
             elementHost.Child = nv;
 
             NVHosts.Add(scheme, elementHost);
@@ -461,6 +448,21 @@ namespace HelloForms
         private void NV_NodeAdded(object sender, network.NodeAddedEventArgs e)
         {
             return;
+        }
+
+        private void NV_NodeRemoving(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var node = e.Source as network.Node;
+            
+            ISchemeComponent comp = ((network.Node)e.Source).Tag as ISchemeComponent;
+            //var ineighbors = node.IncomingNeighbors;
+            var oneighbors = node.OutgoingNeighbors;
+            //foreach (var neighbor in ineighbors)
+            //    comp.RemoveUpper(neighbor.Tag as ISchemeComponent);
+            foreach (var neighbor in oneighbors)
+                (neighbor.Tag as ISchemeComponent).RemoveUpper(comp);
+            CurrentScheme.RemoveComponent(comp);
+            Console.WriteLine("NV_NodeRemoving!");
         }
 
         private void NV_ConnectionAdded(object sender, network.ConnectionAddedEventArgs e)

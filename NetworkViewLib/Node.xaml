@@ -44,7 +44,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <WrapPanel HorizontalAlignment="Left">
-                <Label x:Name="pName" Content="Name" MouseDoubleClick="NameLabelDClick" HorizontalAlignment="Left"/>
+                <Label x:Name="pName" Content="Name" HorizontalAlignment="Left"/>
                 <TextBox x:Name="pNameEdit"
                  Text="{Binding Content, Mode=TwoWay}"
                  Visibility="Collapsed"

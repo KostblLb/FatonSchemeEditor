@@ -67,7 +67,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentCondition.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
     <Compile Include="FactScheme\Relation.cs" />
@@ -91,9 +90,6 @@
     <Compile Include="Ontology\OntologyBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SchemePageControl.xaml.cs">
-      <DependentUpon>SchemePageControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsPathsDialog.cs">
       <SubType>Form</SubType>
@@ -154,12 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="SchemePageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetworkViewLib\NetworkViewLib.csproj">
