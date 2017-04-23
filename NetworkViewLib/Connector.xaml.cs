@@ -17,18 +17,24 @@ namespace network
 {
     public class ConnectionEventArgs : RoutedEventArgs
     {
-        public ConnectionEventArgs(RoutedEvent e, Connector src, Connector dst) : base(e)
+        public ConnectionEventArgs(RoutedEvent e, Connector src, Connector dst) : this(e)
         {
             SourceConnector = src;
             DestConnector = dst;
         }
+        public ConnectionEventArgs(RoutedEvent e) : base(e)
+        {
+            Valid = true;
+        }
         public ConnectionEventArgs(Connector src, Connector dst) : base()
         {
+            Valid = true;
             SourceConnector = src;
             DestConnector = dst;
         }
         public Connector SourceConnector { get;}
         public Connector DestConnector { get; }
+        public bool Valid { get; set; }
     }
     /// <summary>
     /// Логика взаимодействия для Connector.xaml
@@ -52,7 +58,17 @@ namespace network
         /// <summary>
         /// event is raised before establishing a valid connection
         /// </summary>
-        public event ConnectionEventHandler ConnectionBeforeAdd;
+        public event ConnectionEventHandler ConnectionBeforeAdd
+        {
+            add
+            {
+                AddHandler(ConnectionBeforeAddEvent, value);
+            }
+            remove
+            {
+                RemoveHandler(ConnectionBeforeAddEvent, value);
+            }
+        }
 
         protected virtual void RaiseConnectionAddedEvent(Connector src, Connector dst)
         {

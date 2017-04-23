@@ -23,7 +23,11 @@ namespace HelloForms
             if (dst.Tag == null || src.Tag == null)
                 throw new Exception("connector not attached to attribute");
 
-            if (dst.ParentNode.Tag is FactScheme.Result)
+            if (dst.Tag is FactScheme.Result) //very specific code for linking EDIT connector of a result
+            {
+                ((Result)dst.Tag).EditArgument = src.ParentNode.Tag as Argument;
+            }
+            else if (dst.ParentNode.Tag is FactScheme.Result)
             {
                 var dstAttr = dst.Tag as OntologyNode.Attribute;
                 var srcAttr = src.Tag as OntologyNode.Attribute;
@@ -40,7 +44,7 @@ namespace HelloForms
                         srcAttr);
             }
 
-            if (dst.ParentNode.Tag is FactScheme.Functor)
+            else if (dst.ParentNode.Tag is FactScheme.Functor)
             {
                 //wont work
                 //var functor = dst.ParentNode.Tag as FactScheme.Functor;
@@ -53,7 +57,7 @@ namespace HelloForms
         public static void RemoveSchemeConnection(Connector src, Connector dst)
         {
             ISchemeComponent dstComponent = dst.ParentNode.Tag as ISchemeComponent;
-            if(dst.Tag is OntologyNode.Attribute)
+            if (dst.Tag is OntologyNode.Attribute)
                 dstComponent.Free(dst.Tag as OntologyNode.Attribute);
             else
             { ///
@@ -62,7 +66,7 @@ namespace HelloForms
 
         ///convert factscheme argument into nv node
         ///
-        public static NodeInfo Convert(FactScheme.Argument argument)  
+        public static NodeInfo Convert(FactScheme.Argument argument)
         {
             NodeInfo info = new NodeInfo();
 
@@ -80,10 +84,10 @@ namespace HelloForms
             var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
 
             var inheritedAttrs = argument.Klass.InheritedAttributes.Select(i => i.Item1);
-            foreach(var inheritedAttr in inheritedAttrs)
-                attrs.Add(inheritedAttr as OntologyNode.Attribute); 
+            foreach (var inheritedAttr in inheritedAttrs)
+                attrs.Add(inheritedAttr as OntologyNode.Attribute);
 
-            foreach(var attr in attrs)
+            foreach (var attr in attrs)
             {
                 NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
                 attrInfo.Data = attr;
@@ -121,9 +125,9 @@ namespace HelloForms
                 var attrs = new List<OntologyNode.Attribute>((result.Reference as OntologyClass).OwnAttributes);
                 //if (argument.Origin.type == OntologyNode.Type.OntologyClass)
                 //{
-                    var inheritedAttrs = (result.Reference as OntologyClass).InheritedAttributes.Select(i => i.Item1);
-                    foreach (var inheritedAttr in inheritedAttrs)
-                        attrs.Add(inheritedAttr as OntologyNode.Attribute);
+                var inheritedAttrs = (result.Reference as OntologyClass).InheritedAttributes.Select(i => i.Item1);
+                foreach (var inheritedAttr in inheritedAttrs)
+                    attrs.Add(inheritedAttr as OntologyNode.Attribute);
                 //}
 
                 foreach (var attr in attrs)
@@ -158,7 +162,7 @@ namespace HelloForms
             output.AttributePanel = outputLabel;
             info.Attributes.Add(output);
 
-            if (functor.NumArgs > 0) 
+            if (functor.NumArgs > 0)
                 for (int i = 0; i < functor.NumArgs; i++)
                 {
                     NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
@@ -169,13 +173,13 @@ namespace HelloForms
                 }
             //else
             //    Button
-            return info; 
+            return info;
         }
 
         private static Style typeNameStyle;
         private static Style infoTextStyle;
 
-        private static FrameworkElement ResultInfoPanel(FactScheme.Result result)
+        private static StackPanel ResultInfoPanel(FactScheme.Result result)
         {
             StackPanel stackPanel = new StackPanel();
 
@@ -184,10 +188,18 @@ namespace HelloForms
             stackPanel.Children.Add(cb);
 
             WrapPanel wrapPanel = new WrapPanel();
-            Connector editedArgConnector = new Connector(Connector.ConnectorMode.Input, null);
+            Connector editedArgConnector = new Connector(Connector.ConnectorMode.Input, result);
+            editedArgConnector.ConnectionBeforeAdd += (s, e) =>
+            {
+                //first condition to be changed if result can edit another result
+                if (!(e.SourceConnector.ParentNode.Tag is Argument) ||
+                    ((Result)editedArgConnector.Tag).Reference != 
+                        ((Argument)e.SourceConnector.ParentNode.Tag).Klass)
+                    e.Valid = false;
+            };
             editedArgConnector.Name = "_EDITED_ARGUMENT";
-            Label editedArgName = new Label();
-            editedArgName.Content = "";
+            TextBlock editedArgName = new TextBlock();
+            editedArgName.Text = result.Reference.Name;
             wrapPanel.Children.Add(editedArgConnector);
             wrapPanel.Children.Add(editedArgName);
             stackPanel.Children.Add(wrapPanel);
@@ -195,9 +207,15 @@ namespace HelloForms
             cb.SelectionChanged += (s, e) =>
             {
                 if (e.AddedItems.Contains(FactScheme.ResultType.Create))
-                    wrapPanel.Visibility = Visibility.Collapsed;
+                {
+                    result.Type = ResultType.Create;
+                    editedArgConnector.Visibility = Visibility.Collapsed;
+                }
                 else
-                    wrapPanel.Visibility = Visibility.Visible;
+                {
+                    result.Type = ResultType.Edit;
+                    editedArgConnector.Visibility = Visibility.Visible;
+                }
             };
             cb.SelectedValue = FactScheme.ResultType.Create;
 
@@ -208,13 +226,13 @@ namespace HelloForms
         public static void LoadViewFromScheme(NetworkView nv, Scheme scheme)
         {
             var nodes = nv.Nodes;
-            foreach(Result res in scheme.Results)
+            foreach (Result res in scheme.Results)
             {
                 var dstNode = nodes.First(x => x.Tag == res);
-                foreach(Result.Rule rule in res.Rules)
+                foreach (Result.Rule rule in res.Rules)
                 {
                     var srcNode = nodes.First(x => x.Tag == rule.Reference);
-                    var srcConn = srcNode.Connectors.First(x => 
+                    var srcConn = srcNode.Connectors.First(x =>
                         x.Tag == rule.InputAttribute &&
                         x.Mode == Connector.ConnectorMode.Output);
                     var dstConn = dstNode.Connectors.First(x => x.Tag == rule.Attribute);
@@ -224,6 +242,6 @@ namespace HelloForms
             }
         }
 
-        
+
     }
 }

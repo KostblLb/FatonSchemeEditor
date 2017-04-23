@@ -64,7 +64,9 @@ namespace FactScheme
         public ResultType Type
         {
             get { return _type; }
+            set { _type = value; }
         }
+        public Argument EditArgument;
 
         public OntologyClass Reference
         {

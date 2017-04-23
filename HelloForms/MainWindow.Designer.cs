@@ -440,6 +440,7 @@
             this.schemeXMLTextBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
             this.schemeXMLTextBox.Name = "schemeXMLTextBox";
+            this.schemeXMLTextBox.ReadOnly = true;
             this.schemeXMLTextBox.Size = new System.Drawing.Size(553, 471);
             this.schemeXMLTextBox.TabIndex = 0;
             this.schemeXMLTextBox.Text = "";

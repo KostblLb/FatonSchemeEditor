@@ -44,7 +44,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <WrapPanel HorizontalAlignment="Left">
-                <Label x:Name="pName" Content="Name" HorizontalAlignment="Left"/>
+                <Label x:Name="pName" Content="Name" MaxWidth="135">
+                    <Label.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </Label.Resources>
+                </Label>
                 <TextBox x:Name="pNameEdit"
                  Text="{Binding Content, Mode=TwoWay}"
                  Visibility="Collapsed"
@@ -53,16 +59,11 @@
                  HorizontalAlignment="Center" VerticalAlignment="Center"
                  />
             </WrapPanel>
-            <local:Connector Grid.Column="1" Mode="Output"/>
+            <local:Connector x:Name="pSelfConnector" Grid.Column="1" Mode="Output"/>
         </Grid>
-        
-        <Label x:Name="pInfo">
-            <WrapPanel>
-                <TextBlock x:Name="pInfoType" FontWeight="Bold">T</TextBlock>
-                <TextBlock x:Name="pInfoAdditional">Add.info</TextBlock>
-            </WrapPanel>
-        </Label>
-        
+
+        <StackPanel x:Name="pInfoHeader" Margin="0,0,0,5"/>
+
         <Border BorderBrush="#FF624A00" BorderThickness="0,1,0,0" Margin="3,2" Width="150"/>
         
         <Grid x:Name="pAttributesGrid">

@@ -73,6 +73,7 @@ namespace network
         public Node(NodeInfo info) : this()
         {
             this.Tag = info.Tag;
+            this.pSelfConnector.Tag = info.Tag;
 
             if (info.Header.NameChangeable)
             {
@@ -82,7 +83,10 @@ namespace network
             bind.Source = info;
             bind.Mode = BindingMode.TwoWay;
             this.pName.SetBinding(Label.ContentProperty, bind);
-            this.pInfo.Content = info.Header.InfoPanel;
+
+            if (info.Header.InfoPanel != null)
+                this.pInfoHeader.Children.Add(info.Header.InfoPanel);
+            
 
             foreach (NodeInfo.AttributeInfo attrInfo in info.Attributes)
             {
@@ -146,6 +150,7 @@ namespace network
         {
             pName.Visibility = Visibility.Collapsed;
             pNameEdit.Visibility = Visibility.Visible;
+            //Keyboard.Focus(pNameEdit);
         }
 
         private void NameLabelEditKeyDown(object sender, KeyEventArgs e)

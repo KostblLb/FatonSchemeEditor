@@ -259,7 +259,16 @@ namespace HelloForms
             var dialog = sender as SaveFileDialog;
             System.IO.Stream fstream = saveFileDialog1.OpenFile();
             System.Xml.Linq.XDocument doc = new XDocument();
-            XElement xbank = Bank.ToXml().Root;
+            XElement xbank = null;
+            try
+            {
+                xbank = Bank.ToXml().Root;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
             if (dialog.FilterIndex == EditorConstants.EDITOR_XML)
             {
                 doc.Add(new XElement(EditorConstants.XML_EDITOR_ROOT_NAME));
@@ -524,7 +533,14 @@ namespace HelloForms
         private void schemesTabControl_Selected(object sender, TabControlEventArgs e)
         {
             if (e.TabPage == schemeTabXMLPage)
-                schemeXMLTextBox.Text = CurrentScheme.ToXml().ToString();
+                try
+                {
+                    schemeXMLTextBox.Text = CurrentScheme.ToXml().ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             XMLHighlight.HighlightRTF(schemeXMLTextBox);
         }
 

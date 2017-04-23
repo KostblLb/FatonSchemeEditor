@@ -206,6 +206,12 @@ namespace network
 
         void NVConnectionBeforeAdd(object sender, ConnectionEventArgs e)
         {
+            if(!e.Valid)
+            {
+                Console.WriteLine("invalid connection");
+                e.Handled = true;
+                return;
+            }
             Console.WriteLine("before connection");
             Path p = new Path();
             p.Data = connectorToMouseCurve.Data;

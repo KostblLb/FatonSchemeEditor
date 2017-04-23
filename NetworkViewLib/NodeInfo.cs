@@ -18,7 +18,7 @@ namespace network
             public string Name;
             public bool NameChangeable;
             public object Data;
-            public FrameworkElement InfoPanel;
+            public StackPanel InfoPanel;
         }
         public HeaderInfo Header;
 

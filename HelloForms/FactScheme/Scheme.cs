@@ -171,10 +171,14 @@ namespace FactScheme
             {
                 List<XAttribute> xattrs_ = new List<XAttribute>();
                 xattrs_.Add(new XAttribute("Name", res.Name));
-                xattrs_.Add(new XAttribute("Type", res.Type));
-
-                xattrs_.Add(new XAttribute("ReferenceType", "OntologyClass"));
                 xattrs_.Add(new XAttribute("ClassName", (res.Reference as OntologyClass).Name));
+                xattrs_.Add(new XAttribute("Type", res.Type));
+                if (res.Type == ResultType.Edit)
+                {
+                    if (res.EditArgument == null)
+                        throw new Exception("Result type is EDIT, but no argument set");
+                    xattrs_.Add(new XAttribute("ArgEdit", res.EditArgument.Order));
+                }
 
                 XElement xres = new XElement("Result", xattrs_);
 
