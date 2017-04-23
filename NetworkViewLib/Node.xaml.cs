@@ -82,41 +82,45 @@ namespace network
             Binding bind = new Binding("NodeNameProperty");
             bind.Source = info;
             bind.Mode = BindingMode.TwoWay;
-            this.pName.SetBinding(Label.ContentProperty, bind);
+            this.pName.SetBinding(Label.ContentProperty, bind);            
 
-            if (info.Header.InfoPanel != null)
-                this.pInfoHeader.Children.Add(info.Header.InfoPanel);
-            
-
-            foreach (NodeInfo.AttributeInfo attrInfo in info.Attributes)
+            foreach (NodeInfo.SectionInfo sectInfo in info.Sections)
             {
-                int numRows = pAttributesGrid.RowDefinitions.Count;
-                pAttributesGrid.RowDefinitions.Add(new RowDefinition());
-                if (attrInfo.IsInput)
+                int numRows = pSectionsGrid.RowDefinitions.Count;
+                pSectionsGrid.RowDefinitions.Add(new RowDefinition());
+                if (sectInfo.IsInput)
                 {
-                    Connector conn = new Connector(Connector.ConnectorMode.Input, attrInfo.Data);
+                    Connector conn = new Connector(Connector.ConnectorMode.Input, sectInfo.Data);
                     conn.SetValue(Grid.RowProperty, numRows);
                     conn.SetValue(Grid.ColumnProperty, 0);
-                    pAttributesGrid.Children.Add(conn);
+                    pSectionsGrid.Children.Add(conn);
+                    if (sectInfo.InputValidation != null)
+                        conn.ConnectionBeforeAdd += sectInfo.InputValidation;
+                    conn.Tag = sectInfo.Data;
                 }
-                if (attrInfo.IsOutput)
+                if (sectInfo.IsOutput)
                 {
-                    Connector conn = new Connector(Connector.ConnectorMode.Output, attrInfo.Data);
+                    Connector conn = new Connector(Connector.ConnectorMode.Output, sectInfo.Data);
                     conn.SetValue(Grid.RowProperty, numRows);
                     conn.SetValue(Grid.ColumnProperty, 2);
-                    pAttributesGrid.Children.Add(conn);
+                    pSectionsGrid.Children.Add(conn);
+                    conn.Tag = sectInfo.Data;
                 }
-                attrInfo.AttributePanel.SetValue(Grid.RowProperty, numRows);
-                attrInfo.AttributePanel.SetValue(Grid.ColumnProperty, 1);
-                pAttributesGrid.Children.Add(attrInfo.AttributePanel);
+
+                if (sectInfo.UIPanel != null)
+                {
+                    sectInfo.UIPanel.SetValue(Grid.RowProperty, numRows);
+                    sectInfo.UIPanel.SetValue(Grid.ColumnProperty, 1);
+                    pSectionsGrid.Children.Add(sectInfo.UIPanel);
+                }
             }
-            foreach (Connector c in pAttributesGrid.Children.OfType<Connector>().Union(
-                pNameGrid.Children.OfType<Connector>()))
-            {
-                c.ParentNode = this;
-                if (!Connectors.Contains(c)) //remove mb?
-                    Connectors.Add(c);
-            }
+            //foreach (Connector c in pSectionsGrid.Children.OfType<Connector>().Union(
+            //    pNameGrid.Children.OfType<Connector>()))
+            //{
+            //    c.ParentNode = this;
+            //    if (!Connectors.Contains(c)) //remove mb?
+            //        Connectors.Add(c);
+            //}
 
             if (info.Menu == null)
                 this.ContextMenu = new ContextMenu();
@@ -217,7 +221,7 @@ namespace network
 
         private void NodeLoaded(object sender, EventArgs e)
         {
-            foreach (Connector c in pAttributesGrid.Children.OfType<Connector>().Union(
+            foreach (Connector c in pSectionsGrid.Children.OfType<Connector>().Union(
                 pNameGrid.Children.OfType<Connector>()))
             {
                 c.ParentNode = this;

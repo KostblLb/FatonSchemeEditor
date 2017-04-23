@@ -72,7 +72,7 @@ namespace HelloForms
 
             info.Tag = argument;
 
-            info.Attributes = new List<NodeInfo.AttributeInfo>();
+            info.Sections = new List<NodeInfo.SectionInfo>();
 
             info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
             argument.PropertyChanged += (s, e) =>
@@ -89,14 +89,14 @@ namespace HelloForms
 
             foreach (var attr in attrs)
             {
-                NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
                 attrInfo.Data = attr;
                 attrInfo.IsInput = false;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
                 attrName.Content = attr.Name;
-                attrInfo.AttributePanel = attrName;
-                info.Attributes.Add(attrInfo);
+                attrInfo.UIPanel = attrName;
+                info.Sections.Add(attrInfo);
             }
 
             return info;
@@ -108,8 +108,6 @@ namespace HelloForms
 
             info.Tag = result;
 
-            info.Attributes = new List<NodeInfo.AttributeInfo>();
-
             info.Header.NameChangeable = true;
             info.NodeNameProperty = result.Name;
             info.PropertyChanged += (sender, e) =>
@@ -118,7 +116,20 @@ namespace HelloForms
                     result.Name = (sender as NodeInfo).NodeNameProperty;
             };
 
-            info.Header.InfoPanel = ResultInfoPanel(result);
+            var resultInfo = new NodeInfo.SectionInfo();
+            resultInfo.Data = result;
+            resultInfo.UIPanel = ResultInfoPanel(result);
+            resultInfo.IsInput = true;
+            resultInfo.InputValidation = (s, e) =>
+            {
+                //first condition to be changed if result can edit another result
+                if (!(e.SourceConnector.ParentNode.Tag is Argument) ||
+                    (result.Reference !=
+                        ((Argument)e.SourceConnector.ParentNode.Tag).Klass))
+                    e.Valid = false;
+                Console.WriteLine("yeah boi");
+            };
+            info.Sections.Add(resultInfo);
 
             if (result.Reference is OntologyClass)
             {
@@ -132,14 +143,14 @@ namespace HelloForms
 
                 foreach (var attr in attrs)
                 {
-                    NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                    var attrInfo = new NodeInfo.SectionInfo();
                     attrInfo.Data = attr;
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = true;
                     var attrName = new Label();
                     attrName.Content = attr.Name;
-                    attrInfo.AttributePanel = attrName;
-                    info.Attributes.Add(attrInfo);
+                    attrInfo.UIPanel = attrName;
+                    info.Sections.Add(attrInfo);
                 }
             }
 
@@ -152,24 +163,23 @@ namespace HelloForms
             info.Tag = functor;
 
             info.NodeNameProperty = functor.ID;
-
-            info.Attributes = new List<NodeInfo.AttributeInfo>();
-            NodeInfo.AttributeInfo output = new NodeInfo.AttributeInfo();
+            
+            var output = new NodeInfo.SectionInfo();
             output.IsInput = false;
             output.IsOutput = true;
             var outputLabel = new Label();
             outputLabel.Content = "Output";
-            output.AttributePanel = outputLabel;
-            info.Attributes.Add(output);
+            output.UIPanel = outputLabel;
+            info.Sections.Add(output);
 
             if (functor.NumArgs > 0)
                 for (int i = 0; i < functor.NumArgs; i++)
                 {
-                    NodeInfo.AttributeInfo attrInfo = new NodeInfo.AttributeInfo();
+                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = false;
                     attrInfo.Data = functor.Inputs[i];
-                    info.Attributes.Add(attrInfo);
+                    info.Sections.Add(attrInfo);
                 }
             //else
             //    Button
@@ -182,39 +192,25 @@ namespace HelloForms
         private static StackPanel ResultInfoPanel(FactScheme.Result result)
         {
             StackPanel stackPanel = new StackPanel();
+            stackPanel.Margin = new Thickness(5);
 
             ComboBox cb = new ComboBox();
             cb.ItemsSource = Enum.GetValues(typeof(FactScheme.ResultType));
             stackPanel.Children.Add(cb);
 
-            WrapPanel wrapPanel = new WrapPanel();
-            Connector editedArgConnector = new Connector(Connector.ConnectorMode.Input, result);
-            editedArgConnector.ConnectionBeforeAdd += (s, e) =>
-            {
-                //first condition to be changed if result can edit another result
-                if (!(e.SourceConnector.ParentNode.Tag is Argument) ||
-                    ((Result)editedArgConnector.Tag).Reference != 
-                        ((Argument)e.SourceConnector.ParentNode.Tag).Klass)
-                    e.Valid = false;
-            };
-            editedArgConnector.Name = "_EDITED_ARGUMENT";
             TextBlock editedArgName = new TextBlock();
             editedArgName.Text = result.Reference.Name;
-            wrapPanel.Children.Add(editedArgConnector);
-            wrapPanel.Children.Add(editedArgName);
-            stackPanel.Children.Add(wrapPanel);
+            stackPanel.Children.Add(editedArgName);
 
             cb.SelectionChanged += (s, e) =>
             {
                 if (e.AddedItems.Contains(FactScheme.ResultType.Create))
                 {
                     result.Type = ResultType.Create;
-                    editedArgConnector.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     result.Type = ResultType.Edit;
-                    editedArgConnector.Visibility = Visibility.Visible;
                 }
             };
             cb.SelectedValue = FactScheme.ResultType.Create;

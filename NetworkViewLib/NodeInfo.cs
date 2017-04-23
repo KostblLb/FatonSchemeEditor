@@ -18,7 +18,6 @@ namespace network
             public string Name;
             public bool NameChangeable;
             public object Data;
-            public StackPanel InfoPanel;
         }
         public HeaderInfo Header;
 
@@ -33,17 +32,24 @@ namespace network
             }
         }
 
-        public struct AttributeInfo
+        public struct SectionInfo
         {
+            //connection
             public bool IsInput;
             public bool IsOutput;
+            public Connector.ConnectionEventHandler InputValidation;
+            //ui
             public object Data;
-            public FrameworkElement AttributePanel;
+            public FrameworkElement UIPanel;
         }
-        public List<AttributeInfo> Attributes;
-
-        public FrameworkElement Footer;
-
+        public List<SectionInfo> Sections;
+        
         public ContextMenu Menu;
+
+        public NodeInfo()
+        {
+            Sections = new List<SectionInfo>();
+            Header = new HeaderInfo();
+        }
     }
 }
