@@ -368,12 +368,14 @@
             this.bankListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bankListView.FullRowSelect = true;
             this.bankListView.GridLines = true;
+            this.bankListView.LabelEdit = true;
             this.bankListView.Location = new System.Drawing.Point(3, 20);
             this.bankListView.Name = "bankListView";
             this.bankListView.Size = new System.Drawing.Size(134, 665);
             this.bankListView.TabIndex = 0;
             this.bankListView.UseCompatibleStateImageBehavior = false;
             this.bankListView.View = System.Windows.Forms.View.List;
+            this.bankListView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.bankListView_AfterLabelEdit);
             this.bankListView.DoubleClick += new System.EventHandler(this.bankListView_DoubleClick);
             // 
             // nvAndConditionsContainer

@@ -21,7 +21,7 @@ namespace FactScheme
         XDocument _xml;
         bool _saved;
 
-        public string Name { get { return _name; } }
+        public string Name { get { return _name; } set { _name = value; } }
         public string XMLName { get { return _name.Replace(' ', '_'); } }
 
         public readonly HashSet<ISchemeComponent> Components;
@@ -41,22 +41,6 @@ namespace FactScheme
         {
             get { return Components.OfType<Functor>().ToList(); }
         }
-        //public List<Argument> Arguments
-        //{
-        //    get { return _arguments; }
-        //}
-        //public List<Condition> Conditions
-        //{
-        //    get { return _conditions; }
-        //}
-        //public List<Result> Results
-        //{
-        //    get { return _results; }
-        //}
-        //public List<Functor> Functors
-        //{
-        //    get { return _functors; }
-        //}
 
         public Scheme()
         {
@@ -175,9 +159,12 @@ namespace FactScheme
                 xattrs_.Add(new XAttribute("Type", res.Type));
                 if (res.Type == ResultType.Edit)
                 {
-                    if (res.EditArgument == null)
+                    if (res.EditObject == null)
                         throw new Exception("Result type is EDIT, but no argument set");
-                    xattrs_.Add(new XAttribute("ArgEdit", res.EditArgument.Order));
+                    if (res.EditObject is Argument)
+                        xattrs_.Add(new XAttribute("ArgEdit", ((Argument)res.EditObject).Order));
+                    else if (res.EditObject is Result)
+                        xattrs_.Add(new XAttribute("ResultEdit", ((Result)res.EditObject).Name));
                 }
 
                 XElement xres = new XElement("Result", xattrs_);
@@ -203,7 +190,10 @@ namespace FactScheme
                     }
                     else
                     {
-                        xattrs.Add(new XAttribute("ArgFrom", (rule.Reference as Argument).Order));
+                        if (rule.Reference is Argument)
+                            xattrs.Add(new XAttribute("ArgFrom", (rule.Reference as Argument).Order));
+                        else
+                            xattrs.Add(new XAttribute("ResultFrom", (rule.Reference as Result).Name));
                         xattrs.Add(new XAttribute("AttrFrom", rule.InputAttribute.Name));
                         xrul = new XElement("Rule", xattrs);
                     }

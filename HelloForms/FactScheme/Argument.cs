@@ -12,6 +12,11 @@ namespace FactScheme
     //{
     public class Argument : ISchemeComponent, INotifyPropertyChanged
     {
+        public class ArgumentCondition
+        {
+
+        }
+
         OntologyClass _klass;
         bool _useInheritance;
         protected uint _order;

@@ -66,7 +66,7 @@ namespace FactScheme
             get { return _type; }
             set { _type = value; }
         }
-        public Argument EditArgument;
+        public ISchemeComponent EditObject;
 
         public OntologyClass Reference
         {
@@ -103,6 +103,8 @@ namespace FactScheme
             foreach (var rule in rulesCopy)
                 if (rule.Reference == upper)
                     Rules.Remove(rule);
+            if (upper == EditObject)
+                EditObject = null;
         }
 
         public void Free(object attribute)

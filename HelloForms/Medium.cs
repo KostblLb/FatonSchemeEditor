@@ -25,7 +25,7 @@ namespace HelloForms
 
             if (dst.Tag is FactScheme.Result) //very specific code for linking EDIT connector of a result
             {
-                ((Result)dst.Tag).EditArgument = src.ParentNode.Tag as Argument;
+                ((Result)dst.Tag).EditObject = src.ParentNode.Tag as ISchemeComponent;
             }
             else if (dst.ParentNode.Tag is FactScheme.Result)
             {
@@ -122,12 +122,17 @@ namespace HelloForms
             resultInfo.IsInput = true;
             resultInfo.InputValidation = (s, e) =>
             {
-                //first condition to be changed if result can edit another result
-                if (!(e.SourceConnector.ParentNode.Tag is Argument) ||
-                    (result.Reference !=
-                        ((Argument)e.SourceConnector.ParentNode.Tag).Klass))
-                    e.Valid = false;
-                Console.WriteLine("yeah boi");
+                var input = e.SourceConnector.ParentNode.Tag;
+                if (input is Argument)
+                {
+                    if (result.Reference !=((Argument)input).Klass)
+                        e.Valid = false;
+                }
+                else if (input is Result)
+                {
+                    if (result.Reference != ((Result)input).Reference)
+                        e.Valid = false;
+                }
             };
             info.Sections.Add(resultInfo);
 

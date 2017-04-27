@@ -318,15 +318,17 @@ namespace HelloForms
         }
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            dataGridView1.Rows[e.RowIndex].ErrorText = null;
-
+            var grid = sender as DataGridView;
+            grid.Rows[e.RowIndex].ErrorText = null;
+            if (grid.Tag == null)
+                return;
             if (e.ColumnIndex != EditorConstants.CONDITION_DATAGRID_ATTR_COL)
             {
                 e.Cancel = false;
                 return;
             }
 
-            FactScheme.Argument arg = ((DataGridView)sender).Tag as FactScheme.Argument;
+            FactScheme.Argument arg = grid.Tag as FactScheme.Argument;
             List<OntologyNode.Attribute> attrs = arg.Klass.OwnAttributes;
             String cellAttrName = e.FormattedValue as String;
 
@@ -353,7 +355,7 @@ namespace HelloForms
             }
 
             e.Cancel = true;
-            dataGridView1.Rows[e.RowIndex].ErrorText = EditorConstants.CONDITION_DATAGRID_ERROR_ATT_NAME;
+            grid.Rows[e.RowIndex].ErrorText = EditorConstants.CONDITION_DATAGRID_ERROR_ATT_NAME;
 
         }
 
@@ -392,6 +394,15 @@ namespace HelloForms
             nv.ConnectionAdded += NV_ConnectionAdded;
             nv.ConnectionRemoved += NV_ConnectionRemoved;
             nv.ContextMenu = NVViewContextMenu;
+            nv.NodeSelected += (s, e) =>
+            {
+                var node = e.Source as network.Node;
+                if (node != null && node.Tag is Argument)
+                    dataGridView1.Tag = node.Tag;
+                else
+                    dataGridView1.Tag = null;
+            };
+
             elementHost.Child = nv;
 
             NVHosts.Add(scheme, elementHost);
@@ -548,6 +559,16 @@ namespace HelloForms
         {
             if ((sender as SplitContainer).DataBindings["SplitterDistance"] != null)
                 (sender as SplitContainer).DataBindings["SplitterDistance"].WriteValue();
+        }
+
+        private void bankListView_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            if (e.CancelEdit)
+                return;
+            var item = (sender as ListView).SelectedItems[0];
+            var scheme = item.Tag as Scheme;
+            if (scheme != null && e.Label != "")
+                scheme.Name = e.Label;
         }
     }
 }
