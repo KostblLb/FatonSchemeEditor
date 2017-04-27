@@ -55,7 +55,7 @@ namespace HelloForms
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
+            //ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
 
             DataGridViewComboBoxColumn conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
             conditionTypeColumn.DataSource = Enum.GetValues(typeof(ConditionType));

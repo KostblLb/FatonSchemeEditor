@@ -139,12 +139,9 @@ namespace HelloForms
             if (result.Reference is OntologyClass)
             {
                 var attrs = new List<OntologyNode.Attribute>((result.Reference as OntologyClass).OwnAttributes);
-                //if (argument.Origin.type == OntologyNode.Type.OntologyClass)
-                //{
                 var inheritedAttrs = (result.Reference as OntologyClass).InheritedAttributes.Select(i => i.Item1);
                 foreach (var inheritedAttr in inheritedAttrs)
                     attrs.Add(inheritedAttr as OntologyNode.Attribute);
-                //}
 
                 foreach (var attr in attrs)
                 {
@@ -152,6 +149,16 @@ namespace HelloForms
                     attrInfo.Data = attr;
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = true;
+                    attrInfo.InputValidation = (s, e) => {
+                        var src = e.SourceConnector.Tag as OntologyNode.Attribute;
+                        var dst = e.DestConnector.Tag as OntologyNode.Attribute;
+                        if (src == null || dst == null) {
+                            e.Valid = false;
+                            return;
+                        }
+                        if (src.Type != dst.Type)
+                            e.Valid = false;
+                    };
                     var attrName = new Label();
                     attrName.Content = attr.Name;
                     attrInfo.UIPanel = attrName;
