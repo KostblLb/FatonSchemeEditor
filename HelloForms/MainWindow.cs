@@ -62,9 +62,6 @@ namespace HelloForms
             conditionTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ConditionType);
             conditionTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ConditionType));
 
-            //var attrColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL] as DataGridViewComboBoxColumn;
-            //attrColumn.CellTemplate.ValueType = typeof(OntologyNode.Attribute);
-
             var comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
             comparTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ComparisonType);
             comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
@@ -317,55 +314,7 @@ namespace HelloForms
                 loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
             }
         }
-
-        private void dataGridView1_CellValidated(object sender, DataGridViewCellEventArgs e)
-        {
-            dataGridView1.Rows[e.RowIndex].ErrorText = null;
-        }
-        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {
-            return;
-            var grid = sender as DataGridView;
-            grid.Rows[e.RowIndex].ErrorText = null;
-            if (grid.Tag == null)
-                return;
-            if (e.ColumnIndex != EditorConstants.CONDITION_DATAGRID_ATTR_COL)
-            {
-                e.Cancel = false;
-                return;
-            }
-
-            FactScheme.Argument arg = grid.Tag as FactScheme.Argument;
-            List<OntologyNode.Attribute> attrs = arg.Klass.OwnAttributes;
-            String cellAttrName = e.FormattedValue as String;
-
-            foreach (OntologyNode.Attribute attr in attrs)
-            {
-                if (attr.Name.Equals(cellAttrName))
-                {
-                    e.Cancel = false;
-                    return;
-                }
-            }
-
-            if (arg.Inheritance)
-            {
-                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = arg.Klass.InheritedAttributes;
-                foreach(Tuple<OntologyNode.Attribute, OntologyClass> attr in inheritedAttrs)
-                {
-                    if (attr.Item2.Name.Equals(cellAttrName))
-                    {
-                        e.Cancel = false;
-                        return;
-                    }
-                }
-            }
-
-            e.Cancel = true;
-            grid.Rows[e.RowIndex].ErrorText = EditorConstants.CONDITION_DATAGRID_ERROR_ATT_NAME;
-
-        }
-
+        
         FactSchemeBank getCurrentBank()
         {
             return bankListView.Tag as FactSchemeBank;
@@ -597,42 +546,9 @@ namespace HelloForms
 
         private void updateDataGrid()
         {
-            //dataGridView1.Rows.Clear();
             ((DataGridViewComboBoxColumn)dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL]).DataSource =
                 ((Argument)dataGridView1.Tag).Klass.AllAttributes.Select(x => x.Name).ToList();
-            /*foreach (var item in ((Argument)dataGridView1.Tag).Сonditions)
-            {
-                int n = dataGridView1.Rows.Add();
-                
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_TYPE_COL].ValueType =
-                typeof(Argument.ArgumentCondition.ConditionType);
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_TYPE_COL].Value =
-                    item.CondType;
-
-                //dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_ATTR_COL].Value =
-                //    item.CondType;
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_ATTR_COL].Value =
-                    item.Attribute;
-
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_COMPAR_COL].ValueType =
-                    typeof(Argument.ArgumentCondition.ComparisonType);
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_COMPAR_COL].Value =
-                    item.ComparType;
-
-                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_VALUES_COL].Value =
-                    item.Value;
-            }
-            */
         }
-
-        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
-        {
-
-        }
+        
     }
 }
