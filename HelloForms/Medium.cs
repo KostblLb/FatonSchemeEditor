@@ -246,6 +246,17 @@ namespace HelloForms
                     var dstConn = dstNode.Connectors.First(x => x.Tag == rule.Attribute);
                     nv.AddConnection(srcConn, dstConn, false);
                 }
+                if (res.EditObject != null)
+                {
+                    var srcNode = nodes.First(x => x.Tag == res.EditObject);
+                    var srcConn = srcNode.Connectors.First(x =>
+                        x.Tag == res.EditObject &&
+                        x.Mode == Connector.ConnectorMode.Output);
+                    var dstConn = dstNode.Connectors.First(x => 
+                        x.Tag == res && 
+                        x.Mode == Connector.ConnectorMode.Input);
+                    nv.AddConnection(srcConn, dstConn, false);
+                }
                 //add functors and conditions
             }
         }

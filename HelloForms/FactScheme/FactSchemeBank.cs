@@ -95,8 +95,12 @@ namespace HelloForms
                         {
 
                         }
-
                     }
+                    if (xres.Attribute("ArgEdit") != null)
+                        result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute("ArgEdit").Value));                    
+                    if (xres.Attribute("ResultEdit") != null)
+                        result.EditObject = scheme.Results.Find(x => x.Name == xres.Attribute("ArgEdit").Value);
+
                 }
 
                 bank.Schemes.Add(scheme);

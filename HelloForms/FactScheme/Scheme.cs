@@ -138,13 +138,13 @@ namespace FactScheme
                         new XAttribute("Order", arg.Order),
                         new XAttribute("ClassName", arg.Klass.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
-                foreach(Condition cond in arg.Conditions)
+                foreach(var cond in arg.Сonditions)
                 {
                     XElement xcond =
                         new XElement("Condition",
-                            new XAttribute("Type", cond.ConditionType),
+                            new XAttribute("Type", cond.CondType),
                             new XAttribute("Attribute", cond.Attribute),
-                            new XAttribute("ComparType", cond.ComparisonType),
+                            new XAttribute("ComparType", cond.ComparType),
                             new XAttribute("Values", cond.Value));
                     xarg.Add(xcond);
                 }

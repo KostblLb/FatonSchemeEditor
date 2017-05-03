@@ -56,12 +56,18 @@ namespace HelloForms
         private void Form1_Load(object sender, EventArgs e)
         {
             //ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
+            dataGridView1.AutoGenerateColumns = false;
 
-            DataGridViewComboBoxColumn conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
-            conditionTypeColumn.DataSource = Enum.GetValues(typeof(ConditionType));
+            var conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
+            conditionTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ConditionType);
+            conditionTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ConditionType));
 
-            DataGridViewComboBoxColumn comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
-            comparTypeColumn.DataSource = Enum.GetValues(typeof(ComparisonType));
+            //var attrColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL] as DataGridViewComboBoxColumn;
+            //attrColumn.CellTemplate.ValueType = typeof(OntologyNode.Attribute);
+
+            var comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
+            comparTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ComparisonType);
+            comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
 
             if(!String.IsNullOrEmpty(Properties.Settings.Default["OntologyPath"] as String))
             {
@@ -318,6 +324,7 @@ namespace HelloForms
         }
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
+            return;
             var grid = sender as DataGridView;
             grid.Rows[e.RowIndex].ErrorText = null;
             if (grid.Tag == null)
@@ -398,9 +405,23 @@ namespace HelloForms
             {
                 var node = e.Source as network.Node;
                 if (node != null && node.Tag is Argument)
+                {
+                    var arg = node.Tag as Argument;
                     dataGridView1.Tag = node.Tag;
+                    dataGridView1.Enabled = true;
+                    updateDataGrid();
+                    var binding = new BindingSource();
+                    binding.DataSource = arg.Сonditions;
+                    dataGridView1.DataSource = binding;
+                    //dataGridView1.DataMember = "Conditions";
+                    //var attrColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL] as DataGridViewComboBoxColumn;
+                    //attrColumn.DataSource = ((Argument)node.Tag).Klass.AllAttributes.Select(x => x.Name);
+                }
                 else
+                {
                     dataGridView1.Tag = null;
+                    dataGridView1.Enabled = false;
+                }
             };
 
             elementHost.Child = nv;
@@ -427,6 +448,7 @@ namespace HelloForms
             updateBankListView();
 
             initNVHost(scheme);
+            dataGridView1.Enabled = false;
             CurrentScheme = scheme;
         }
 
@@ -484,6 +506,7 @@ namespace HelloForms
                 (neighbor.Tag as ISchemeComponent).RemoveUpper(comp);
             CurrentScheme.RemoveComponent(comp);
             Console.WriteLine("NV_NodeRemoving!");
+            dataGridView1.Enabled = false;
         }
 
         private void NV_ConnectionAdded(object sender, network.ConnectionEventArgs e)
@@ -539,6 +562,7 @@ namespace HelloForms
             if ((sender as ListView).SelectedItems.Count == 0)
                 return;
             CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as Scheme);
+            dataGridView1.Enabled = false;
         }
 
         private void schemesTabControl_Selected(object sender, TabControlEventArgs e)
@@ -569,6 +593,46 @@ namespace HelloForms
             var scheme = item.Tag as Scheme;
             if (scheme != null && e.Label != "")
                 scheme.Name = e.Label;
+        }
+
+        private void updateDataGrid()
+        {
+            //dataGridView1.Rows.Clear();
+            ((DataGridViewComboBoxColumn)dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL]).DataSource =
+                ((Argument)dataGridView1.Tag).Klass.AllAttributes.Select(x => x.Name).ToList();
+            /*foreach (var item in ((Argument)dataGridView1.Tag).Сonditions)
+            {
+                int n = dataGridView1.Rows.Add();
+                
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_TYPE_COL].ValueType =
+                typeof(Argument.ArgumentCondition.ConditionType);
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_TYPE_COL].Value =
+                    item.CondType;
+
+                //dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_ATTR_COL].Value =
+                //    item.CondType;
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_ATTR_COL].Value =
+                    item.Attribute;
+
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_COMPAR_COL].ValueType =
+                    typeof(Argument.ArgumentCondition.ComparisonType);
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_COMPAR_COL].Value =
+                    item.ComparType;
+
+                dataGridView1.Rows[n].Cells[EditorConstants.CONDITION_DATAGRID_VALUES_COL].Value =
+                    item.Value;
+            }
+            */
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
+        {
+
         }
     }
 }

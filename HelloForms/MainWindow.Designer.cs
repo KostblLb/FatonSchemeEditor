@@ -63,10 +63,12 @@
             this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.сonditionsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.CondType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Attribute = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.ComparType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.argumentBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
@@ -93,6 +95,8 @@
             this.schemeTabXMLPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -463,17 +467,16 @@
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ActiveBorder;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.dataGridViewTextBoxColumn3,
-            this.dataGridViewTextBoxColumn4});
-            this.dataGridView1.DataSource = this.conditionBindingSource;
+            this.CondType,
+            this.Attribute,
+            this.ComparType,
+            this.Value});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Enabled = false;
             this.dataGridView1.Location = new System.Drawing.Point(4, 19);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView1.Name = "dataGridView1";
@@ -483,37 +486,43 @@
             this.dataGridView1.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValidated);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
-            // dataGridViewTextBoxColumn1
+            // сonditionsBindingSource
             // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "ConditionType";
-            this.dataGridViewTextBoxColumn1.HeaderText = "ConditionType";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.сonditionsBindingSource.DataMember = "Сonditions";
+            this.сonditionsBindingSource.DataSource = this.argumentBindingSource;
             // 
-            // dataGridViewTextBoxColumn2
+            // CondType
             // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "Attribute";
-            this.dataGridViewTextBoxColumn2.HeaderText = "Attribute";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.CondType.DataPropertyName = "CondType";
+            this.CondType.HeaderText = "Тип условия";
+            this.CondType.Name = "CondType";
+            this.CondType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
-            // dataGridViewTextBoxColumn3
+            // Attribute
             // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "ComparisonType";
-            this.dataGridViewTextBoxColumn3.HeaderText = "ComparisonType";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Attribute.DataPropertyName = "Attribute";
+            this.Attribute.HeaderText = "Атрибут";
+            this.Attribute.Name = "Attribute";
             // 
-            // dataGridViewTextBoxColumn4
+            // ComparType
             // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "Value";
-            this.dataGridViewTextBoxColumn4.HeaderText = "Value";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.ComparType.DataPropertyName = "ComparType";
+            this.ComparType.HeaderText = "Тип сравнения";
+            this.ComparType.Name = "ComparType";
+            // 
+            // Value
+            // 
+            this.Value.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Value.DataPropertyName = "Value";
+            this.Value.HeaderText = "Значение";
+            this.Value.Name = "Value";
+            // 
+            // argumentBindingSource
+            // 
+            this.argumentBindingSource.DataSource = typeof(FactScheme.Argument);
             // 
             // conditionBindingSource
             // 
-            this.conditionBindingSource.AllowNew = true;
             this.conditionBindingSource.DataSource = typeof(FactScheme.Condition);
             // 
             // MainWindow
@@ -556,6 +565,8 @@
             this.schemeTabXMLPage.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -574,7 +585,6 @@
         private System.Windows.Forms.SplitContainer nvAndConditionsContainer;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.BindingSource conditionBindingSource;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
@@ -593,10 +603,6 @@
         private System.Windows.Forms.TabPage schemeTabViewPage;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
-        private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewTextBoxColumn3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TreeView ontologyTreeView;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -607,6 +613,13 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        private System.Windows.Forms.BindingSource сonditionsBindingSource;
+        private System.Windows.Forms.BindingSource argumentBindingSource;
+        private System.Windows.Forms.BindingSource conditionBindingSource;
+        private System.Windows.Forms.DataGridViewComboBoxColumn CondType;
+        private System.Windows.Forms.DataGridViewComboBoxColumn Attribute;
+        private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
     }
 }
 

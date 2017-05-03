@@ -14,13 +14,25 @@ namespace FactScheme
     {
         public class ArgumentCondition
         {
+            public enum ConditionType { SEM, SEG, MORPH, SYNT }
+            public enum ComparisonType { EQ, NEQ };
+            
+            public ConditionType CondType { get; set; }
+            public string Attribute { get; set; }
+            public ComparisonType ComparType { get; set; }
+            public string Value { get; set; }
 
+            public ArgumentCondition()
+            {
+                Value = "";
+                Attribute = null;
+            }
         }
 
         OntologyClass _klass;
         bool _useInheritance;
         protected uint _order;
-        List<Condition> _conditions;
+        public List<ArgumentCondition> Сonditions { get; set; }
 
         public OntologyClass Klass
         {
@@ -41,24 +53,11 @@ namespace FactScheme
             }
         }
 
-        public List<Condition> Conditions
-        {
-            get { return _conditions; }
-        }
-
         public Argument(OntologyClass klass, string name = null, bool inherit = true)
         {
             _klass = klass;
             _useInheritance = inherit;
-            //_tag = tag;
-            _conditions = new List<Condition>();
-        }
-
-        public Condition AddContition(string attrName = "")
-        {
-            Condition cond = new Condition(this, attrName);
-            _conditions.Add(cond);
-            return cond;
+            Сonditions = new List<ArgumentCondition>();
         }
 
         #region ISchemeComponent implementation
