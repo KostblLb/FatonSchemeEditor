@@ -19,6 +19,9 @@ namespace HelloForms
     /// </summary>
     public class Medium
     {
+        public delegate void AttributeSetup(OntologyNode.Attribute attr, Argument arg);
+        public static event AttributeSetup onAttributeSetup;
+
         public static void AddSchemeConnection(Scheme scheme, Connector src, Connector dst)
         {
             if (dst.Tag == null || src.Tag == null)
@@ -74,7 +77,7 @@ namespace HelloForms
             info.Tag = argument;
 
             info.Sections = new List<NodeInfo.SectionInfo>();
-            
+
             info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
             argument.PropertyChanged += (s, e) =>
             {
@@ -82,40 +85,39 @@ namespace HelloForms
                     info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
             };
 
-            if (argument.ArgType == Argument.ArgumentType.IOBJECT)
-            {
-                var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
-
-                var inheritedAttrs = argument.Klass.InheritedAttributes.Select(i => i.Item1);
-                foreach (var inheritedAttr in inheritedAttrs)
-                    attrs.Add(inheritedAttr as OntologyNode.Attribute);
-
-                foreach (var attr in attrs)
-                {
-                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
-                    attrInfo.Data = attr;
-                    attrInfo.IsInput = false;
-                    attrInfo.IsOutput = true;
-                    var attrName = new Label();
-                    attrName.Content = attr.Name;
-                    attrInfo.UIPanel = attrName;
-                    info.Sections.Add(attrInfo);
-                }
-            }
-
-            else
+            foreach (var attr in argument.Attributes)
             {
                 NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
-                VocTheme theme = argument.Theme;
-                var attr = new OntologyNode.Attribute(theme);
                 attrInfo.Data = attr;
+                attrInfo.IsInput = false;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
-                attrName.Content = "Значение";
-                attrInfo.UIPanel = attrName;
+                if (argument.ArgType == Argument.ArgumentType.IOBJECT)
+                    attrName.Content = attr.Name;
+                else
+                    attrName.Content = "Значение";
+                if (attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN)
+                    attrName.ToolTip = attr.AttrType + " | " + attr.Theme.name;
+                else
+                    attrName.ToolTip = attr.AttrType;
+
+                WrapPanel panel = new WrapPanel();
+                Button attrSetup = new Button();
+                attrSetup.Height = 16;
+                attrSetup.Width = 16;
+                attrSetup.Content = "S";
+                attrSetup.ToolTip = "Изменить ограничения атрибута";
+                attrSetup.HorizontalAlignment = HorizontalAlignment.Right;
+                attrSetup.Click += (s, e) =>
+                {
+                    Medium.onAttributeSetup(attr, argument);
+                };
+
+                panel.Children.Add(attrName);
+                panel.Children.Add(attrSetup);
+                attrInfo.UIPanel = panel;
                 info.Sections.Add(attrInfo);
             }
-
             return info;
         }
 
@@ -142,7 +144,7 @@ namespace HelloForms
                 var input = e.SourceConnector.ParentNode.Tag;
                 if (input is Argument)
                 {
-                    if (result.Reference !=((Argument)input).Klass)
+                    if (result.Reference != ((Argument)input).Klass)
                         e.Valid = false;
                 }
                 else if (input is Result)
@@ -166,10 +168,12 @@ namespace HelloForms
                     attrInfo.Data = attr;
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = true;
-                    attrInfo.InputValidation = (s, e) => {
+                    attrInfo.InputValidation = (s, e) =>
+                    {
                         var src = e.SourceConnector.Tag as OntologyNode.Attribute;
                         var dst = e.DestConnector.Tag as OntologyNode.Attribute;
-                        if (src == null || dst == null) {
+                        if (src == null || dst == null)
+                        {
                             e.Valid = false;
                             return;
                         }
@@ -197,7 +201,7 @@ namespace HelloForms
             info.Tag = functor;
 
             info.NodeNameProperty = functor.ID;
-            
+
             var output = new NodeInfo.SectionInfo();
             output.IsInput = false;
             output.IsOutput = true;
@@ -274,8 +278,8 @@ namespace HelloForms
                     var srcConn = srcNode.Connectors.First(x =>
                         x.Tag == res.EditObject &&
                         x.Mode == Connector.ConnectorMode.Output);
-                    var dstConn = dstNode.Connectors.First(x => 
-                        x.Tag == res && 
+                    var dstConn = dstNode.Connectors.First(x =>
+                        x.Tag == res &&
                         x.Mode == Connector.ConnectorMode.Input);
                     nv.AddConnection(srcConn, dstConn, false);
                 }

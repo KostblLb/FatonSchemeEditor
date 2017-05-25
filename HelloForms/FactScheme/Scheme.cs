@@ -151,15 +151,18 @@ namespace FactScheme
                         new XAttribute("Type", arg.ArgType),
                         new XAttribute("ClassName", arg.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
-                foreach(var cond in arg.Сonditions)
+                foreach(var pair in arg.Сonditions)
                 {
-                    XElement xcond =
-                        new XElement("Condition",
-                            new XAttribute("Type", cond.CondType),
-                            new XAttribute("Attribute", cond.Attribute),
-                            new XAttribute("ComparType", cond.ComparType),
-                            new XAttribute("Values", cond.Value));
-                    xarg.Add(xcond);
+                    foreach (var cond in pair.Value)
+                    {
+                        XElement xcond =
+                            new XElement("Condition",
+                                new XAttribute("Attribute", pair.Key.Name),
+                                new XAttribute("Type", cond.CondType),
+                                new XAttribute("ComparType", cond.ComparType),
+                                new XAttribute("Values", cond.Value));
+                        xarg.Add(xcond);
+                    }
                 }
                 doc.Root.Add(xarg);
             }

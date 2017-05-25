@@ -54,6 +54,8 @@
             this.ontologyTreeView = new System.Windows.Forms.TreeView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dictionaryTreeView = new System.Windows.Forms.TreeView();
+            this.dictionaryTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,14 +69,11 @@
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
             this.schemeTabXMLPage = new System.Windows.Forms.TabPage();
             this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.argumentConditionsGroupBox = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.CondType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Attribute = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ComparType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dictionaryTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).BeginInit();
@@ -91,6 +90,7 @@
             this.ontologyAndDictionaryTabsBox.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.dictionaryTreeMenuStrip.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).BeginInit();
             this.tabsAndBankContainer.Panel1.SuspendLayout();
@@ -103,9 +103,8 @@
             this.nvAndConditionsContainer.SuspendLayout();
             this.schemesTabControl.SuspendLayout();
             this.schemeTabXMLPage.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.argumentConditionsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.dictionaryTreeMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // файлToolStripMenuItem
@@ -338,6 +337,21 @@
             this.dictionaryTreeView.Size = new System.Drawing.Size(186, 302);
             this.dictionaryTreeView.TabIndex = 0;
             // 
+            // dictionaryTreeMenuStrip
+            // 
+            this.dictionaryTreeMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.dictionaryTreeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.dictionaryTreeMenuStrip.Name = "ontologyTreeMenuStrip";
+            this.dictionaryTreeMenuStrip.Size = new System.Drawing.Size(112, 28);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(111, 24);
+            this.toolStripMenuItem1.Text = "dgsg";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.addDictionaryArgumentMenuItem_Click);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.listView1);
@@ -449,7 +463,7 @@
             // 
             // nvAndConditionsContainer.Panel2
             // 
-            this.nvAndConditionsContainer.Panel2.Controls.Add(this.groupBox1);
+            this.nvAndConditionsContainer.Panel2.Controls.Add(this.argumentConditionsGroupBox);
             this.nvAndConditionsContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.nvAndConditionsContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.nvAndConditionsContainer.Size = new System.Drawing.Size(561, 688);
@@ -503,18 +517,18 @@
             this.schemeXMLTextBox.Text = "";
             this.schemeXMLTextBox.WordWrap = false;
             // 
-            // groupBox1
+            // argumentConditionsGroupBox
             // 
-            this.groupBox1.Controls.Add(this.dataGridView1);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(561, 183);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Ограничения аргумента";
+            this.argumentConditionsGroupBox.Controls.Add(this.dataGridView1);
+            this.argumentConditionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.argumentConditionsGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.argumentConditionsGroupBox.Margin = new System.Windows.Forms.Padding(4);
+            this.argumentConditionsGroupBox.Name = "argumentConditionsGroupBox";
+            this.argumentConditionsGroupBox.Padding = new System.Windows.Forms.Padding(4);
+            this.argumentConditionsGroupBox.Size = new System.Drawing.Size(561, 183);
+            this.argumentConditionsGroupBox.TabIndex = 0;
+            this.argumentConditionsGroupBox.TabStop = false;
+            this.argumentConditionsGroupBox.Text = "Ограничения аргумента";
             // 
             // dataGridView1
             // 
@@ -523,7 +537,6 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CondType,
-            this.Attribute,
             this.ComparType,
             this.Value});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -534,6 +547,8 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView1.Size = new System.Drawing.Size(553, 160);
             this.dataGridView1.TabIndex = 1;
+            this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
+            this.dataGridView1.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dataGridView1_RowsRemoved);
             // 
             // CondType
             // 
@@ -541,12 +556,6 @@
             this.CondType.HeaderText = "Тип условия";
             this.CondType.Name = "CondType";
             this.CondType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // Attribute
-            // 
-            this.Attribute.DataPropertyName = "Attribute";
-            this.Attribute.HeaderText = "Атрибут";
-            this.Attribute.Name = "Attribute";
             // 
             // ComparType
             // 
@@ -560,21 +569,6 @@
             this.Value.DataPropertyName = "Value";
             this.Value.HeaderText = "Значение";
             this.Value.Name = "Value";
-            // 
-            // dictionaryTreeMenuStrip
-            // 
-            this.dictionaryTreeMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.dictionaryTreeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
-            this.dictionaryTreeMenuStrip.Name = "ontologyTreeMenuStrip";
-            this.dictionaryTreeMenuStrip.Size = new System.Drawing.Size(112, 28);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(111, 24);
-            this.toolStripMenuItem1.Text = "dgsg";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.addDictionaryArgumentMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -607,6 +601,7 @@
             this.ontologyAndDictionaryTabsBox.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.dictionaryTreeMenuStrip.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.tabsAndBankContainer.Panel1.ResumeLayout(false);
             this.tabsAndBankContainer.Panel2.ResumeLayout(false);
@@ -619,9 +614,8 @@
             this.nvAndConditionsContainer.ResumeLayout(false);
             this.schemesTabControl.ResumeLayout(false);
             this.schemeTabXMLPage.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
+            this.argumentConditionsGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.dictionaryTreeMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -637,7 +631,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer nvAndConditionsContainer;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox argumentConditionsGroupBox;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
@@ -669,16 +663,15 @@
         private System.Windows.Forms.BindingSource сonditionsBindingSource;
         private System.Windows.Forms.BindingSource argumentBindingSource;
         private System.Windows.Forms.BindingSource conditionBindingSource;
-        private System.Windows.Forms.DataGridViewComboBoxColumn CondType;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Attribute;
-        private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
         private System.Windows.Forms.TabControl ontologyAndDictionaryTabsBox;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TreeView dictionaryTreeView;
         private System.Windows.Forms.ContextMenuStrip dictionaryTreeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.DataGridViewComboBoxColumn CondType;
+        private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
     }
 }
 

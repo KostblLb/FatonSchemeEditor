@@ -6,3 +6,5 @@ NetworkViewLib/obj
 
 *.dll
 *.exe
+
+.vs/

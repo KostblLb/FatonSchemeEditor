@@ -47,10 +47,12 @@ namespace HelloForms
             this.addArgumentMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_ARG;
             this.addResultMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_RESULT;
 
-            ontologyTreeView.NodeMouseClick += (sender, args) => ontologyTreeView.SelectedNode = args.Node;
+            ontologyTreeView.NodeMouseClick += (s, e) => ontologyTreeView.SelectedNode = e.Node;
+            dictionaryTreeView.NodeMouseClick += (s, e) => dictionaryTreeView.SelectedNode = e.Node;
+
+            Medium.onAttributeSetup += (attr, arg) => updateDataGrid(attr, arg);
 
             NVHosts = new Dictionary<Scheme, ElementHost>();
-
             NVViewContextMenu = new System.Windows.Controls.ContextMenu();
             NVViewContextMenu.Items.Add("N.View context menu");
         }
@@ -403,25 +405,6 @@ namespace HelloForms
             nv.ContextMenu = NVViewContextMenu;
             nv.NodeSelected += (s, e) =>
             {
-                var node = e.Source as network.Node;
-                if (node != null && node.Tag is Argument)
-                {
-                    var arg = node.Tag as Argument;
-                    dataGridView1.Tag = node.Tag;
-                    dataGridView1.Enabled = true;
-                    updateDataGrid();
-                    var binding = new BindingSource();
-                    binding.DataSource = arg.Сonditions;
-                    dataGridView1.DataSource = binding;
-                    //dataGridView1.DataMember = "Conditions";
-                    //var attrColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL] as DataGridViewComboBoxColumn;
-                    //attrColumn.DataSource = ((Argument)node.Tag).Klass.AllAttributes.Select(x => x.Name);
-                }
-                else
-                {
-                    dataGridView1.Tag = null;
-                    dataGridView1.Enabled = false;
-                }
             };
 
             elementHost.Child = nv;
@@ -499,10 +482,7 @@ namespace HelloForms
             var node = e.Source as network.Node;
             
             ISchemeComponent comp = ((network.Node)e.Source).Tag as ISchemeComponent;
-            //var ineighbors = node.IncomingNeighbors;
             var oneighbors = node.OutgoingNeighbors;
-            //foreach (var neighbor in ineighbors)
-            //    comp.RemoveUpper(neighbor.Tag as ISchemeComponent);
             foreach (var neighbor in oneighbors)
                 (neighbor.Tag as ISchemeComponent).RemoveUpper(comp);
             CurrentScheme.RemoveComponent(comp);
@@ -613,12 +593,29 @@ namespace HelloForms
                 scheme.Name = e.Label;
         }
 
-        private void updateDataGrid()
+        private void updateDataGrid(OntologyNode.Attribute attr, Argument arg)
         {
-            var col = (DataGridViewComboBoxColumn)dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL];
-            var arg = (Argument)dataGridView1.Tag;
-                col.DataSource = arg.Attributes.Select(x => x.Name).ToList();
+            dataGridView1.Tag = arg;
+            dataGridView1.Enabled = true;
+            argumentConditionsGroupBox.Text = String.Format(
+                "Ограничения arg{0} {1} :: Атрибут {2}",
+                arg.Order, arg.Name, attr.Name);
+            //updateDataGrid();
+            var binding = new BindingSource();
+            if (!arg.Сonditions.ContainsKey(attr))
+                arg.Сonditions.Add(attr, new List<Argument.ArgumentCondition>());
+            binding.DataSource = arg.Сonditions[attr];
+            dataGridView1.DataSource = binding;
         }
 
+        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            
+        }
+
+        private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+
+        }
     }
 }

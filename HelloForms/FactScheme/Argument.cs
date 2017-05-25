@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -22,14 +23,14 @@ namespace FactScheme
             public enum ComparisonType { EQ, NEQ };
 
             public ConditionType CondType { get; set; }
-            public string Attribute { get; set; }
+            //public OntologyNode.Attribute Attribute { get; set; }
             public ComparisonType ComparType { get; set; }
             public string Value { get; set; }
 
             public ArgumentCondition()
             {
                 Value = "";
-                Attribute = null;
+                //Attribute = null;
             }
         }
 
@@ -37,10 +38,10 @@ namespace FactScheme
         OntologyClass _klass;
         VocTheme _theme;
         List<OntologyNode.Attribute> _attrs;
-        string _name;
+        //string _name;
         bool _useInheritance;
         protected uint _order;
-        public List<ArgumentCondition> Сonditions { get; set; }
+        public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Сonditions { get; set; }
 
         public ArgumentType ArgType
         {
@@ -90,7 +91,8 @@ namespace FactScheme
             _argType = ArgumentType.IOBJECT;
             _klass = klass;
             _useInheritance = inherit;
-            Сonditions = new List<ArgumentCondition>();
+            Сonditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
+            
             _attrs = klass.AllAttributes;
         }
 
@@ -98,7 +100,7 @@ namespace FactScheme
         {
             _argType = ArgumentType.TERMIN;
             _theme = theme;
-            Сonditions = new List<ArgumentCondition>();
+            Сonditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             _attrs = new List<OntologyNode.Attribute>();
             _attrs.Add(new OntologyNode.Attribute(theme));
         }
