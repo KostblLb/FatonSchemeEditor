@@ -16,5 +16,8 @@ namespace Faton
         public static string XML_BANK_NAME = "FATON_SCHEMES_BANK";
 
         public static string XML_ATTR_ARG_INHERITANCE = "AllowInheritance";
+        public static string XML_ATTR_ARG_TYPE = "Type";
+        public static string XML_ATTR_ARG_TYPE_IOBJECt = "IOBJECT";
+        public static string XML_ATTR_ARG_TYPE_TERMIN = "TERMIN";
     }
 }

@@ -114,13 +114,13 @@ namespace network
                     pSectionsGrid.Children.Add(sectInfo.UIPanel);
                 }
             }
-            //foreach (Connector c in pSectionsGrid.Children.OfType<Connector>().Union(
-            //    pNameGrid.Children.OfType<Connector>()))
-            //{
-            //    c.ParentNode = this;
-            //    if (!Connectors.Contains(c)) //remove mb?
-            //        Connectors.Add(c);
-            //}
+            foreach (Connector c in pSectionsGrid.Children.OfType<Connector>().Union(
+                pNameGrid.Children.OfType<Connector>()))
+            {
+                c.ParentNode = this;
+                if (!Connectors.Contains(c)) //remove mb?
+                    Connectors.Add(c);
+            }
 
             if (info.Menu == null)
                 this.ContextMenu = new ContextMenu();

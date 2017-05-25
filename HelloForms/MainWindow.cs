@@ -141,7 +141,7 @@ namespace HelloForms
             XElement xbank = doc.Root.Element(FatonConstants.XML_BANK_NAME);
             if (xbank == null)
                 return;
-            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology); //assuming ontology is loaded
+            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology, Themes); //assuming ontology is loaded
 
             XElement xmarkup = doc.Root.Element(EditorConstants.XML_EDITOR_MARKUP);
             if (xmarkup != null)

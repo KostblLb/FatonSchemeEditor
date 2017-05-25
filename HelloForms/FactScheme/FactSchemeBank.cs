@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using FactScheme;
 using Faton;
 using Ontology;
+using KlanVocabularyExtractor;
 
 namespace HelloForms
 { 
@@ -34,7 +35,7 @@ namespace HelloForms
             return doc;
         }
 
-        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology)
+        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology, List<VocTheme> themes)
         {
             FactSchemeBank bank = new FactSchemeBank();
             foreach(XElement xscheme in root.Elements())
@@ -49,22 +50,28 @@ namespace HelloForms
                 var functors = from x in xscheme.Elements()
                               where x.Name.LocalName == "Functor"
                               select x;
-                var relations = from x in xscheme.Elements()
-                              where x.Name.LocalName == "Relation"
-                              select x;
                 foreach (XElement xarg in arguments)
                 {
-                    OntologyClass argKlass;
-                    foreach(OntologyClass klass in ontology)
+                    Argument arg = null;
+                    if (xarg.Attribute(FatonConstants.XML_ATTR_ARG_TYPE).Value == FatonConstants.XML_ATTR_ARG_TYPE_TERMIN)
                     {
-                        argKlass = klass.Search(xarg.Attribute("ClassName").Value);
-                        if (argKlass == null)
-                            continue;
-                        Argument arg = scheme.AddArgument(argKlass);
-                        arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
-                        arg.Order = uint.Parse(xarg.Attribute("Order").Value);
-                        break;
+                        var theme = themes.Find(x => x.name == xarg.Attribute("ClassName").Value);
+                        arg = scheme.AddArgument(theme);
                     }
+                    else
+                    {
+                        OntologyClass argKlass;
+                        foreach (OntologyClass klass in ontology)
+                        {
+                            argKlass = klass.Search(xarg.Attribute("ClassName").Value);
+                            if (argKlass == null)
+                                continue;
+                            arg = scheme.AddArgument(argKlass);
+                            break;
+                        }
+                    }
+                    arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
+                    arg.Order = uint.Parse(xarg.Attribute("Order").Value);
                 }
                 foreach (XElement xres in results)
                 {
@@ -86,7 +93,7 @@ namespace HelloForms
                         if (ruleType == Result.RuleType.DEF)
                         {
                             Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute("ArgFrom").Value));
-                            OntologyNode.Attribute inputAttr = arg.Klass.AllAttributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
+                            OntologyNode.Attribute inputAttr = arg.Attributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
                             OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute("Attribute").Value);
                             result.AddRule(ruleType, attr, arg, inputAttr);
                         }
