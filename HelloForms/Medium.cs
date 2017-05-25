@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using FactScheme;
 using Ontology;
+using KlanVocabularyExtractor;
 
 namespace HelloForms
 {
@@ -73,28 +74,43 @@ namespace HelloForms
             info.Tag = argument;
 
             info.Sections = new List<NodeInfo.SectionInfo>();
-
-            info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
+            
+            info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
             argument.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == "Order")
-                    info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Klass.Name);
+                    info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
             };
 
-            var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
+            if (argument.ArgType == Argument.ArgumentType.IOBJECT)
+            {
+                var attrs = new List<OntologyNode.Attribute>(argument.Klass.OwnAttributes);
 
-            var inheritedAttrs = argument.Klass.InheritedAttributes.Select(i => i.Item1);
-            foreach (var inheritedAttr in inheritedAttrs)
-                attrs.Add(inheritedAttr as OntologyNode.Attribute);
+                var inheritedAttrs = argument.Klass.InheritedAttributes.Select(i => i.Item1);
+                foreach (var inheritedAttr in inheritedAttrs)
+                    attrs.Add(inheritedAttr as OntologyNode.Attribute);
 
-            foreach (var attr in attrs)
+                foreach (var attr in attrs)
+                {
+                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
+                    attrInfo.Data = attr;
+                    attrInfo.IsInput = false;
+                    attrInfo.IsOutput = true;
+                    var attrName = new Label();
+                    attrName.Content = attr.Name;
+                    attrInfo.UIPanel = attrName;
+                    info.Sections.Add(attrInfo);
+                }
+            }
+
+            else
             {
                 NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
-                attrInfo.Data = attr;
-                attrInfo.IsInput = false;
+                VocTheme theme = argument.Theme;
+                attrInfo.Data = theme;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
-                attrName.Content = attr.Name;
+                attrName.Content = "Значение";
                 attrInfo.UIPanel = attrName;
                 info.Sections.Add(attrInfo);
             }
@@ -156,8 +172,13 @@ namespace HelloForms
                             e.Valid = false;
                             return;
                         }
-                        if (src.Type != dst.Type)
+                        if (src.AttrType != dst.AttrType)
                             e.Valid = false;
+                        else if (src.AttrType == OntologyNode.Attribute.AttributeType.TERMIN)
+                        {
+                            if (src.Theme != dst.Theme)
+                                e.Valid = false;
+                        }
                     };
                     var attrName = new Label();
                     attrName.Content = attr.Name;

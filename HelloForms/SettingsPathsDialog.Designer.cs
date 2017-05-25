@@ -32,17 +32,17 @@
             this.label1 = new System.Windows.Forms.Label();
             this.browseOntologyButton = new System.Windows.Forms.Button();
             this.browseGramtabButton = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.browseDictionaryButton = new System.Windows.Forms.Button();
             this.textBoxOntologyPath = new System.Windows.Forms.TextBox();
             this.textBoxGramtabPath = new System.Windows.Forms.TextBox();
-            this.textBoxSomethingPath = new System.Windows.Forms.TextBox();
+            this.textBoxDictionaryPath = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.openOntologyDialog = new System.Windows.Forms.OpenFileDialog();
             this.openGramtabDialog = new System.Windows.Forms.OpenFileDialog();
-            this.openSomethingDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openDictionaryDialog = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,10 +56,10 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.browseOntologyButton, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.browseGramtabButton, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.button3, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.browseDictionaryButton, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.textBoxOntologyPath, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBoxGramtabPath, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxSomethingPath, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxDictionaryPath, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 12);
@@ -104,16 +104,16 @@
             this.browseGramtabButton.UseVisualStyleBackColor = true;
             this.browseGramtabButton.Click += new System.EventHandler(this.browseGramtabButton_Click);
             // 
-            // button3
+            // browseDictionaryButton
             // 
-            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.Location = new System.Drawing.Point(685, 73);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 29);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Обзор...";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.browseDictionaryButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.browseDictionaryButton.Location = new System.Drawing.Point(685, 73);
+            this.browseDictionaryButton.Name = "browseDictionaryButton";
+            this.browseDictionaryButton.Size = new System.Drawing.Size(75, 29);
+            this.browseDictionaryButton.TabIndex = 3;
+            this.browseDictionaryButton.Text = "Обзор...";
+            this.browseDictionaryButton.UseVisualStyleBackColor = true;
+            this.browseDictionaryButton.Click += new System.EventHandler(this.browseDictionaryButton_Click);
             // 
             // textBoxOntologyPath
             // 
@@ -133,14 +133,14 @@
             this.textBoxGramtabPath.TabIndex = 5;
             this.textBoxGramtabPath.TextChanged += new System.EventHandler(this.textBoxGramtabPath_TextChanged);
             // 
-            // textBoxSomethingPath
+            // textBoxDictionaryPath
             // 
-            this.textBoxSomethingPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxSomethingPath.Location = new System.Drawing.Point(122, 76);
-            this.textBoxSomethingPath.Name = "textBoxSomethingPath";
-            this.textBoxSomethingPath.Size = new System.Drawing.Size(557, 22);
-            this.textBoxSomethingPath.TabIndex = 6;
-            this.textBoxSomethingPath.TextChanged += new System.EventHandler(this.textBoxSomethingPath_TextChanged);
+            this.textBoxDictionaryPath.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBoxDictionaryPath.Location = new System.Drawing.Point(122, 76);
+            this.textBoxDictionaryPath.Name = "textBoxDictionaryPath";
+            this.textBoxDictionaryPath.Size = new System.Drawing.Size(557, 22);
+            this.textBoxDictionaryPath.TabIndex = 6;
+            this.textBoxDictionaryPath.TextChanged += new System.EventHandler(this.textBoxSomethingPath_TextChanged);
             // 
             // label2
             // 
@@ -156,11 +156,11 @@
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(29, 79);
+            this.label3.Location = new System.Drawing.Point(53, 79);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(87, 17);
+            this.label3.Size = new System.Drawing.Size(63, 17);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Ещё что-то:";
+            this.label3.Text = "Словарь";
             // 
             // cancelButton
             // 
@@ -193,10 +193,10 @@
             this.openGramtabDialog.FileName = "gramtab.xml";
             this.openGramtabDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openGramtabDialog_FileOk);
             // 
-            // openSomethingDialog
+            // openDictionaryDialog
             // 
-            this.openSomethingDialog.FileName = "something";
-            this.openSomethingDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openSomethingDialog_FileOk);
+            this.openDictionaryDialog.FileName = "dictionary.vc";
+            this.openDictionaryDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openDictionaryDialog_FileOk);
             // 
             // SettingsPathsDialog
             // 
@@ -227,16 +227,16 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button browseOntologyButton;
         private System.Windows.Forms.Button browseGramtabButton;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button browseDictionaryButton;
         private System.Windows.Forms.TextBox textBoxOntologyPath;
         private System.Windows.Forms.TextBox textBoxGramtabPath;
-        private System.Windows.Forms.TextBox textBoxSomethingPath;
+        private System.Windows.Forms.TextBox textBoxDictionaryPath;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.OpenFileDialog openOntologyDialog;
         private System.Windows.Forms.OpenFileDialog openGramtabDialog;
-        private System.Windows.Forms.OpenFileDialog openSomethingDialog;
+        private System.Windows.Forms.OpenFileDialog openDictionaryDialog;
     }
 }

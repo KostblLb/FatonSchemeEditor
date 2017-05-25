@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Faton;
+using KlanVocabularyExtractor;
 
 namespace Ontology
 {
@@ -14,32 +15,45 @@ namespace Ontology
         /// </summary>
         public static List<OntologyNode> Ontology; 
 
-
-        public enum Type { Class, Relation, Domain };
         public class Attribute
         {
-            readonly OntologyNode parent;
-            string type;
-            string name;
-            public Attribute(string myType, string myValue)
+            //CLASS is attr type for linking ontology classes typically to relation objects
+            //TERMIN is a Klan vocabulary theme (aka Klan class)
+            public enum AttributeType { STRING, INT, CLASS, DOMAIN, TERMIN};
+            VocTheme _theme; //if type is voctheme
+
+            readonly OntologyNode _parent;
+            AttributeType _attrType;
+            string _name;
+            public Attribute(AttributeType myType, string myName)
             {
-                parent = null;
-                type = myType;
-                name = myValue;
+                _parent = null;
+                _attrType = myType;
+                _name = myName;
             }
-            public Attribute(OntologyNode myParent, string myType, string myValue) : this(myType, myValue)
+            public Attribute(OntologyNode myParent, AttributeType myType, string myName) : this(myType, myName)
             {
-                parent = myParent;
+                _parent = myParent;
             }
-            public string Type
+            public Attribute(VocTheme myTheme) : this(AttributeType.TERMIN, myTheme.name)
             {
-                get { return type; }
-                set { type = value; }
+                _theme = myTheme;
+            }
+
+            public AttributeType AttrType
+            {
+                get { return _attrType; }
+                set { _attrType = value; }
             }
             public string Name
             {
-                get { return name; }
-                set { name = value; }
+                get { return _name; }
+                set { _name = value; }
+            }
+            public VocTheme Theme
+            {
+                get { return _theme; }
+                set { _theme = value; }
             }
         }
         public List<Attribute> attrs;
@@ -49,21 +63,8 @@ namespace Ontology
             get { return _name; }
             set { _name = value; }
         }
-        public Type type;
-        public string TypeString
-        {
-            get
-            {
-                if (type == Type.Class)
-                    return FatonConstants.NODE_CLASS;
-                else if (type == Type.Domain)
-                    return "Домен"; // FIXME
-                else if (type == Type.Relation)
-                    return FatonConstants.NODE_RELATION;
-                else
-                    return "";
-            }
-        }
+        //public Type type;
+        
         public void AddAttribute(Attribute att)
         {
             attrs.Add(att);
@@ -75,10 +76,9 @@ namespace Ontology
         {
             get { return attrs; }
         }
-        public OntologyNode(string myName, Type myType)
+        public OntologyNode(string myName)
         {
             _name = myName;
-            type = myType;
             attrs = new List<Attribute>();
         }
     }
@@ -135,7 +135,7 @@ namespace Ontology
                 return allAttrs;
             }
         }
-        public OntologyClass(string myName) : base(myName, Type.Class)
+        public OntologyClass(string myName) : base(myName)
         {
             _children = new List<OntologyClass>();
             _parents = new List<OntologyClass>();

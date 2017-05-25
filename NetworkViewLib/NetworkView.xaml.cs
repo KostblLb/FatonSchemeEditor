@@ -36,7 +36,6 @@ namespace network
 
         private Node _selectedNode;
         public Node SelectedNode { get { return _selectedNode; } }
-        
 
         #region UI drawing
         private Path connectorToMouseCurve;

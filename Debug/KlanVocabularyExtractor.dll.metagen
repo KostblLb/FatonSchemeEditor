@@ -1,0 +1,30 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly KlanVocabularyExtractor, Version=1.0.*, Culture=Инвариантный язык (Инвариантная страна): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class KlanVocabularyExtractor.VocTheme: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.String name : Public
+    System.Collections.Generic.List`1[KlanVocabularyExtractor.VocTheme] parents : Public
+    System.Collections.Generic.List`1[KlanVocabularyExtractor.VocTheme] children : Public
+  Methods:
+    Equals(VocTheme): PrivateScope, Public, HideBySig
+Class KlanVocabularyExtractor.VocEntry: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.String word : Public
+    KlanVocabularyExtractor.VocTheme wordClass : Public
+Class KlanVocabularyExtractor.Extractor: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(System.String ByRef): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    ParseVocabulary(String&): PrivateScope, Public, HideBySig
+    Themes(): PrivateScope, Public, HideBySig

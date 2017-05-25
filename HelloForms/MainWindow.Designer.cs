@@ -44,9 +44,11 @@
             this.ontologyTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addArgumentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addResultMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сonditionsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.argumentBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.ontologyTreeView = new System.Windows.Forms.TreeView();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -63,15 +65,19 @@
             this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.сonditionsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.CondType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Attribute = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ComparType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.argumentBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.ontologyAndDictionaryTabsBox = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dictionaryTreeView = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
             this.mainContainer.Panel2.SuspendLayout();
@@ -80,7 +86,6 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).BeginInit();
             this.tabsAndBankContainer.Panel1.SuspendLayout();
@@ -95,9 +100,9 @@
             this.schemeTabXMLPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).BeginInit();
+            this.ontologyAndDictionaryTabsBox.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // файлToolStripMenuItem
@@ -202,21 +207,34 @@
             this.addArgumentMenuItem,
             this.addResultMenuItem});
             this.ontologyTreeMenuStrip.Name = "ontologyTreeMenuStrip";
-            this.ontologyTreeMenuStrip.Size = new System.Drawing.Size(118, 56);
+            this.ontologyTreeMenuStrip.Size = new System.Drawing.Size(112, 52);
             // 
             // addArgumentMenuItem
             // 
             this.addArgumentMenuItem.Name = "addArgumentMenuItem";
-            this.addArgumentMenuItem.Size = new System.Drawing.Size(117, 26);
+            this.addArgumentMenuItem.Size = new System.Drawing.Size(111, 24);
             this.addArgumentMenuItem.Text = "dgsg";
             this.addArgumentMenuItem.Click += new System.EventHandler(this.addArgumentMenuItem_Click);
             // 
             // addResultMenuItem
             // 
             this.addResultMenuItem.Name = "addResultMenuItem";
-            this.addResultMenuItem.Size = new System.Drawing.Size(117, 26);
+            this.addResultMenuItem.Size = new System.Drawing.Size(111, 24);
             this.addResultMenuItem.Text = "asdf";
             this.addResultMenuItem.Click += new System.EventHandler(this.addResultMenuItem_Click);
+            // 
+            // сonditionsBindingSource
+            // 
+            this.сonditionsBindingSource.DataMember = "Сonditions";
+            this.сonditionsBindingSource.DataSource = this.argumentBindingSource;
+            // 
+            // argumentBindingSource
+            // 
+            this.argumentBindingSource.DataSource = typeof(FactScheme.Argument);
+            // 
+            // conditionBindingSource
+            // 
+            this.conditionBindingSource.DataSource = typeof(FactScheme.Condition);
             // 
             // mainContainer
             // 
@@ -251,7 +269,7 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.groupBox3);
+            this.splitContainer2.Panel1.Controls.Add(this.ontologyAndDictionaryTabsBox);
             this.splitContainer2.Panel1MinSize = 200;
             // 
             // splitContainer2.Panel2
@@ -263,27 +281,15 @@
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.window_SplitterMoved);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.ontologyTreeView);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(0, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.groupBox3.Size = new System.Drawing.Size(200, 337);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Дерево онтологии";
-            // 
             // ontologyTreeView
             // 
             this.ontologyTreeView.AllowDrop = true;
             this.ontologyTreeView.ContextMenuStrip = this.ontologyTreeMenuStrip;
             this.ontologyTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ontologyTreeView.Location = new System.Drawing.Point(3, 20);
+            this.ontologyTreeView.Location = new System.Drawing.Point(3, 3);
             this.ontologyTreeView.Margin = new System.Windows.Forms.Padding(4);
             this.ontologyTreeView.Name = "ontologyTreeView";
-            this.ontologyTreeView.Size = new System.Drawing.Size(194, 314);
+            this.ontologyTreeView.Size = new System.Drawing.Size(186, 302);
             this.ontologyTreeView.TabIndex = 1;
             this.ontologyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -484,11 +490,6 @@
             this.dataGridView1.Size = new System.Drawing.Size(553, 160);
             this.dataGridView1.TabIndex = 1;
             // 
-            // сonditionsBindingSource
-            // 
-            this.сonditionsBindingSource.DataMember = "Сonditions";
-            this.сonditionsBindingSource.DataSource = this.argumentBindingSource;
-            // 
             // CondType
             // 
             this.CondType.DataPropertyName = "CondType";
@@ -515,13 +516,46 @@
             this.Value.HeaderText = "Значение";
             this.Value.Name = "Value";
             // 
-            // argumentBindingSource
+            // ontologyAndDictionaryTabsBox
             // 
-            this.argumentBindingSource.DataSource = typeof(FactScheme.Argument);
+            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage1);
+            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage2);
+            this.ontologyAndDictionaryTabsBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ontologyAndDictionaryTabsBox.Location = new System.Drawing.Point(0, 0);
+            this.ontologyAndDictionaryTabsBox.Name = "ontologyAndDictionaryTabsBox";
+            this.ontologyAndDictionaryTabsBox.SelectedIndex = 0;
+            this.ontologyAndDictionaryTabsBox.Size = new System.Drawing.Size(200, 337);
+            this.ontologyAndDictionaryTabsBox.TabIndex = 2;
             // 
-            // conditionBindingSource
+            // tabPage1
             // 
-            this.conditionBindingSource.DataSource = typeof(FactScheme.Condition);
+            this.tabPage1.Controls.Add(this.ontologyTreeView);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(192, 308);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Онтология";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dictionaryTreeView);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(192, 308);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Словарь";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dictionaryTreeView
+            // 
+            this.dictionaryTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dictionaryTreeView.Location = new System.Drawing.Point(3, 3);
+            this.dictionaryTreeView.Name = "dictionaryTreeView";
+            this.dictionaryTreeView.Size = new System.Drawing.Size(186, 302);
+            this.dictionaryTreeView.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -540,6 +574,9 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ontologyTreeMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
             this.mainContainer.Panel1.ResumeLayout(false);
             this.mainContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
@@ -548,7 +585,6 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.tabsAndBankContainer.Panel1.ResumeLayout(false);
             this.tabsAndBankContainer.Panel2.ResumeLayout(false);
@@ -563,9 +599,9 @@
             this.schemeTabXMLPage.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.argumentBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.conditionBindingSource)).EndInit();
+            this.ontologyAndDictionaryTabsBox.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -601,7 +637,6 @@
         private System.Windows.Forms.TabPage schemeTabViewPage;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TreeView ontologyTreeView;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ListView listView1;
@@ -618,6 +653,10 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn Attribute;
         private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
         private System.Windows.Forms.DataGridViewTextBoxColumn Value;
+        private System.Windows.Forms.TabControl ontologyAndDictionaryTabsBox;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TreeView dictionaryTreeView;
     }
 }
 

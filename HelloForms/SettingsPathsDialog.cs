@@ -14,7 +14,7 @@ namespace HelloForms
     {
         private String _ontologyPath;
         private String _gramtabPath;
-        private String _somePath;
+        private String _dictionaryPath;
 
         public SettingsPathsDialog()
         {
@@ -33,21 +33,21 @@ namespace HelloForms
             else
                 _gramtabPath = null;
 
-            if (Properties.Settings.Default["SomePath"] != null)
-                _somePath = (String)Properties.Settings.Default["SomePath"];
+            if (Properties.Settings.Default["DictionaryPath"] != null)
+                _dictionaryPath = (String)Properties.Settings.Default["DictionaryPath"];
             else
-                _somePath = null;
+                _dictionaryPath = null;
 
             textBoxOntologyPath.Text = _ontologyPath;
             textBoxGramtabPath.Text = _gramtabPath;
-            textBoxSomethingPath.Text = _somePath;
+            textBoxDictionaryPath.Text = _dictionaryPath;
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default["OntologyPath"] = _ontologyPath;
             Properties.Settings.Default["GramtabPath"] = _gramtabPath;
-            Properties.Settings.Default["SomePath"] = _somePath;
+            Properties.Settings.Default["DictionaryPath"] = _dictionaryPath;
             Properties.Settings.Default.Save();
 
             DialogResult = DialogResult.OK;
@@ -72,7 +72,7 @@ namespace HelloForms
 
         private void textBoxSomethingPath_TextChanged(object sender, EventArgs e)
         {
-            _somePath = ((TextBox)sender).Text;
+            _dictionaryPath = ((TextBox)sender).Text;
         }
 
         private void browseOntologyButton_Click(object sender, EventArgs e)
@@ -95,14 +95,14 @@ namespace HelloForms
             textBoxGramtabPath.Text = openGramtabDialog.FileName;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void browseDictionaryButton_Click(object sender, EventArgs e)
         {
-
+            openDictionaryDialog.Filter = Locale.DICTIONARY_FORMAT_FILTER;
+            openDictionaryDialog.ShowDialog();
         }
-
-        private void openSomethingDialog_FileOk(object sender, CancelEventArgs e)
+        private void openDictionaryDialog_FileOk(object sender, CancelEventArgs e)
         {
-
+            textBoxDictionaryPath.Text = openDictionaryDialog.FileName;
         }
     }
 }

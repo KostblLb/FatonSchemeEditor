@@ -14,6 +14,7 @@ using System.IO;
 using Faton;
 using Ontology;
 using FactScheme;
+using KlanVocabularyExtractor;
 
 namespace HelloForms
 {
@@ -34,12 +35,13 @@ namespace HelloForms
         }
 
         FactSchemeBank Bank;
-
+        List<VocTheme> Themes;
 
         public MainWindow()
         {
-            InitializeComponent();
 
+            FloatingPointReset.Action();
+            InitializeComponent();
             //Ontology Tree localization
             //check MSDN's LocalizableAttribute for proper localization!
             this.addArgumentMenuItem.Text = Locale.ONTOLOGY_TREE_ADD_ARG;
@@ -66,18 +68,17 @@ namespace HelloForms
             comparTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ComparisonType);
             comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
 
-            if(!String.IsNullOrEmpty(Properties.Settings.Default["OntologyPath"] as String))
-            {
-                loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
-                createScheme();
-            }
+
+            loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
+            loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+            createScheme();
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             listView1.Clear();
             OntologyNode node = (OntologyNode)e.Node.Tag;
-            if (node.type == OntologyNode.Type.Class){
+            if (node is OntologyClass){
                 listView1.Columns.Add("Атрибут"); //bad hardcode
                 listView1.Columns.Add("Тип");
                 listView1.Columns.Add("Унаследован");
@@ -87,21 +88,16 @@ namespace HelloForms
 
                 foreach(OntologyNode.Attribute attr in attrs)
                 {
-                    string[] values = { attr.Name, attr.Type, "" };
+                    string[] values = { attr.Name, attr.AttrType.ToString(), "" };
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
                 foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
                 {
-                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.Type, inheritedAtt.Item2.Name};
+                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString(), inheritedAtt.Item2.Name};
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
-            }
-            else if (node.type == OntologyNode.Type.Relation)
-            {
-                listView1.Columns.Add("Атрибут");
-                //foreach(OntologyNode.Attribute attr in (Relation))
             }
             
         }
@@ -185,8 +181,11 @@ namespace HelloForms
             fstream.Close();
         }
 
+#region resource loading
         private void loadOntologyTree(String filename)
         {
+            if (String.IsNullOrEmpty(filename))
+                return;
             System.IO.FileStream fstream = null;
             try
             {
@@ -202,7 +201,7 @@ namespace HelloForms
                 return;
             }
 
-            List<OntologyNode> ontology = OntologyBuilder.fromXml(fstream);
+            List<OntologyNode> ontology = OntologyBuilder.fromXml(fstream, Themes);
             fstream.Close();
 
             ontology.Reverse();
@@ -225,7 +224,7 @@ namespace HelloForms
                 TreeNode treeNode = new TreeNode(ontNode.Name);
                 treeNode.Tag = ontNode;
                 baseNodeCollection.Add(treeNode);
-                if (ontNode.type == OntologyNode.Type.Class && ((OntologyClass)ontNode).Children.Count > 0)
+                if (ontNode is OntologyClass && ((OntologyClass)ontNode).Children.Count > 0)
                 {
                     baseNodeCollection = treeNode.Nodes;
                     s.Push(null); //trick to control baseNodeCollection
@@ -237,6 +236,54 @@ namespace HelloForms
             }
             OntologyNode.Ontology = ontology;
         }
+
+        private void loadDictionary(String path)
+        {
+
+            FloatingPointReset.Action();
+            if (path == null || path.Length == 0)
+                return;
+            Extractor ex = new Extractor(ref path);
+            List<VocTheme> themes = ex.Themes();
+            FloatingPointReset.Action();
+
+
+            //list always comes ordered so that parents are always defined before children (?)
+            themes.Reverse();
+            Stack<VocTheme> s = new Stack<VocTheme>(themes);
+            TreeNodeCollection baseNodeCollection = dictionaryTreeView.Nodes;
+            while (s.Any())
+            {
+                VocTheme theme = s.Pop();
+                if (theme == null)
+                {
+                    if (baseNodeCollection[0].Parent.Parent == null)
+                        baseNodeCollection = dictionaryTreeView.Nodes;
+                    else
+                        baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes;
+                    continue;
+                }
+                TreeNode treeNode = new TreeNode(theme.name);
+                treeNode.Tag = theme;
+
+                //make sure children are not added to the root
+                if (theme.parents.Count == 0 || baseNodeCollection != dictionaryTreeView.Nodes)
+                    baseNodeCollection.Add(treeNode);
+
+                if (theme.children.Count > 0)
+                {
+                    s.Push(null);
+                    foreach (VocTheme child in theme.children)
+                        s.Push(child);
+                    baseNodeCollection = treeNode.Nodes;
+                }
+            }
+
+            themes.Reverse();
+            Themes = themes;
+        }
+
+#endregion
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -312,6 +359,7 @@ namespace HelloForms
             if(dr == DialogResult.OK)
             {
                 loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+                loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
             }
         }
         
@@ -333,6 +381,7 @@ namespace HelloForms
             }
         }
 
+        //private System.Windows.Thickness nvCanvasOffset = new System.Windows.Thickness( -short.MaxValue / 2.0, -short.MaxValue / 2.0 , 0, 0);
         ElementHost initNVHost(Scheme scheme)
         {
             ElementHost elementHost = new ElementHost();
@@ -374,6 +423,7 @@ namespace HelloForms
             };
 
             elementHost.Child = nv;
+            //nv.Margin = nvCanvasOffset;
 
             NVHosts.Add(scheme, elementHost);
 

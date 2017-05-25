@@ -3,3 +3,6 @@ HelloForms/obj
 
 NetworkViewLib/bin
 NetworkViewLib/obj
+
+*.dll
+*.exe

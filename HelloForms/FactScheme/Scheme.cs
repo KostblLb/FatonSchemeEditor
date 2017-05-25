@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Xml.Linq;
 using Ontology;
+using KlanVocabularyExtractor;
 
 namespace FactScheme
 {
@@ -58,7 +59,18 @@ namespace FactScheme
             _name = name;
         }
 
-        public Argument AddArgument(OntologyClass klass, bool useInheritance = true)
+        public Argument AddArgument(VocTheme theme)
+        {
+            _saved = false;
+            Argument arg = new Argument(theme);
+            arg.Order = ++_numArgs;
+            _arguments.Add(arg);
+            Components.Add(arg);
+
+            return arg;
+        }
+
+        public Argument AddArgument(OntologyClass klass)
         {
             _saved = false;
             Argument arg = new Argument(klass, klass.Name);
@@ -136,6 +148,7 @@ namespace FactScheme
                 XElement xarg =
                     new XElement("Argument",
                         new XAttribute("Order", arg.Order),
+                        new XAttribute("Type", arg.ArgType),
                         new XAttribute("ClassName", arg.Klass.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
                 foreach(var cond in arg.Сonditions)

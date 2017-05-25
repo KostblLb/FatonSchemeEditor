@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ontology;
+using KlanVocabularyExtractor;
 
 namespace FactScheme
 {
@@ -12,6 +13,9 @@ namespace FactScheme
     //{
     public class Argument : ISchemeComponent, INotifyPropertyChanged
     {
+
+        public enum ArgumentType { IOBJECT, TERMIN };
+
         public class ArgumentCondition
         {
             public enum ConditionType { SEM, SEG, MORPH, SYNT }
@@ -29,14 +33,35 @@ namespace FactScheme
             }
         }
 
+        ArgumentType _argType;
         OntologyClass _klass;
+        VocTheme _theme;
+        string _name;
         bool _useInheritance;
         protected uint _order;
         public List<ArgumentCondition> Сonditions { get; set; }
 
+        public ArgumentType ArgType
+        {
+            get { return _argType; }
+        }
         public OntologyClass Klass
         {
             get { return _klass; }
+        }
+        public VocTheme Theme
+        {
+            get { return _theme; }
+        }
+        public string Name
+        {
+            get
+            {
+                if (ArgType == ArgumentType.IOBJECT)
+                    return Klass.Name;
+                else
+                    return Theme.name;
+            }
         }
         public bool Inheritance
         {
@@ -55,8 +80,16 @@ namespace FactScheme
 
         public Argument(OntologyClass klass, string name = null, bool inherit = true)
         {
+            _argType = ArgumentType.IOBJECT;
             _klass = klass;
             _useInheritance = inherit;
+            Сonditions = new List<ArgumentCondition>();
+        }
+
+        public Argument(VocTheme theme)
+        {
+            _argType = ArgumentType.TERMIN;
+            _theme = theme;
             Сonditions = new List<ArgumentCondition>();
         }
 

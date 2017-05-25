@@ -1,0 +1,7 @@
+﻿  Stdafx.cpp
+  AssemblyInfo.cpp
+  KlanVocabularyExtractor.cpp
+KlanVocabularyExtractor.cpp(32): warning C4018: <: несоответствие типов со знаком и без знака
+  Создание кода...
+  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
+  KlanVocabularyExtractor.vcxproj -> C:\Users\Пользователь\Documents\Visual Studio 2015\fatonschemeeditor\Debug\KlanVocabularyExtractor.dll

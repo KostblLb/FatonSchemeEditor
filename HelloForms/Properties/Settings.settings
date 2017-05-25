@@ -29,5 +29,8 @@
     <Setting Name="OntologyAndAttributesSplitter" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">337</Value>
     </Setting>
+    <Setting Name="DictionaryPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
