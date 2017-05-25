@@ -107,7 +107,8 @@ namespace HelloForms
             {
                 NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
                 VocTheme theme = argument.Theme;
-                attrInfo.Data = theme;
+                var attr = new OntologyNode.Attribute(theme);
+                attrInfo.Data = attr;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
                 attrName.Content = "Значение";

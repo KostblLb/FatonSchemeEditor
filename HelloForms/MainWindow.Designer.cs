@@ -49,7 +49,11 @@
             this.conditionBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.ontologyAndDictionaryTabsBox = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.ontologyTreeView = new System.Windows.Forms.TreeView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dictionaryTreeView = new System.Windows.Forms.TreeView();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -69,10 +73,8 @@
             this.Attribute = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ComparType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ontologyAndDictionaryTabsBox = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dictionaryTreeView = new System.Windows.Forms.TreeView();
+            this.dictionaryTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.сonditionsBindingSource)).BeginInit();
@@ -86,6 +88,9 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.ontologyAndDictionaryTabsBox.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).BeginInit();
             this.tabsAndBankContainer.Panel1.SuspendLayout();
@@ -100,9 +105,7 @@
             this.schemeTabXMLPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.ontologyAndDictionaryTabsBox.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.dictionaryTreeMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // файлToolStripMenuItem
@@ -281,6 +284,28 @@
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.window_SplitterMoved);
             // 
+            // ontologyAndDictionaryTabsBox
+            // 
+            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage1);
+            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage2);
+            this.ontologyAndDictionaryTabsBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ontologyAndDictionaryTabsBox.Location = new System.Drawing.Point(0, 0);
+            this.ontologyAndDictionaryTabsBox.Name = "ontologyAndDictionaryTabsBox";
+            this.ontologyAndDictionaryTabsBox.SelectedIndex = 0;
+            this.ontologyAndDictionaryTabsBox.Size = new System.Drawing.Size(200, 337);
+            this.ontologyAndDictionaryTabsBox.TabIndex = 2;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.ontologyTreeView);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(192, 308);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Онтология";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // ontologyTreeView
             // 
             this.ontologyTreeView.AllowDrop = true;
@@ -292,6 +317,26 @@
             this.ontologyTreeView.Size = new System.Drawing.Size(186, 302);
             this.ontologyTreeView.TabIndex = 1;
             this.ontologyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dictionaryTreeView);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(192, 308);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Словарь";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dictionaryTreeView
+            // 
+            this.dictionaryTreeView.ContextMenuStrip = this.dictionaryTreeMenuStrip;
+            this.dictionaryTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dictionaryTreeView.Location = new System.Drawing.Point(3, 3);
+            this.dictionaryTreeView.Name = "dictionaryTreeView";
+            this.dictionaryTreeView.Size = new System.Drawing.Size(186, 302);
+            this.dictionaryTreeView.TabIndex = 0;
             // 
             // groupBox4
             // 
@@ -516,46 +561,20 @@
             this.Value.HeaderText = "Значение";
             this.Value.Name = "Value";
             // 
-            // ontologyAndDictionaryTabsBox
+            // dictionaryTreeMenuStrip
             // 
-            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage1);
-            this.ontologyAndDictionaryTabsBox.Controls.Add(this.tabPage2);
-            this.ontologyAndDictionaryTabsBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ontologyAndDictionaryTabsBox.Location = new System.Drawing.Point(0, 0);
-            this.ontologyAndDictionaryTabsBox.Name = "ontologyAndDictionaryTabsBox";
-            this.ontologyAndDictionaryTabsBox.SelectedIndex = 0;
-            this.ontologyAndDictionaryTabsBox.Size = new System.Drawing.Size(200, 337);
-            this.ontologyAndDictionaryTabsBox.TabIndex = 2;
+            this.dictionaryTreeMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.dictionaryTreeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.dictionaryTreeMenuStrip.Name = "ontologyTreeMenuStrip";
+            this.dictionaryTreeMenuStrip.Size = new System.Drawing.Size(112, 28);
             // 
-            // tabPage1
+            // toolStripMenuItem1
             // 
-            this.tabPage1.Controls.Add(this.ontologyTreeView);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(192, 308);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Онтология";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.dictionaryTreeView);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 308);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Словарь";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // dictionaryTreeView
-            // 
-            this.dictionaryTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dictionaryTreeView.Location = new System.Drawing.Point(3, 3);
-            this.dictionaryTreeView.Name = "dictionaryTreeView";
-            this.dictionaryTreeView.Size = new System.Drawing.Size(186, 302);
-            this.dictionaryTreeView.TabIndex = 0;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(111, 24);
+            this.toolStripMenuItem1.Text = "dgsg";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.addDictionaryArgumentMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -585,6 +604,9 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.ontologyAndDictionaryTabsBox.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.tabsAndBankContainer.Panel1.ResumeLayout(false);
             this.tabsAndBankContainer.Panel2.ResumeLayout(false);
@@ -599,9 +621,7 @@
             this.schemeTabXMLPage.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.ontologyAndDictionaryTabsBox.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.dictionaryTreeMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -657,6 +677,8 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TreeView dictionaryTreeView;
+        private System.Windows.Forms.ContextMenuStrip dictionaryTreeMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

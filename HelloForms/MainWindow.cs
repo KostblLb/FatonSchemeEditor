@@ -88,13 +88,15 @@ namespace HelloForms
 
                 foreach(OntologyNode.Attribute attr in attrs)
                 {
-                    string[] values = { attr.Name, attr.AttrType.ToString(), "" };
+                    string theme = attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + attr.Theme.name : "";
+                    string[] values = { attr.Name, attr.AttrType.ToString() + theme, "" };
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
                 foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
                 {
-                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString(), inheritedAtt.Item2.Name};
+                    string theme = inheritedAtt.Item1.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + inheritedAtt.Item1.Theme.name : "";
+                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString() + theme, inheritedAtt.Item2.Name};
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
@@ -529,7 +531,24 @@ namespace HelloForms
             return ontologyClass;
         }
 
+        private VocTheme menuItemToTheme(ToolStripMenuItem item)
+        {
+            TreeNode selectedNode = ((item.GetCurrentParent() as ContextMenuStrip).SourceControl as TreeView).SelectedNode;
+            VocTheme theme = selectedNode.Tag as VocTheme;
+            return theme;
+        }
 
+
+        private void addDictionaryArgumentMenuItem_Click(object sender, EventArgs e)
+        {
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+            var theme = menuItemToTheme(sender as ToolStripMenuItem);
+            FactScheme.Argument arg = CurrentScheme.AddArgument(theme);
+
+            network.Node node = nv.AddNode(Medium.Convert(arg), true);
+        }
 
         private void addArgumentMenuItem_Click(object sender, EventArgs e)
         {
@@ -596,9 +615,10 @@ namespace HelloForms
 
         private void updateDataGrid()
         {
-            ((DataGridViewComboBoxColumn)dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL]).DataSource =
-                ((Argument)dataGridView1.Tag).Klass.AllAttributes.Select(x => x.Name).ToList();
+            var col = (DataGridViewComboBoxColumn)dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_ATTR_COL];
+            var arg = (Argument)dataGridView1.Tag;
+                col.DataSource = arg.Attributes.Select(x => x.Name).ToList();
         }
-        
+
     }
 }

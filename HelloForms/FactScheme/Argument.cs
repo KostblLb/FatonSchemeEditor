@@ -20,7 +20,7 @@ namespace FactScheme
         {
             public enum ConditionType { SEM, SEG, MORPH, SYNT }
             public enum ComparisonType { EQ, NEQ };
-            
+
             public ConditionType CondType { get; set; }
             public string Attribute { get; set; }
             public ComparisonType ComparType { get; set; }
@@ -36,6 +36,7 @@ namespace FactScheme
         ArgumentType _argType;
         OntologyClass _klass;
         VocTheme _theme;
+        List<OntologyNode.Attribute> _attrs;
         string _name;
         bool _useInheritance;
         protected uint _order;
@@ -52,6 +53,11 @@ namespace FactScheme
         public VocTheme Theme
         {
             get { return _theme; }
+        }
+
+        public List<OntologyNode.Attribute> Attributes
+        {
+            get { return _attrs; }
         }
         public string Name
         {
@@ -72,7 +78,8 @@ namespace FactScheme
         public uint Order
         {
             get { return _order; }
-            set {
+            set
+            {
                 _order = value;
                 NotifyPropertyChanged("Order");
             }
@@ -84,6 +91,7 @@ namespace FactScheme
             _klass = klass;
             _useInheritance = inherit;
             Сonditions = new List<ArgumentCondition>();
+            _attrs = klass.AllAttributes;
         }
 
         public Argument(VocTheme theme)
@@ -91,6 +99,8 @@ namespace FactScheme
             _argType = ArgumentType.TERMIN;
             _theme = theme;
             Сonditions = new List<ArgumentCondition>();
+            _attrs = new List<OntologyNode.Attribute>();
+            _attrs.Add(new OntologyNode.Attribute(theme));
         }
 
         #region ISchemeComponent implementation
@@ -108,7 +118,7 @@ namespace FactScheme
             return;
         }
         #endregion
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName = "")
         {

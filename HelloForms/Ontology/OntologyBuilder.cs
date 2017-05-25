@@ -42,8 +42,9 @@ namespace HelloForms
                     OntologyNode.Attribute.AttributeType attrType = (OntologyNode.Attribute.AttributeType)Enum.Parse(typeof(OntologyNode.Attribute.AttributeType), attrTypeStr.ToUpper());
                     if (attrType == OntologyNode.Attribute.AttributeType.TERMIN)
                     {
-                        var theme = themes.Find(x => x.name.Equals(attrName));
-                        currentClass.OwnAttributes.Add(new OntologyNode.Attribute(theme));
+                        string themeStr = attrElement.Attribute("theme").Value;
+                        var theme = themes.Find(x => x.name.Equals(themeStr));
+                        currentClass.OwnAttributes.Add(new OntologyNode.Attribute(theme, attrName));
                     }
                     else
                         currentClass.OwnAttributes.Add(new OntologyNode.Attribute(currentClass, attrType, attrName));

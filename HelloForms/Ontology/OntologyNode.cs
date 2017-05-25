@@ -35,8 +35,10 @@ namespace Ontology
             {
                 _parent = myParent;
             }
-            public Attribute(VocTheme myTheme) : this(AttributeType.TERMIN, myTheme.name)
+            public Attribute(VocTheme myTheme, string myName = null) : this(AttributeType.TERMIN, myName)
             {
+                if (myName == null)
+                    _name = myTheme.name;
                 _theme = myTheme;
             }
 

@@ -149,7 +149,7 @@ namespace FactScheme
                     new XElement("Argument",
                         new XAttribute("Order", arg.Order),
                         new XAttribute("Type", arg.ArgType),
-                        new XAttribute("ClassName", arg.Klass.Name),
+                        new XAttribute("ClassName", arg.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
                 foreach(var cond in arg.Сonditions)
                 {
