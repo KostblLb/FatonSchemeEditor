@@ -31,6 +31,7 @@ namespace HelloForms
                 schemeTabViewPage.Controls.RemoveByKey(EditorConstants.TABPAGE_WPF_HOST_NAME);
                 schemeTabViewPage.Controls.Add(NVHosts[value]);
                 schemeTabViewPage.Tag = value;
+                schemeTabViewPage.Text = string.Format("Схема ({0})", value.Name);
             }
         }
 
@@ -182,6 +183,7 @@ namespace HelloForms
                 }
             }
             updateBankListView();
+            CurrentScheme = Bank.Schemes[0];
             fstream.Close();
         }
 
@@ -385,6 +387,12 @@ namespace HelloForms
             }
         }
 
+        private void bankListView_Click(object sender, EventArgs e)
+        {
+            //bankListView.select
+            return;
+        }
+
         //private System.Windows.Thickness nvCanvasOffset = new System.Windows.Thickness( -short.MaxValue / 2.0, -short.MaxValue / 2.0 , 0, 0);
         ElementHost initNVHost(Scheme scheme)
         {
@@ -421,19 +429,39 @@ namespace HelloForms
         }
         private void createScheme()
         {
-            //create new fact scheme
-            Scheme scheme = new Scheme(EditorConstants.DEFAULT_SCHEME_NAME);
             if (Bank == null)
             {
                 Bank = new FactSchemeBank(EditorConstants.DEFAULT_BANK_NAME);
                 bankListView.Tag = Bank;
             }
-            getCurrentBank().Schemes.Add(scheme);
+            //create new fact scheme
+            int defaultSchemeCount = 1;
+            while (Bank.Schemes.Find(x => x.Name == EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount) != null)
+                defaultSchemeCount++;
+            Scheme scheme = new Scheme(EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount);
+
+            Bank.Schemes.Add(scheme);
             updateBankListView();
 
             initNVHost(scheme);
             dataGridView1.Enabled = false;
             CurrentScheme = scheme;
+        }
+        
+        private void removeSchemeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (bankListView.SelectedIndices.Count == 0)
+                return;
+            int index = bankListView.SelectedIndices[0];
+            if (Bank.Schemes[index] == CurrentScheme)
+                CurrentScheme = Bank.Schemes[0];
+
+            Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
+
+            if (Bank.Schemes.Count == 0)
+                createScheme();
+
+            updateBankListView();
         }
 
         private network.NetworkView getCurrentNetworkView()
@@ -617,5 +645,6 @@ namespace HelloForms
         {
 
         }
+
     }
 }

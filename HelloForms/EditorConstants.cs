@@ -19,7 +19,7 @@ namespace HelloForms
 
         public const string RESULT_NAME_NEW = "Новый результат";
 
-        public const string DEFAULT_SCHEME_NAME = "Новая схема";
+        public const string DEFAULT_SCHEME_NAME = "НоваяСхема";
         public const string DEFAULT_BANK_NAME = "Новый банк";
 
         public static string XML_EDITOR_ROOT_NAME = "FATON_EDITOR_FILE";

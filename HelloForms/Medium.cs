@@ -187,6 +187,9 @@ namespace HelloForms
                     };
                     var attrName = new Label();
                     attrName.Content = attr.Name;
+                    attrName.ToolTip = String.Format("{0}{1}",
+                        attr.AttrType, 
+                        attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? " | " + attr.Theme.name : "");
                     attrInfo.UIPanel = attrName;
                     info.Sections.Add(attrInfo);
                 }

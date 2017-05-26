@@ -64,6 +64,8 @@
             this.tabsAndBankContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.bankListView = new System.Windows.Forms.ListView();
+            this.bankContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeSchemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nvAndConditionsContainer = new System.Windows.Forms.SplitContainer();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
@@ -97,6 +99,7 @@
             this.tabsAndBankContainer.Panel2.SuspendLayout();
             this.tabsAndBankContainer.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.bankContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).BeginInit();
             this.nvAndConditionsContainer.Panel1.SuspendLayout();
             this.nvAndConditionsContainer.Panel2.SuspendLayout();
@@ -120,7 +123,8 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
             this.openToolStripMenuItem.Text = "Открыть...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -128,14 +132,15 @@
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
             this.saveAsToolStripMenuItem.Text = "Сохранить...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // mainToolStripNewScheme
             // 
             this.mainToolStripNewScheme.Name = "mainToolStripNewScheme";
-            this.mainToolStripNewScheme.Size = new System.Drawing.Size(217, 26);
+            this.mainToolStripNewScheme.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.mainToolStripNewScheme.Size = new System.Drawing.Size(226, 26);
             this.mainToolStripNewScheme.Text = "Новая схема";
             this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
@@ -343,13 +348,14 @@
             this.dictionaryTreeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
             this.dictionaryTreeMenuStrip.Name = "ontologyTreeMenuStrip";
-            this.dictionaryTreeMenuStrip.Size = new System.Drawing.Size(112, 28);
+            this.dictionaryTreeMenuStrip.Size = new System.Drawing.Size(240, 28);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(111, 24);
-            this.toolStripMenuItem1.Text = "dgsg";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(239, 24);
+            this.toolStripMenuItem1.Text = "Добавить как аргумент";
+            this.toolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolStripMenuItem1.Click += new System.EventHandler(this.addDictionaryArgumentMenuItem_Click);
             // 
             // groupBox4
@@ -434,6 +440,7 @@
             // 
             // bankListView
             // 
+            this.bankListView.ContextMenuStrip = this.bankContextMenuStrip;
             this.bankListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bankListView.FullRowSelect = true;
             this.bankListView.GridLines = true;
@@ -445,7 +452,23 @@
             this.bankListView.UseCompatibleStateImageBehavior = false;
             this.bankListView.View = System.Windows.Forms.View.List;
             this.bankListView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.bankListView_AfterLabelEdit);
+            this.bankListView.Click += new System.EventHandler(this.bankListView_Click);
             this.bankListView.DoubleClick += new System.EventHandler(this.bankListView_DoubleClick);
+            // 
+            // bankContextMenuStrip
+            // 
+            this.bankContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.bankContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeSchemeToolStripMenuItem});
+            this.bankContextMenuStrip.Name = "bankContextMenuStrip";
+            this.bankContextMenuStrip.Size = new System.Drawing.Size(179, 28);
+            // 
+            // removeSchemeToolStripMenuItem
+            // 
+            this.removeSchemeToolStripMenuItem.Name = "removeSchemeToolStripMenuItem";
+            this.removeSchemeToolStripMenuItem.Size = new System.Drawing.Size(178, 24);
+            this.removeSchemeToolStripMenuItem.Text = "Удалить схему";
+            this.removeSchemeToolStripMenuItem.Click += new System.EventHandler(this.removeSchemeToolStripMenuItem_Click);
             // 
             // nvAndConditionsContainer
             // 
@@ -532,6 +555,7 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ActiveBorder;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -540,11 +564,13 @@
             this.ComparType,
             this.Value});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dataGridView1.Enabled = false;
             this.dataGridView1.Location = new System.Drawing.Point(4, 19);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(553, 160);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
@@ -608,6 +634,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).EndInit();
             this.tabsAndBankContainer.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.bankContextMenuStrip.ResumeLayout(false);
             this.nvAndConditionsContainer.Panel1.ResumeLayout(false);
             this.nvAndConditionsContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).EndInit();
@@ -672,6 +699,8 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn CondType;
         private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
         private System.Windows.Forms.DataGridViewTextBoxColumn Value;
+        private System.Windows.Forms.ContextMenuStrip bankContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem removeSchemeToolStripMenuItem;
     }
 }
 
