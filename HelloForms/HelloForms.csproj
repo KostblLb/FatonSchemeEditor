@@ -67,6 +67,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditorProject.cs" />
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
@@ -155,18 +156,21 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\wrench.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\KlanVocabularyExtractor\KlanVocabularyExtractor.vcxproj">
       <Project>{96f3c74e-a088-4152-b439-e2e083e9ce20}</Project>
-      <Name>KlanVocabularyExtractor</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Name>VocabularyExtractor</Name>
     </ProjectReference>
     <ProjectReference Include="..\NetworkViewLib\NetworkViewLib.csproj">
       <Project>{6f552069-ed70-4909-a982-a1c6333318c6}</Project>
       <Name>NetworkViewLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wrench.png" />
+    <ProjectReference Include="..\Shared\Shared.vcxproj">
+      <Project>{1a43b7ae-2639-4a6b-be86-fb2076bf2b31}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -46,10 +46,13 @@ namespace network
         
         public ContextMenu Menu;
 
+        public System.Windows.Media.Color FillColor;
+
         public NodeInfo()
         {
             Sections = new List<SectionInfo>();
             Header = new HeaderInfo();
+            FillColor = System.Windows.Media.Colors.White;
         }
     }
 }

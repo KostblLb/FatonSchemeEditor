@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using FactScheme;
 using Ontology;
-using KlanVocabularyExtractor;
+using VocabularyExtractor;
 
 namespace HelloForms
 {
@@ -68,6 +68,7 @@ namespace HelloForms
             }
         }
 
+        #region convertations
         ///convert factscheme argument into nv node
         ///
         public static NodeInfo Convert(FactScheme.Argument argument)
@@ -118,6 +119,9 @@ namespace HelloForms
                 attrInfo.UIPanel = panel;
                 info.Sections.Add(attrInfo);
             }
+
+            info.FillColor = System.Windows.Media.Colors.LightSkyBlue;
+
             return info;
         }
 
@@ -195,6 +199,8 @@ namespace HelloForms
                 }
             }
 
+            info.FillColor = System.Windows.Media.Colors.LightSeaGreen;
+
             return info;
         }
 
@@ -227,9 +233,43 @@ namespace HelloForms
             return info;
         }
 
+        public static NodeInfo Convert(FactScheme.Condition condition)
+        {
+            var info = new NodeInfo();
+            info.Tag = condition;
+
+            info.NodeNameProperty = "Условие схемы";
+
+            var positionInfoSection = new NodeInfo.SectionInfo();
+            ComboBox posCb = new ComboBox();
+            posCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
+            posCb.SelectionChanged += (s, e) =>
+            {
+                condition.CPosition = (FactScheme.Condition.ConditionPosition)posCb.SelectedItem;
+            };
+            positionInfoSection.UIPanel = posCb;
+
+            var contactInfoSection = new NodeInfo.SectionInfo();
+            ComboBox contactCb = new ComboBox();
+            contactCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionContact));
+            contactCb.SelectionChanged += (s, e) =>
+            {
+                condition.CContact = (FactScheme.Condition.ConditionContact)contactCb.SelectedItem;
+            };
+            contactInfoSection.UIPanel = contactCb;
+
+            info.Sections.Add(positionInfoSection);
+            info.Sections.Add(contactInfoSection);
+
+            info.FillColor = System.Windows.Media.Colors.Gold;
+
+            return info;
+        }
+        #endregion convertations
         private static Style typeNameStyle;
         private static Style infoTextStyle;
 
+        #region various panels
         private static StackPanel ResultInfoPanel(FactScheme.Result result)
         {
             StackPanel stackPanel = new StackPanel();
@@ -258,6 +298,7 @@ namespace HelloForms
 
             return stackPanel;
         }
+        #endregion various panels
 
         //connect nodes by hand
         public static void LoadViewFromScheme(NetworkView nv, Scheme scheme)

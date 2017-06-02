@@ -15,19 +15,24 @@ namespace HelloForms
 
         public const string TABPAGE_WPF_HOST_NAME = "TABPAGE_WPF_HOST";
 
-        public const string CONDITION_DATAGRID_ERROR_ATT_NAME = "Такого атрибута не существует";
+        public const string RESULT_NAME_NEW = "Новый результат"; //move to locale
 
-        public const string RESULT_NAME_NEW = "Новый результат";
+        public const string DEFAULT_SCHEME_NAME = "НоваяСхема"; //move to locale
+        public const string DEFAULT_BANK_NAME = "Новый банк"; //move to locale
 
-        public const string DEFAULT_SCHEME_NAME = "НоваяСхема";
-        public const string DEFAULT_BANK_NAME = "Новый банк";
-
-        public static string XML_EDITOR_ROOT_NAME = "FATON_EDITOR_FILE";
+        public static string XML_EDITOR_ROOT_NAME = "FATON_EDITOR_PROJECT";
         public static string XML_EDITOR_MARKUP = "FATON_EDITOR_MARKUP";
+        public static string XML_PROJECT_ONTOLOGY = "ONTOLOGY";
+        public static string XML_PROJECT_DICTIONARY = "DICTIONARY";
+        public static string XML_PROJECT_BANK = "BANK";
+
+        public static string XML_PROJECT_DICTIONARYTHEMENAME ="name";
+        public static string XML_PROJECT_DICTIONARYBASE = "base";
 
         public static int SIMPLE_XML = 1, EDITOR_XML = 2;
 
-        public static string NV_CMENU_NODE_RM = "Удалить узел";
+        public static string NV_CMENU_NODE_RM = "Удалить узел"; //move to locale
+
 
     }
 }

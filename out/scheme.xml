@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<FATON_EDITOR_FILE>
-  <FATON_SCHEMES_BANK>
-    <Новая_схема>
-      <Argument Order="1" ClassName="Деятельность" AllowInheritance="true" />
-      <Result Name="NewResult" Type="Create" ReferenceType="OntologyClass" ClassName="Организация">
-        <Rule Attribute="Название" Type="DEF" ArgFrom="1" AttrFrom="Описание деятельности" />
-      </Result>
-      <Result Name="NewResult(1)" Type="Create" ReferenceType="OntologyClass" ClassName="Информационные Ресурсы">
-        <Rule Attribute="Название Ресурса" Type="DEF" ArgFrom="1" AttrFrom="Пол" />
-      </Result>
-    </Новая_схема>
-  </FATON_SCHEMES_BANK>
-  <FATON_EDITOR_MARKUP>
-    <Новая_схема>
-      <node type="FactScheme.Result" id="NewResult" left="262" top="222" />
-      <node type="FactScheme.Result" id="NewResult(1)" left="469" top="82" />
-      <node type="FactScheme.Argument" id="1" left="21" top="19" />
-    </Новая_схема>
-  </FATON_EDITOR_MARKUP>
-</FATON_EDITOR_FILE>
+<FATON_SCHEMES_BANK>
+  <НоваяСхема1>
+    <Argument Order="1" Type="IOBJECT" ClassName="Деятельность" AllowInheritance="true">
+      <Condition Attribute="Пол" Type="MORPH" ComparType="EQ" Values="" />
+      <Condition Attribute="Описание деятельности" Type="MORPH" ComparType="EQ" Values="Род:мр" />
+    </Argument>
+    <Argument Order="2" Type="TERMIN" ClassName="Наука" AllowInheritance="false" />
+    <Result Name="NewResult" ClassName="Сайты организаций, персон, проектов" Type="Create">
+      <Rule Attribute="Описание ресурса" Type="DEF" ArgFrom="1" AttrFrom="Описание деятельности" />
+    </Result>
+    <Result Name="NewResult(1)" ClassName="Учёный" Type="Create">
+      <Rule Attribute="Область деятельности" Type="DEF" ArgFrom="2" AttrFrom="Наука" />
+    </Result>
+  </НоваяСхема1>
+  <НоваяСхема2 />
+</FATON_SCHEMES_BANK>

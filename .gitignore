@@ -1,3 +1,6 @@
+*.log
+*.obj
+
 HelloForms/bin
 HelloForms/obj
 

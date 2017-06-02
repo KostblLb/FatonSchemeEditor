@@ -15,5 +15,6 @@ namespace HelloForms
         public static string DICTIONARY_FORMAT_FILTER = "Словарь KLAN|*.vc";
 
         public static string ERR_ONTOLOGY_NOT_LOADED = "Онтология не загружена";
+        public static string ERR_DICTIONARY_NOPARENT = "Родитель {0} не определён для {1}";
     }
 }

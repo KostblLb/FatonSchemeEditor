@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using FactScheme;
 using Faton;
 using Ontology;
-using KlanVocabularyExtractor;
+using Shared;
 
 namespace HelloForms
 { 
@@ -28,14 +28,14 @@ namespace HelloForms
             XElement xbank = new XElement(FatonConstants.XML_BANK_NAME);
             foreach (Scheme scheme in Schemes)
             {
-                xbank.Add(scheme.ToXml().Root);
+                xbank.Add(scheme.ToXml());
             }
             doc.Add(xbank);
 
             return doc;
         }
 
-        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology, List<VocTheme> themes)
+        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology)
         {
             FactSchemeBank bank = new FactSchemeBank();
             foreach(XElement xscheme in root.Elements())
@@ -55,8 +55,8 @@ namespace HelloForms
                     Argument arg = null;
                     if (xarg.Attribute(FatonConstants.XML_ATTR_ARG_TYPE).Value == FatonConstants.XML_ATTR_ARG_TYPE_TERMIN)
                     {
-                        var theme = themes.Find(x => x.name == xarg.Attribute("ClassName").Value);
-                        arg = scheme.AddArgument(theme);
+                        //var theme = themes.Find(x => x.name == xarg.Attribute("ClassName").Value);
+                        //arg = scheme.AddArgument(theme);
                     }
                     else
                     {

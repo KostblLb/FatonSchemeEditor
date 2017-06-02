@@ -14,7 +14,8 @@ using System.IO;
 using Faton;
 using Ontology;
 using FactScheme;
-using KlanVocabularyExtractor;
+using Shared;
+using VocabularyExtractor;
 
 namespace HelloForms
 {
@@ -34,6 +35,8 @@ namespace HelloForms
                 schemeTabViewPage.Text = string.Format("Схема ({0})", value.Name);
             }
         }
+
+        EditorProject CurrentProject;
 
         FactSchemeBank Bank;
         List<VocTheme> Themes;
@@ -71,52 +74,126 @@ namespace HelloForms
             comparTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ComparisonType);
             comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
 
+            CurrentProject = new EditorProject();
+            //loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
+            //loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+            //createScheme();
+        }
 
-            loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
-            loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+        #region toolstrip
+        private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsPathsDialog dialog = new SettingsPathsDialog();
+            DialogResult dr = dialog.ShowDialog(this);
+            if (dr == DialogResult.OK)
+            {
+                //loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
+                //loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (OntologyNode.Ontology == null || OntologyNode.Ontology.Count == 0)
+            {
+                MessageBox.Show(Locale.ERR_ONTOLOGY_NOT_LOADED);
+                return;
+            }
+            openFileDialog1.FileName = "scheme.xml";
+            openFileDialog1.ShowDialog();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.FileName = "scheme.xml";
+            saveFileDialog1.Filter = Locale.FILE_FORMAT_FILTER;
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void handleCreateSchemeToolstrip(object sender, EventArgs e)
+        {
             createScheme();
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void removeSchemeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            listView1.Clear();
-            OntologyNode node = (OntologyNode)e.Node.Tag;
-            if (node is OntologyClass){
-                listView1.Columns.Add("Атрибут"); //bad hardcode
-                listView1.Columns.Add("Тип");
-                listView1.Columns.Add("Унаследован");
-                List<OntologyNode.Attribute> attrs = ((OntologyClass)node).OwnAttributes;
-                
-                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)node).InheritedAttributes;
+            if (bankListView.SelectedIndices.Count == 0)
+                return;
+            int index = bankListView.SelectedIndices[0];
+            if (Bank.Schemes[index] == CurrentScheme)
+                CurrentScheme = Bank.Schemes[0];
 
-                foreach(OntologyNode.Attribute attr in attrs)
-                {
-                    string theme = attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + attr.Theme.name : "";
-                    string[] values = { attr.Name, attr.AttrType.ToString() + theme, "" };
-                    ListViewItem item = new ListViewItem(values);
-                    listView1.Items.Add(item);
-                }
-                foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
-                {
-                    string theme = inheritedAtt.Item1.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + inheritedAtt.Item1.Theme.name : "";
-                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString() + theme, inheritedAtt.Item2.Name};
-                    ListViewItem item = new ListViewItem(values);
-                    listView1.Items.Add(item);
-                }
-            }
-            
+            Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
+
+            if (Bank.Schemes.Count == 0)
+                createScheme();
+
+            updateBankListView();
         }
 
-        private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
+        private void addDictionaryArgumentMenuItem_Click(object sender, EventArgs e)
         {
-            // Copy the dragged node when the left mouse button is used.
-            if (e.Button == MouseButtons.Left)
-            {
-                //    DoDragDrop(new MyDataObject((e.Item as TreeNode).Tag), DragDropEffects.Move);
-                DoDragDrop(new DataContainer((e.Item as TreeNode).Tag), DragDropEffects.Copy);
-            }
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+            var theme = menuItemToTheme(sender as ToolStripMenuItem);
+            FactScheme.Argument arg = CurrentScheme.AddArgument(theme);
+
+            network.Node node = nv.AddNode(Medium.Convert(arg), true);
         }
 
+        private void addArgumentMenuItem_Click(object sender, EventArgs e)
+        {
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+
+            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
+            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
+            FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
+
+            network.Node node = nv.AddNode(Medium.Convert(arg), true);
+        }
+
+        private void addResultMenuItem_Click(object sender, EventArgs e)
+        {
+            network.NetworkView nv = getCurrentNetworkView();
+            if (nv == null)
+                return;
+
+            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
+            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
+            FactScheme.Result result = scheme.AddResult(ontologyClass);
+            network.Node node = nv.AddNode(Medium.Convert(result), true);
+        }
+
+        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CurrentProject = new EditorProject();
+        }
+
+        private void importOntologyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importOntologyFileDialog.ShowDialog();
+        }
+
+        private void importDictionaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importDictionaryFileDialog.ShowDialog();
+        }
+
+        private void importGramtabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveProjectFileDialog.ShowDialog();
+        }
+        #endregion toolstrip
+
+        #region open/save
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             System.IO.FileStream fstream = null;
@@ -142,12 +219,12 @@ namespace HelloForms
             XElement xbank = doc.Root.Element(FatonConstants.XML_BANK_NAME);
             if (xbank == null)
                 return;
-            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology, Themes); //assuming ontology is loaded
+            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology); //assuming ontology is loaded
 
             XElement xmarkup = doc.Root.Element(EditorConstants.XML_EDITOR_MARKUP);
             if (xmarkup != null)
             {
-                foreach(Scheme scheme in Bank.Schemes)
+                foreach (Scheme scheme in Bank.Schemes)
                 {
                     XElement xscheme = xmarkup.Element(scheme.Name);
                     ElementHost host = initNVHost(scheme);
@@ -186,130 +263,6 @@ namespace HelloForms
             CurrentScheme = Bank.Schemes[0];
             fstream.Close();
         }
-
-#region resource loading
-        private void loadOntologyTree(String filename)
-        {
-            if (String.IsNullOrEmpty(filename))
-                return;
-            System.IO.FileStream fstream = null;
-            try
-            {
-                fstream = System.IO.File.Open(filename, System.IO.FileMode.Open);
-            } catch(System.IO.FileNotFoundException e)
-            {
-                MessageBox.Show(e.Message);
-                return;
-            }
-            catch(System.IO.DirectoryNotFoundException e)
-            {
-                MessageBox.Show(e.Message);
-                return;
-            }
-
-            List<OntologyNode> ontology = OntologyBuilder.fromXml(fstream, Themes);
-            fstream.Close();
-
-            ontology.Reverse();
-            Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //DFS add ontology nodes to treeview
-            ontology.Reverse();
-            TreeNodeCollection baseNodeCollection = ontologyTreeView.Nodes;
-            while (s.Any())
-            {
-                OntologyNode ontNode = s.Pop();
-                while (ontNode == null && s.Any()) // null may be last element in stack!
-                {
-                    ontNode = s.Pop();
-                    if (baseNodeCollection[0].Parent == null || baseNodeCollection[0].Parent.Parent == null)
-                        baseNodeCollection = ontologyTreeView.Nodes;
-                    else
-                        baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes; //get all ontNode parent's neighbors
-                }
-                if (ontNode == null)
-                    break;
-                TreeNode treeNode = new TreeNode(ontNode.Name);
-                treeNode.Tag = ontNode;
-                baseNodeCollection.Add(treeNode);
-                if (ontNode is OntologyClass && ((OntologyClass)ontNode).Children.Count > 0)
-                {
-                    baseNodeCollection = treeNode.Nodes;
-                    s.Push(null); //trick to control baseNodeCollection
-                    foreach (OntologyClass child in ((OntologyClass)ontNode).Children)
-                    {
-                        s.Push(child);
-                    }
-                }
-            }
-            OntologyNode.Ontology = ontology;
-        }
-
-        private void loadDictionary(String path)
-        {
-
-            FloatingPointReset.Action();
-            if (path == null || path.Length == 0)
-                return;
-            Extractor ex = new Extractor(ref path);
-            List<VocTheme> themes = ex.Themes();
-            FloatingPointReset.Action();
-
-
-            //list always comes ordered so that parents are always defined before children (?)
-            themes.Reverse();
-            Stack<VocTheme> s = new Stack<VocTheme>(themes);
-            TreeNodeCollection baseNodeCollection = dictionaryTreeView.Nodes;
-            while (s.Any())
-            {
-                VocTheme theme = s.Pop();
-                if (theme == null)
-                {
-                    if (baseNodeCollection[0].Parent.Parent == null)
-                        baseNodeCollection = dictionaryTreeView.Nodes;
-                    else
-                        baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes;
-                    continue;
-                }
-                TreeNode treeNode = new TreeNode(theme.name);
-                treeNode.Tag = theme;
-
-                //make sure children are not added to the root
-                if (theme.parents.Count == 0 || baseNodeCollection != dictionaryTreeView.Nodes)
-                    baseNodeCollection.Add(treeNode);
-
-                if (theme.children.Count > 0)
-                {
-                    s.Push(null);
-                    foreach (VocTheme child in theme.children)
-                        s.Push(child);
-                    baseNodeCollection = treeNode.Nodes;
-                }
-            }
-
-            themes.Reverse();
-            Themes = themes;
-        }
-
-#endregion
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (OntologyNode.Ontology == null || OntologyNode.Ontology.Count == 0)
-            {
-                MessageBox.Show(Locale.ERR_ONTOLOGY_NOT_LOADED);
-                return;
-            }
-            openFileDialog1.FileName = "scheme.xml";
-            openFileDialog1.ShowDialog();
-        }
-        
-        
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.FileName = "scheme.xml";
-            saveFileDialog1.Filter = Locale.FILE_FORMAT_FILTER;
-            saveFileDialog1.ShowDialog();
-        }
-
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             var dialog = sender as SaveFileDialog;
@@ -357,17 +310,150 @@ namespace HelloForms
             doc.Save(fstream);
             fstream.Close();
         }
-
-        private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openProjectDialog_FileOk(object sender, CancelEventArgs e)
         {
-            SettingsPathsDialog dialog = new SettingsPathsDialog();
-            DialogResult dr = dialog.ShowDialog(this);
-            if(dr == DialogResult.OK)
+            Stream fstream = openProjectDialog.OpenFile();
+            CurrentProject = new EditorProject(fstream);
+        }
+        private void saveProjectFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            var fstream = saveProjectFileDialog.OpenFile();
+            CurrentProject.Save(fstream);
+            fstream.Flush();
+            fstream.Close();
+        }
+        private void importOntologyFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Stream fstream = importOntologyFileDialog.OpenFile();
+            loadOntologyTree(fstream);
+        }
+        private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            string path = importDictionaryFileDialog.FileName;
+            loadDictionary(path);
+        }
+        #endregion open/save
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            listView1.Clear();
+            OntologyNode node = (OntologyNode)e.Node.Tag;
+            if (node is OntologyClass){
+                listView1.Columns.Add("Атрибут"); //bad hardcode
+                listView1.Columns.Add("Тип");
+                listView1.Columns.Add("Унаследован");
+                List<OntologyNode.Attribute> attrs = ((OntologyClass)node).OwnAttributes;
+                
+                List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)node).InheritedAttributes;
+
+                foreach(OntologyNode.Attribute attr in attrs)
+                {
+                    string theme = attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + attr.Theme.name : "";
+                    string[] values = { attr.Name, attr.AttrType.ToString() + theme, "" };
+                    ListViewItem item = new ListViewItem(values);
+                    listView1.Items.Add(item);
+                }
+                foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
+                {
+                    string theme = inheritedAtt.Item1.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + inheritedAtt.Item1.Theme.name : "";
+                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString() + theme, inheritedAtt.Item2.Name};
+                    ListViewItem item = new ListViewItem(values);
+                    listView1.Items.Add(item);
+                }
+            }
+            
+        }
+
+        private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            // Copy the dragged node when the left mouse button is used.
+            if (e.Button == MouseButtons.Left)
             {
-                loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
-                loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
+                //    DoDragDrop(new MyDataObject((e.Item as TreeNode).Tag), DragDropEffects.Move);
+                DoDragDrop(new DataContainer((e.Item as TreeNode).Tag), DragDropEffects.Copy);
             }
         }
+
+        
+
+#region resource loading
+        private void loadOntologyTree(Stream fstream)
+        {
+            List<OntologyNode> ontology = CurrentProject.LoadOntology(fstream);
+            fstream.Close();
+
+            ontology.Reverse();
+            Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //DFS add ontology nodes to treeview
+            ontology.Reverse();
+            TreeNodeCollection baseNodeCollection = ontologyTreeView.Nodes;
+            while (s.Any())
+            {
+                OntologyNode ontNode = s.Pop();
+                while (ontNode == null && s.Any()) // null may be last element in stack!
+                {
+                    ontNode = s.Pop();
+                    if (baseNodeCollection[0].Parent == null || baseNodeCollection[0].Parent.Parent == null)
+                        baseNodeCollection = ontologyTreeView.Nodes;
+                    else
+                        baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes; //get all ontNode parent's neighbors
+                }
+                if (ontNode == null)
+                    break;
+                TreeNode treeNode = new TreeNode(ontNode.Name);
+                treeNode.Tag = ontNode;
+                baseNodeCollection.Add(treeNode);
+                if (ontNode is OntologyClass && ((OntologyClass)ontNode).Children.Count > 0)
+                {
+                    baseNodeCollection = treeNode.Nodes;
+                    s.Push(null); //trick to control baseNodeCollection
+                    foreach (OntologyClass child in ((OntologyClass)ontNode).Children)
+                    {
+                        s.Push(child);
+                    }
+                }
+            }
+            OntologyNode.Ontology = ontology;
+        }
+
+        private void loadDictionary(string path)
+        {
+            var themes = CurrentProject.LoadDictionary(path);
+            //list always comes ordered so that parents are always defined before children (?)
+            themes.Reverse();
+            Stack<VocTheme> s = new Stack<VocTheme>(themes);
+            TreeNodeCollection baseNodeCollection = dictionaryTreeView.Nodes;
+            while (s.Any())
+            {
+                VocTheme theme = s.Pop();
+                if (theme == null)
+                {
+                    if (baseNodeCollection[0].Parent.Parent == null)
+                        baseNodeCollection = dictionaryTreeView.Nodes;
+                    else
+                        baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes;
+                    continue;
+                }
+                TreeNode treeNode = new TreeNode(theme.name);
+                treeNode.Tag = theme;
+
+                //make sure children are not added to the root
+                if (theme.root || baseNodeCollection != dictionaryTreeView.Nodes)
+                    baseNodeCollection.Add(treeNode);
+
+                if (theme.children.Count > 0)
+                {
+                    s.Push(null);
+                    foreach (VocTheme child in theme.children)
+                        s.Push(child);
+                    baseNodeCollection = treeNode.Nodes;
+                }
+            }
+
+            themes.Reverse();
+            Themes = themes;
+        }
+
+#endregion
         
         FactSchemeBank getCurrentBank()
         {
@@ -385,12 +471,6 @@ namespace HelloForms
                 listItem.Tag = fs;
                 bankListView.Items.Add(listItem);
             }
-        }
-
-        private void bankListView_Click(object sender, EventArgs e)
-        {
-            //bankListView.select
-            return;
         }
 
         //private System.Windows.Thickness nvCanvasOffset = new System.Windows.Thickness( -short.MaxValue / 2.0, -short.MaxValue / 2.0 , 0, 0);
@@ -423,10 +503,6 @@ namespace HelloForms
             return elementHost;
         }
 
-        private void handleCreateSchemeToolstrip(object sender, EventArgs e)
-        {
-            createScheme();
-        }
         private void createScheme()
         {
             if (Bank == null)
@@ -446,22 +522,6 @@ namespace HelloForms
             initNVHost(scheme);
             dataGridView1.Enabled = false;
             CurrentScheme = scheme;
-        }
-        
-        private void removeSchemeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (bankListView.SelectedIndices.Count == 0)
-                return;
-            int index = bankListView.SelectedIndices[0];
-            if (Bank.Schemes[index] == CurrentScheme)
-                CurrentScheme = Bank.Schemes[0];
-
-            Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
-
-            if (Bank.Schemes.Count == 0)
-                createScheme();
-
-            updateBankListView();
         }
 
         private network.NetworkView getCurrentNetworkView()
@@ -546,43 +606,6 @@ namespace HelloForms
             return theme;
         }
 
-
-        private void addDictionaryArgumentMenuItem_Click(object sender, EventArgs e)
-        {
-            network.NetworkView nv = getCurrentNetworkView();
-            if (nv == null)
-                return;
-            var theme = menuItemToTheme(sender as ToolStripMenuItem);
-            FactScheme.Argument arg = CurrentScheme.AddArgument(theme);
-
-            network.Node node = nv.AddNode(Medium.Convert(arg), true);
-        }
-
-        private void addArgumentMenuItem_Click(object sender, EventArgs e)
-        {
-            network.NetworkView nv = getCurrentNetworkView();
-            if (nv == null)
-                return;
-
-            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
-            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
-            FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
-
-            network.Node node = nv.AddNode(Medium.Convert(arg), true);
-        }
-
-        private void addResultMenuItem_Click(object sender, EventArgs e)
-        {
-            network.NetworkView nv = getCurrentNetworkView();
-            if (nv == null)
-                return;
-
-            OntologyClass ontologyClass = menuItemToClass(sender as ToolStripMenuItem);
-            Scheme scheme = (Scheme)schemesTabControl.SelectedTab.Tag;
-            FactScheme.Result result  = scheme.AddResult(ontologyClass);
-            network.Node node = nv.AddNode(Medium.Convert(result), true);
-        }
-
         private void bankListView_DoubleClick(object sender, EventArgs e)
         {
             if ((sender as ListView).SelectedItems.Count == 0)
@@ -636,15 +659,11 @@ namespace HelloForms
             dataGridView1.DataSource = binding;
         }
 
-        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        private void addSchemeConditionButton_Click(object sender, EventArgs e)
         {
             
+            Condition cond = CurrentScheme.AddCondition();
+            getCurrentNetworkView().AddNode(Medium.Convert(cond));
         }
-
-        private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-        {
-
-        }
-
     }
 }

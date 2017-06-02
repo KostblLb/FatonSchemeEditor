@@ -127,6 +127,7 @@ namespace network
             else
                 this.ContextMenu = info.Menu;
 
+            pRect.Fill = new LinearGradientBrush(info.FillColor, Colors.LightGray, 90.0);
         }
 
         #region UI

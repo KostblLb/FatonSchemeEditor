@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Xml.Linq;
 using Ontology;
-using KlanVocabularyExtractor;
+using Shared;
 
 namespace FactScheme
 {
@@ -19,12 +19,13 @@ namespace FactScheme
         List<Functor> _functors;
         uint _numArgs;
 
-        XDocument _xml;
+        XElement _xml;
         bool _saved;
 
         public string Name { get { return _name; } set { _name = value; } }
         public string XMLName { get { return _name.Replace(' ', '_'); } }
 
+        //TODO remove separate component accessors, leave only Components
         public readonly HashSet<ISchemeComponent> Components;
         public List<Argument> Arguments
         {
@@ -82,6 +83,15 @@ namespace FactScheme
 
         }
 
+        public Condition AddCondition()
+        {
+            _saved = false;
+            Condition cond = new Condition();
+            _conditions.Add(cond);
+            Components.Add(cond);
+            return cond;
+        }
+
         public Result AddResult(OntologyClass ontologyClass, string name = null)
         {
             _saved = false;
@@ -136,13 +146,12 @@ namespace FactScheme
         }
         
 
-        public XDocument ToXml()
+        public XElement ToXml()
         {
             //if (_saved)
             //    return _xml;
 
-            XDocument doc = new XDocument();
-            doc.Add(new XElement(XMLName));
+            XElement root = new XElement(XMLName);
             foreach(Argument arg in Arguments)
             {
                 XElement xarg =
@@ -164,7 +173,7 @@ namespace FactScheme
                         xarg.Add(xcond);
                     }
                 }
-                doc.Root.Add(xarg);
+                root.Add(xarg);
             }
 
             foreach (Result res in Results)
@@ -216,12 +225,12 @@ namespace FactScheme
                     xres.Add(xrul);
                 }
 
-                doc.Root.Add(xres);
+                root.Add(xres);
             }
 
-            _xml = doc;
+            _xml = root;
             _saved = true;
-            return doc;
+            return root;
         }
     }
 

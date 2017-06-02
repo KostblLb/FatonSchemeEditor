@@ -1,7 +1,7 @@
-﻿  Stdafx.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: промежуточный каталог (Debug\) содержит файлы, которые используются совместно с другим проектом (KlanVocabularyExtractor.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  Stdafx.cpp
   AssemblyInfo.cpp
-  KlanVocabularyExtractor.cpp
-KlanVocabularyExtractor.cpp(32): warning C4018: <: несоответствие типов со знаком и без знака
+  VocabularyExtractor.cpp
+VocabularyExtractor.cpp(28): warning C4018: <: несоответствие типов со знаком и без знака
   Создание кода...
-  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
-  KlanVocabularyExtractor.vcxproj -> C:\Users\Пользователь\Documents\Visual Studio 2015\fatonschemeeditor\Debug\KlanVocabularyExtractor.dll
+  KlanVocabularyExtractor.vcxproj -> C:\Users\Пользователь\Documents\Visual Studio 2015\fatonschemeeditor\Debug\VocabularyExtractor.dll
