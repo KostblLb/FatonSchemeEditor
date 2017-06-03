@@ -17,8 +17,7 @@ namespace Shared {
 				parents = gcnew List<VocTheme^>();
 				children = gcnew List<VocTheme^>();
 			}
-			VocTheme(String^% s) {
-				VocTheme();
+			VocTheme(String^% s) : VocTheme() {
 				name = s;
 			}
 			bool Equals(VocTheme^ other) {

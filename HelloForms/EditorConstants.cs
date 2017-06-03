@@ -26,6 +26,7 @@ namespace HelloForms
         public static string XML_PROJECT_DICTIONARY = "DICTIONARY";
         public static string XML_PROJECT_BANK = "BANK";
 
+        public static string XML_PROJECT_DICTIONARYTHEME = "theme";
         public static string XML_PROJECT_DICTIONARYTHEMENAME ="name";
         public static string XML_PROJECT_DICTIONARYBASE = "base";
 

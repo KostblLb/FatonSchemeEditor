@@ -61,30 +61,44 @@
     </domain>
   </ONTOLOGY>
   <DICTIONARY>
-    <name name="Наука" />
-    <name name="Астрономия">
+    <theme name="Наука" />
+    <theme name="Астрономия">
       <base>Наука</base>
-    </name>
-    <name name="Пространство">
+    </theme>
+    <theme name="Пространство">
       <base>Астрономия</base>
-    </name>
-    <name name="Физика">
+    </theme>
+    <theme name="Физика">
       <base>Наука</base>
-    </name>
-    <name name="Небесное тело">
+    </theme>
+    <theme name="Небесное тело">
       <base>Астрономия</base>
-    </name>
-    <name name="Технология" />
-    <name name="персона" />
-    <name name="Учёный">
+    </theme>
+    <theme name="Технология" />
+    <theme name="персона" />
+    <theme name="Учёный">
       <base>Наука</base>
       <base>персона</base>
-    </name>
-    <name name="звезда">
+    </theme>
+    <theme name="звезда">
       <base>Небесное тело</base>
-    </name>
-    <name name="планета">
+    </theme>
+    <theme name="планета">
       <base>Небесное тело</base>
-    </name>
+    </theme>
   </DICTIONARY>
+  <FATON_SCHEMES_BANK>
+    <dfg>
+      <Argument Order="1" Type="IOBJECT" ClassName="Деятельность" AllowInheritance="true" />
+      <Result Name="NewResult" ClassName="Организация" Type="Create">
+        <Rule Attribute="Название" Type="DEF" ArgFrom="1" AttrFrom="Дата начала" />
+      </Result>
+    </dfg>
+  </FATON_SCHEMES_BANK>
+  <FATON_EDITOR_MARKUP>
+    <dfg>
+      <node type="FactScheme.Argument" id="1" left="36" top="217" />
+      <node type="FactScheme.Result" id="NewResult" left="318" top="353" />
+    </dfg>
+  </FATON_EDITOR_MARKUP>
 </FATON_EDITOR_PROJECT>

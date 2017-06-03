@@ -38,9 +38,6 @@ namespace HelloForms
 
         EditorProject CurrentProject;
 
-        FactSchemeBank Bank;
-        List<VocTheme> Themes;
-
         public MainWindow()
         {
 
@@ -75,38 +72,19 @@ namespace HelloForms
             comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
 
             CurrentProject = new EditorProject();
-            //loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
-            //loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
-            //createScheme();
+            createScheme();
         }
 
         #region toolstrip
-        private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openProjectToolStripMenu_Click(object sender, EventArgs e)
         {
-            SettingsPathsDialog dialog = new SettingsPathsDialog();
-            DialogResult dr = dialog.ShowDialog(this);
-            if (dr == DialogResult.OK)
-            {
-                //loadOntologyTree(Properties.Settings.Default["OntologyPath"] as String);
-                //loadDictionary(Properties.Settings.Default["DictionaryPath"] as String);
-            }
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (OntologyNode.Ontology == null || OntologyNode.Ontology.Count == 0)
-            {
-                MessageBox.Show(Locale.ERR_ONTOLOGY_NOT_LOADED);
-                return;
-            }
-            openFileDialog1.FileName = "scheme.xml";
-            openFileDialog1.ShowDialog();
+            openProjectDialog.ShowDialog();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.FileName = "scheme.xml";
-            saveFileDialog1.Filter = Locale.FILE_FORMAT_FILTER;
+            saveFileDialog1.Filter = Locale.SCHEME_EXPORT_FILTER;
             saveFileDialog1.ShowDialog();
         }
 
@@ -120,12 +98,12 @@ namespace HelloForms
             if (bankListView.SelectedIndices.Count == 0)
                 return;
             int index = bankListView.SelectedIndices[0];
-            if (Bank.Schemes[index] == CurrentScheme)
-                CurrentScheme = Bank.Schemes[0];
+            if (CurrentProject.Bank.Schemes[index] == CurrentScheme)
+                CurrentScheme = CurrentProject.Bank.Schemes[0];
 
-            Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
+            CurrentProject.Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
 
-            if (Bank.Schemes.Count == 0)
+            if (CurrentProject.Bank.Schemes.Count == 0)
                 createScheme();
 
             updateBankListView();
@@ -170,6 +148,9 @@ namespace HelloForms
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CurrentProject = new EditorProject();
+            dictionaryTreeView.Nodes.Clear();
+            ontologyTreeView.Nodes.Clear();
+            createScheme();
         }
 
         private void importOntologyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -194,37 +175,38 @@ namespace HelloForms
         #endregion toolstrip
 
         #region open/save
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            System.IO.FileStream fstream = null;
+            var dialog = sender as SaveFileDialog;
+            System.IO.Stream fstream = saveFileDialog1.OpenFile();
+            System.Xml.Linq.XDocument doc = new XDocument();
+            XElement xbank = null;
             try
             {
-                fstream = System.IO.File.Open((sender as OpenFileDialog).FileName, System.IO.FileMode.Open);
+                xbank = CurrentProject.Bank.ToXml().Root;
             }
-            catch (System.IO.FileNotFoundException ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return;
             }
-            catch (System.IO.DirectoryNotFoundException ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-            StreamReader sr = new StreamReader(fstream);
-            string xmlString = sr.ReadToEnd();
+            doc.Add(xbank);
+            doc.Save(fstream);
+            fstream.Close();
+        }
+        private void openProjectDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Stream fstream = openProjectDialog.OpenFile();
+            CurrentProject = new EditorProject(fstream);
+            fstream.Close();
 
-            XDocument doc = XDocument.Parse(xmlString);
+            buildOntologyTree(CurrentProject.Ontology);
+            buildDictionaryTree(CurrentProject.Themes);
 
-            XElement xbank = doc.Root.Element(FatonConstants.XML_BANK_NAME);
-            if (xbank == null)
-                return;
-            Bank = FactSchemeBank.FromXml(xbank, OntologyNode.Ontology); //assuming ontology is loaded
-
-            XElement xmarkup = doc.Root.Element(EditorConstants.XML_EDITOR_MARKUP);
+            XElement xmarkup = CurrentProject.Markup;
             if (xmarkup != null)
             {
-                foreach (Scheme scheme in Bank.Schemes)
+                foreach (Scheme scheme in CurrentProject.Bank.Schemes)
                 {
                     XElement xscheme = xmarkup.Element(scheme.Name);
                     ElementHost host = initNVHost(scheme);
@@ -259,73 +241,44 @@ namespace HelloForms
                     Medium.LoadViewFromScheme(nv, scheme);
                 }
             }
+            if (!CurrentProject.Bank.Schemes.Any())
+                createScheme();
             updateBankListView();
-            CurrentScheme = Bank.Schemes[0];
-            fstream.Close();
-        }
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            var dialog = sender as SaveFileDialog;
-            System.IO.Stream fstream = saveFileDialog1.OpenFile();
-            System.Xml.Linq.XDocument doc = new XDocument();
-            XElement xbank = null;
-            try
-            {
-                xbank = Bank.ToXml().Root;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-            if (dialog.FilterIndex == EditorConstants.EDITOR_XML)
-            {
-                doc.Add(new XElement(EditorConstants.XML_EDITOR_ROOT_NAME));
-                doc.Root.Add(xbank);
-                XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
-                foreach (Scheme scheme in Bank.Schemes)
-                {
-                    XElement xscheme = new XElement(scheme.XMLName);
-                    network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
-                    foreach (network.Node node in nv.Nodes)
-                    {
-                        string id;
-                        if (node.Tag is Argument)
-                            id = (node.Tag as Argument).Order.ToString();
-                        else
-                            id = (node.TagName);
-                        XElement xnode = new XElement("node",
-                            new XAttribute("type", node.Tag.GetType().ToString()),
-                            new XAttribute("id", id),
-                            new XAttribute("left", (int)node.Margin.Left),
-                            new XAttribute("top", (int)node.Margin.Top));
-                        xscheme.Add(xnode);
-                    }
-                    xmarkup.Add(xscheme);
-                }
-                doc.Root.Add(xmarkup);
-            }
-            else
-                doc.Add(xbank);
-            doc.Save(fstream);
-            fstream.Close();
-        }
-        private void openProjectDialog_FileOk(object sender, CancelEventArgs e)
-        {
-            Stream fstream = openProjectDialog.OpenFile();
-            CurrentProject = new EditorProject(fstream);
+            CurrentScheme = CurrentProject.Bank.Schemes[0];
         }
         private void saveProjectFileDialog_FileOk(object sender, CancelEventArgs e)
         {
+            XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
+            foreach (Scheme scheme in CurrentProject.Bank.Schemes)
+            {
+                XElement xscheme = new XElement(scheme.XMLName);
+                network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
+                foreach (network.Node node in nv.Nodes)
+                {
+                    string id;
+                    if (node.Tag is Argument)
+                        id = (node.Tag as Argument).Order.ToString();
+                    else
+                        id = (node.TagName);
+                    XElement xnode = new XElement("node",
+                        new XAttribute("type", node.Tag.GetType().ToString()),
+                        new XAttribute("id", id),
+                        new XAttribute("left", (int)node.Margin.Left),
+                        new XAttribute("top", (int)node.Margin.Top));
+                    xscheme.Add(xnode);
+                }
+                xmarkup.Add(xscheme);
+            }
+            CurrentProject.Markup = xmarkup;
             var fstream = saveProjectFileDialog.OpenFile();
             CurrentProject.Save(fstream);
-            fstream.Flush();
             fstream.Close();
         }
         private void importOntologyFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = importOntologyFileDialog.OpenFile();
             loadOntologyTree(fstream);
+            fstream.Close();
         }
         private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -381,7 +334,11 @@ namespace HelloForms
         {
             List<OntologyNode> ontology = CurrentProject.LoadOntology(fstream);
             fstream.Close();
-
+            buildOntologyTree(ontology);
+        }
+        private void buildOntologyTree(List<OntologyNode> ontology)
+        {
+            ontologyTreeView.Nodes.Clear();
             ontology.Reverse();
             Stack<OntologyNode> s = new Stack<OntologyNode>(ontology); //DFS add ontology nodes to treeview
             ontology.Reverse();
@@ -417,7 +374,11 @@ namespace HelloForms
 
         private void loadDictionary(string path)
         {
-            var themes = CurrentProject.LoadDictionary(path);
+            CurrentProject.LoadDictionary(path);
+        }
+        private void buildDictionaryTree(List<VocTheme> themes)
+        {
+            dictionaryTreeView.Nodes.Clear();
             //list always comes ordered so that parents are always defined before children (?)
             themes.Reverse();
             Stack<VocTheme> s = new Stack<VocTheme>(themes);
@@ -450,22 +411,15 @@ namespace HelloForms
             }
 
             themes.Reverse();
-            Themes = themes;
+            //Themes = themes;
         }
 
 #endregion
-        
-        FactSchemeBank getCurrentBank()
-        {
-            return bankListView.Tag as FactSchemeBank;
-        }
 
         private void updateBankListView()
         {
-            if (Bank == null)
-                return;
             bankListView.Items.Clear();
-            foreach (Scheme fs in Bank.Schemes)
+            foreach (Scheme fs in CurrentProject.Bank.Schemes)
             {
                 ListViewItem listItem = new ListViewItem(fs.Name);
                 listItem.Tag = fs;
@@ -505,18 +459,12 @@ namespace HelloForms
 
         private void createScheme()
         {
-            if (Bank == null)
-            {
-                Bank = new FactSchemeBank(EditorConstants.DEFAULT_BANK_NAME);
-                bankListView.Tag = Bank;
-            }
-            //create new fact scheme
             int defaultSchemeCount = 1;
-            while (Bank.Schemes.Find(x => x.Name == EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount) != null)
+            while (CurrentProject.Bank.Schemes.Find(x => x.Name == EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount) != null)
                 defaultSchemeCount++;
             Scheme scheme = new Scheme(EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount);
 
-            Bank.Schemes.Add(scheme);
+            CurrentProject.Bank.Schemes.Add(scheme);
             updateBankListView();
 
             initNVHost(scheme);

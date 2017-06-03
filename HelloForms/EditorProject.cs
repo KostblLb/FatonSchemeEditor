@@ -36,6 +36,7 @@ namespace HelloForms
 
         public EditorProject()
         {
+            _xontology = new XElement(EditorConstants.XML_PROJECT_ONTOLOGY);
             _ontology = new List<OntologyNode>();
             _themes = new List<VocTheme>();
             _bank = new FactSchemeBank();
@@ -50,6 +51,7 @@ namespace HelloForms
             XElement xontology = root.Element(EditorConstants.XML_PROJECT_ONTOLOGY);
             XElement xthemes = root.Element(EditorConstants.XML_PROJECT_DICTIONARY);
             XElement xbank = root.Element(FatonConstants.XML_BANK_NAME);
+            Markup = root.Element(EditorConstants.XML_EDITOR_MARKUP);
 
             if (xontology != null)
                 _ontology = OntologyBuilder.fromXml(xontology);
@@ -74,6 +76,7 @@ namespace HelloForms
                             theme.parents.Add(parent);
                         }
                     }
+                    _themes.Add(theme);
                 }
             }
 
@@ -89,7 +92,7 @@ namespace HelloForms
             XElement xthemes = new XElement(EditorConstants.XML_PROJECT_DICTIONARY);
             foreach (var theme in _themes)
             {
-                XElement xtheme = new XElement(EditorConstants.XML_PROJECT_DICTIONARYTHEMENAME,
+                XElement xtheme = new XElement(EditorConstants.XML_PROJECT_DICTIONARYTHEME,
                     new XAttribute(EditorConstants.XML_PROJECT_DICTIONARYTHEMENAME, theme.name));
                 foreach (var parent in theme.parents)
                     xtheme.Add(new XElement(EditorConstants.XML_PROJECT_DICTIONARYBASE, parent.name));
@@ -97,7 +100,8 @@ namespace HelloForms
             }
             doc.Root.Add(_xontology);
             doc.Root.Add(xthemes);
-            doc.Root.Add(Bank.ToXml());
+            doc.Root.Add(Bank.ToXml().Root);
+            doc.Root.Add(Markup);
             doc.Save(fstream);
         }
         public void Export(string filename, FactSchemeBank bank) { }

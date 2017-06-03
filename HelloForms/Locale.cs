@@ -11,7 +11,7 @@ namespace HelloForms
         public static string ONTOLOGY_TREE_ADD_ARG = "Добавить как аргумент";
         public static string ONTOLOGY_TREE_ADD_RESULT = "Добавить как результат";
 
-        public static string FILE_FORMAT_FILTER = "Простой XML|*.xml|XML с разметкой редактора|*.xml";
+        public static string SCHEME_EXPORT_FILTER = "Faton Scheme file|*.xml";
         public static string DICTIONARY_FORMAT_FILTER = "Словарь KLAN|*.vc";
 
         public static string ERR_ONTOLOGY_NOT_LOADED = "Онтология не загружена";

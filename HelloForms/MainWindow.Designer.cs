@@ -30,22 +30,19 @@
         {
             this.components = new System.ComponentModel.Container();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
+            this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectToolStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importOntologyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importDictionaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importGramtabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ontologyTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addArgumentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,7 +83,6 @@
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.importOntologyFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.importDictionaryFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
@@ -126,44 +122,14 @@
             // файлToolStripMenuItem
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainToolStripNewScheme,
             this.newProjectToolStripMenuItem,
-            this.openToolStripMenuItem,
+            this.mainToolStripNewScheme,
             this.openProjectToolStripMenu,
-            this.saveAsToolStripMenuItem,
-            this.saveProjectToolStripMenuItem});
+            this.saveProjectToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
             this.файлToolStripMenuItem.Text = "Файл";
-            // 
-            // openToolStripMenuItem
-            // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
-            this.openToolStripMenuItem.Text = "Открыть...";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
-            // openProjectToolStripMenu
-            // 
-            this.openProjectToolStripMenu.Name = "openProjectToolStripMenu";
-            this.openProjectToolStripMenu.Size = new System.Drawing.Size(226, 26);
-            this.openProjectToolStripMenu.Text = "Открыть проект...";
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
-            this.saveAsToolStripMenuItem.Text = "Сохранить...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // newProjectToolStripMenuItem
-            // 
-            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
-            this.newProjectToolStripMenuItem.Text = "Новый проект";
-            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
             // mainToolStripNewScheme
             // 
@@ -173,13 +139,42 @@
             this.mainToolStripNewScheme.Text = "Новая схема";
             this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
+            // newProjectToolStripMenuItem
+            // 
+            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
+            this.newProjectToolStripMenuItem.Text = "Новый проект";
+            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
+            // 
+            // openProjectToolStripMenu
+            // 
+            this.openProjectToolStripMenu.Name = "openProjectToolStripMenu";
+            this.openProjectToolStripMenu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openProjectToolStripMenu.Size = new System.Drawing.Size(269, 26);
+            this.openProjectToolStripMenu.Text = "Открыть проект...";
+            this.openProjectToolStripMenu.Click += new System.EventHandler(this.openProjectToolStripMenu_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
+            this.saveAsToolStripMenuItem.Text = "Экспортировать банк...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // saveProjectToolStripMenuItem
+            // 
+            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
+            this.saveProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
+            this.saveProjectToolStripMenuItem.Text = "Сохранить проект...";
+            this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
             this.importToolStripMenuItem,
-            this.настройкиToolStripMenuItem,
             this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(3, 3);
             this.menuStrip1.Name = "menuStrip1";
@@ -202,14 +197,14 @@
             // importOntologyToolStripMenuItem
             // 
             this.importOntologyToolStripMenuItem.Name = "importOntologyToolStripMenuItem";
-            this.importOntologyToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.importOntologyToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.importOntologyToolStripMenuItem.Text = "Онтологии...";
             this.importOntologyToolStripMenuItem.Click += new System.EventHandler(this.importOntologyToolStripMenuItem_Click);
             // 
             // importDictionaryToolStripMenuItem
             // 
             this.importDictionaryToolStripMenuItem.Name = "importDictionaryToolStripMenuItem";
-            this.importDictionaryToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.importDictionaryToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.importDictionaryToolStripMenuItem.Text = "Словаря...";
             this.importDictionaryToolStripMenuItem.Click += new System.EventHandler(this.importDictionaryToolStripMenuItem_Click);
             // 
@@ -217,24 +212,9 @@
             // 
             this.importGramtabToolStripMenuItem.Enabled = false;
             this.importGramtabToolStripMenuItem.Name = "importGramtabToolStripMenuItem";
-            this.importGramtabToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.importGramtabToolStripMenuItem.Size = new System.Drawing.Size(169, 26);
             this.importGramtabToolStripMenuItem.Text = "Грамтаба...";
             this.importGramtabToolStripMenuItem.Click += new System.EventHandler(this.importGramtabToolStripMenuItem_Click);
-            // 
-            // настройкиToolStripMenuItem
-            // 
-            this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pathsToolStripMenuItem});
-            this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
-            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(96, 24);
-            this.настройкиToolStripMenuItem.Text = "Настройки";
-            // 
-            // pathsToolStripMenuItem
-            // 
-            this.pathsToolStripMenuItem.Name = "pathsToolStripMenuItem";
-            this.pathsToolStripMenuItem.Size = new System.Drawing.Size(117, 26);
-            this.pathsToolStripMenuItem.Text = "Пути";
-            this.pathsToolStripMenuItem.Click += new System.EventHandler(this.pathsToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -260,11 +240,6 @@
             | System.Windows.Forms.Keys.Z)));
             this.redoToolStripMenuItem.Size = new System.Drawing.Size(250, 26);
             this.redoToolStripMenuItem.Text = "Повторить";
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
             // saveFileDialog1
             // 
@@ -670,7 +645,7 @@
             // openProjectDialog
             // 
             this.openProjectDialog.FileName = "project.xml";
-            this.openProjectDialog.Filter = "\"Faton Editor Project|*.xml\"";
+            this.openProjectDialog.Filter = "Faton Editor Project|*.xml";
             this.openProjectDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openProjectDialog_FileOk);
             // 
             // importOntologyFileDialog
@@ -684,13 +659,6 @@
             this.importDictionaryFileDialog.FileName = "dictionary";
             this.importDictionaryFileDialog.Filter = "KLAN Vocabulary|*.vc|Any|*.*";
             this.importDictionaryFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.importDictionaryFileDialog_FileOk);
-            // 
-            // saveProjectToolStripMenuItem
-            // 
-            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
-            this.saveProjectToolStripMenuItem.Text = "Сохранить проект...";
-            this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // saveProjectFileDialog
             // 
@@ -754,19 +722,15 @@
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.SplitContainer mainContainer;
         private System.Windows.Forms.TabControl schemesTabControl;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer nvAndConditionsContainer;
         private System.Windows.Forms.GroupBox argumentConditionsGroupBox;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pathsToolStripMenuItem;
         private System.Windows.Forms.DataGridViewComboBoxColumn conditionTypeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn attributeDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewComboBoxColumn comparisonTypeDataGridViewTextBoxColumn;
