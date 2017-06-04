@@ -1,13 +1,22 @@
 *.log
+*.tlog
 *.obj
+*.dll
+*.exe
+
+Debug
 
 HelloForms/bin
 HelloForms/obj
+HelloForms/Debug
+HelloForms/Release
 
 NetworkViewLib/bin
 NetworkViewLib/obj
+NetworkViewLib/Debug
+NetworkViewLib/Release
 
-*.dll
-*.exe
+Shared/Debug
+Shared/Release
 
 .vs/*
