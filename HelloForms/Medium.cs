@@ -97,16 +97,13 @@ namespace HelloForms
                     attrName.Content = attr.Name;
                 else
                     attrName.Content = "Значение";
-                if (attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN)
-                    attrName.ToolTip = attr.AttrType + " | " + attr.Theme.name;
-                else
-                    attrName.ToolTip = attr.AttrType;
+                attrName.ToolTip = attr.AttrType;
 
                 WrapPanel panel = new WrapPanel();
                 Button attrSetup = new Button();
                 attrSetup.Height = 16;
                 attrSetup.Width = 16;
-                attrSetup.Content = "S";
+                attrSetup.Content = "::";
                 attrSetup.ToolTip = "Изменить ограничения атрибута";
                 attrSetup.HorizontalAlignment = HorizontalAlignment.Right;
                 attrSetup.Click += (s, e) =>
@@ -183,17 +180,10 @@ namespace HelloForms
                         }
                         if (src.AttrType != dst.AttrType)
                             e.Valid = false;
-                        else if (src.AttrType == OntologyNode.Attribute.AttributeType.TERMIN)
-                        {
-                            if (src.Theme != dst.Theme)
-                                e.Valid = false;
-                        }
                     };
                     var attrName = new Label();
                     attrName.Content = attr.Name;
-                    attrName.ToolTip = String.Format("{0}{1}",
-                        attr.AttrType, 
-                        attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? " | " + attr.Theme.name : "");
+                    attrName.ToolTip = attr.AttrType;
                     attrInfo.UIPanel = attrName;
                     info.Sections.Add(attrInfo);
                 }

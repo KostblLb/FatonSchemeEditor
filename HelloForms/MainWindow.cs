@@ -301,15 +301,13 @@ namespace HelloForms
 
                 foreach(OntologyNode.Attribute attr in attrs)
                 {
-                    string theme = attr.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + attr.Theme.name : "";
-                    string[] values = { attr.Name, attr.AttrType.ToString() + theme, "" };
+                    string[] values = { attr.Name, attr.AttrType.ToString(), "" };
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
                 foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
                 {
-                    string theme = inheritedAtt.Item1.AttrType == OntologyNode.Attribute.AttributeType.TERMIN ? "|" + inheritedAtt.Item1.Theme.name : "";
-                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString() + theme, inheritedAtt.Item2.Name};
+                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString(), inheritedAtt.Item2.Name};
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }

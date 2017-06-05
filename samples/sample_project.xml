@@ -42,7 +42,7 @@
     </class>
     <class name="Учёный">
       <base>Персона</base>
-      <attr type="termin" theme="Наука">Область деятельности</attr>
+      <attr type="string">Область деятельности</attr>
     </class>
     <class name="ФИО">
       <attr type="string">Имя</attr>

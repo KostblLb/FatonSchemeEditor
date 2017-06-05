@@ -6,11 +6,14 @@
 		<attr type="string">Описание деятельности</attr>
 		<attr type="string">Дата начала</attr>
 		<attr type="string">Стадия проекта</attr>
-        <class name="Проекты">
-            <attr type="string">Ответственный</attr>
-        </class>
+        
 	</class>
-
+    
+    <class name="Проекты">
+        <base>Деятельность</base>
+        <attr type="string">Ответственный</attr>
+    </class>
+    
 	<class name="Интернет-ресурсы">
 		<attr type="string">Название Ресурса</attr>
 		<attr type="string">URL</attr>
@@ -20,9 +23,14 @@
 		<attr type="string">Язык ресурса</attr>
 		<attr type="int">Тип доступа</attr>
 		<attr type="string">Права доступа</attr>
-        <class name="Информационные Ресурсы"/>
-        <class name="Сайты организаций, персон, проектов"/>
 	</class>
+    
+    <class name="Информационные Ресурсы">
+        <base>Интернет-ресурсы</base>
+    </class>
+    <class name="Сайты организаций, персон, проектов">
+        <base>Интернет-ресурсы</base>
+    </class>
 	
 	<class name="Организация"> <!--<Возможно или class name = "Орг"/> и <relation name = "Орг"/>/-->
 		<attr type="string">Название</attr>
@@ -36,6 +44,10 @@
 		<attr type="string">Пол</attr>
 		<attr type="domain">Ученая степень</attr>
 	</class>
+    <class name="Учёный">
+        <base>Персона</base>
+        <attr type="string">Область деятельности</attr>
+    </class>
 	
 	<class name="ФИО">
 		<attr type="string">Имя</attr>

@@ -3,6 +3,7 @@
 *.obj
 *.dll
 *.exe
+*.VC.db
 
 Debug
 

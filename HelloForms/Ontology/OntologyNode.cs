@@ -18,9 +18,8 @@ namespace Ontology
         public class Attribute
         {
             //CLASS is attr type for linking ontology classes typically to relation objects
-            //TERMIN is a Klan vocabulary theme (aka Klan class)
-            public enum AttributeType { STRING, INT, CLASS, DOMAIN, TERMIN};
-            VocTheme _theme; //if type is voctheme
+            public enum AttributeType { STRING, INT, CLASS, DOMAIN};
+            //VocTheme _theme; //if type is voctheme
 
             readonly OntologyNode _parent;
             AttributeType _attrType;
@@ -35,12 +34,6 @@ namespace Ontology
             {
                 _parent = myParent;
             }
-            public Attribute(VocTheme myTheme, string myName = null) : this(AttributeType.TERMIN, myName)
-            {
-                if (myName == null)
-                    _name = myTheme.name;
-                _theme = myTheme;
-            }
 
             public AttributeType AttrType
             {
@@ -51,11 +44,6 @@ namespace Ontology
             {
                 get { return _name; }
                 set { _name = value; }
-            }
-            public VocTheme Theme
-            {
-                get { return _theme; }
-                set { _theme = value; }
             }
         }
         public List<Attribute> attrs;

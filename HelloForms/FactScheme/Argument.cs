@@ -103,7 +103,7 @@ namespace FactScheme
             _theme = theme;
             Сonditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             _attrs = new List<OntologyNode.Attribute>();
-            _attrs.Add(new OntologyNode.Attribute(theme));
+            _attrs.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, theme.name));
         }
 
         #region ISchemeComponent implementation

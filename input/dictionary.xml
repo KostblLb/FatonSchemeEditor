@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<dictionary>
-	<class name="Деятельность">
-        <classparent name="Проекты"/>
-        <classparent name="Что-то еще"/>
-	</class>
-	<class name="Деятельность"/>
-</dictionary>

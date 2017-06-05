@@ -33,13 +33,6 @@ namespace HelloForms
                     string attrName = ((XText)attrElement.FirstNode).Value; //get inner text of <attr>
                     string attrTypeStr = attrElement.Attribute("type").Value;
                     OntologyNode.Attribute.AttributeType attrType = (OntologyNode.Attribute.AttributeType)Enum.Parse(typeof(OntologyNode.Attribute.AttributeType), attrTypeStr.ToUpper());
-                    //if (attrType == OntologyNode.Attribute.AttributeType.TERMIN)
-                    //{
-                    //    string themeStr = attrElement.Attribute("theme").Value;
-                    //    var theme = themes.Find(x => x.name.Equals(themeStr));
-                    //    currentClass.OwnAttributes.Add(new OntologyNode.Attribute(theme, attrName));
-                    //}
-                    //else
                         currentClass.OwnAttributes.Add(new OntologyNode.Attribute(currentClass, attrType, attrName));
                 }
                 if (classParents.Any())

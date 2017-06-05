@@ -8,6 +8,7 @@ namespace HelloForms
 {
     public static class Locale
     {
+        #region ru
         public static string ONTOLOGY_TREE_ADD_ARG = "Добавить как аргумент";
         public static string ONTOLOGY_TREE_ADD_RESULT = "Добавить как результат";
 
@@ -16,5 +17,6 @@ namespace HelloForms
 
         public static string ERR_ONTOLOGY_NOT_LOADED = "Онтология не загружена";
         public static string ERR_DICTIONARY_NOPARENT = "Родитель {0} не определён для {1}";
+#endregion ru
     }
 }
