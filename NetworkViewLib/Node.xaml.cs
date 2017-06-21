@@ -96,6 +96,8 @@ namespace network
                     pSectionsGrid.Children.Add(conn);
                     if (sectInfo.InputValidation != null)
                         conn.ConnectionBeforeAdd += sectInfo.InputValidation;
+                    if (sectInfo.InputAdded != null)
+                        conn.InputAdded += sectInfo.InputAdded;
                     conn.Tag = sectInfo.Data;
                 }
                 if (sectInfo.IsOutput)
@@ -104,6 +106,8 @@ namespace network
                     conn.SetValue(Grid.RowProperty, numRows);
                     conn.SetValue(Grid.ColumnProperty, 2);
                     pSectionsGrid.Children.Add(conn);
+                    if (sectInfo.OutputAdded != null)
+                        conn.OutputAdded += sectInfo.OutputAdded;
                     conn.Tag = sectInfo.Data;
                 }
 

@@ -17,6 +17,11 @@ namespace HelloForms
 
         public static string ERR_ONTOLOGY_NOT_LOADED = "Онтология не загружена";
         public static string ERR_DICTIONARY_NOPARENT = "Родитель {0} не определён для {1}";
-#endregion ru
+
+        public static string SCHEME_TAB_NAME = "Схема ({0})";
+
+        public static string SCHEME_CONDITION_TYPE_SELECT = "Тип условия";
+        public static string SCHEME_CONDITION_ACTANT_NAME_DEFAULT = "ИмяАктанта";
+        #endregion ru
     }
 }

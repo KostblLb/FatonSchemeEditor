@@ -32,7 +32,7 @@ namespace HelloForms
                 schemeTabViewPage.Controls.RemoveByKey(EditorConstants.TABPAGE_WPF_HOST_NAME);
                 schemeTabViewPage.Controls.Add(NVHosts[value]);
                 schemeTabViewPage.Tag = value;
-                schemeTabViewPage.Text = string.Format("Схема ({0})", value.Name);
+                schemeTabViewPage.Text = string.Format(Locale.SCHEME_TAB_NAME, value.Name);
             }
         }
 
@@ -165,7 +165,12 @@ namespace HelloForms
 
         private void importGramtabToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            importGramtabFileDialog.ShowDialog();
+        }
 
+        private void importSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importSegmentsFileDialog.ShowDialog();
         }
 
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -283,7 +288,19 @@ namespace HelloForms
         private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             string path = importDictionaryFileDialog.FileName;
-            loadDictionary(path);
+            CurrentProject.LoadDictionary(path);
+        }
+        private void importGramtabFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Stream fstream = importGramtabFileDialog.OpenFile();
+            CurrentProject.LoadGramtab(fstream);
+            fstream.Close();
+        }
+        private void importSegmentsFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Stream fstream = importSegmentsFileDialog.OpenFile();
+            CurrentProject.LoadSegments(fstream);
+            fstream.Close();
         }
         #endregion open/save
 
@@ -292,7 +309,7 @@ namespace HelloForms
             listView1.Clear();
             OntologyNode node = (OntologyNode)e.Node.Tag;
             if (node is OntologyClass){
-                listView1.Columns.Add("Атрибут"); //bad hardcode
+                listView1.Columns.Add("Атрибут"); //bad hardcode, use localization
                 listView1.Columns.Add("Тип");
                 listView1.Columns.Add("Унаследован");
                 List<OntologyNode.Attribute> attrs = ((OntologyClass)node).OwnAttributes;
@@ -370,10 +387,6 @@ namespace HelloForms
             OntologyNode.Ontology = ontology;
         }
 
-        private void loadDictionary(string path)
-        {
-            CurrentProject.LoadDictionary(path);
-        }
         private void buildDictionaryTree(List<VocTheme> themes)
         {
             dictionaryTreeView.Nodes.Clear();
@@ -607,9 +620,10 @@ namespace HelloForms
 
         private void addSchemeConditionButton_Click(object sender, EventArgs e)
         {
-            
             Condition cond = CurrentScheme.AddCondition();
-            getCurrentNetworkView().AddNode(Medium.Convert(cond));
+            getCurrentNetworkView().AddNode(Medium.Convert(cond, CurrentProject.Gramtab, CurrentProject.Segments));
         }
+
+
     }
 }

@@ -13,7 +13,7 @@ namespace network
     {
         public object Tag;
 
-        public struct HeaderInfo
+        public class HeaderInfo
         {
             public string Name;
             public bool NameChangeable;
@@ -32,15 +32,29 @@ namespace network
             }
         }
 
-        public struct SectionInfo
+        public class SectionInfo : INotifyPropertyChanged
         {
-            //connection
+            //connectability
             public bool IsInput;
             public bool IsOutput;
             public Connector.ConnectionEventHandler InputValidation;
+            public Connector.ConnectionEventHandler InputAdded;
+            public Connector.ConnectionEventHandler OutputAdded;
+            //data
+            object _data;
             //ui
-            public object Data;
             public FrameworkElement UIPanel;
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            public object Data
+            {
+                get { return _data; }
+                set
+                {
+                    _data = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
+                }
+            }
         }
         public List<SectionInfo> Sections;
         

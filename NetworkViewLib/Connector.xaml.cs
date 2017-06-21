@@ -53,7 +53,18 @@ namespace network
 
         public delegate void ConnectionEventHandler(object sender, ConnectionEventArgs e);
 
+        //todo rewrite connection events, using inputadded and outputadded. remove connectionadded
         public event ConnectionEventHandler ConnectionAdded;
+        public event ConnectionEventHandler InputAdded
+        {
+            add { AddHandler(InputAddedEvent, value); }
+            remove { RemoveHandler(InputAddedEvent, value); }
+        }
+        public event ConnectionEventHandler OutputAdded
+        {
+            add { AddHandler(OutputAddedEvent, value); }
+            remove { RemoveHandler(OutputAddedEvent, value); }
+        }
 
         /// <summary>
         /// event is raised before establishing a valid connection
@@ -70,12 +81,6 @@ namespace network
             }
         }
 
-        protected virtual void RaiseConnectionAddedEvent(Connector src, Connector dst)
-        {
-            // Raise the event by using the () operator.
-            //ConnectionAdded?.Invoke(this, new ConnectionAddedEventArgs(src, dst));
-        }
-
         public static readonly RoutedEvent ConnectionBeforeAddEvent =
             EventManager.RegisterRoutedEvent(
                 "ConnectionBeforeAdd",
@@ -86,6 +91,20 @@ namespace network
         public static readonly RoutedEvent ConnectionAddedEvent = 
             EventManager.RegisterRoutedEvent(
                 "ConnectionAdded",
+                RoutingStrategy.Bubble,
+                typeof(ConnectionEventHandler),
+                typeof(Connector));
+
+        public static readonly RoutedEvent InputAddedEvent =
+            EventManager.RegisterRoutedEvent(
+                "InputAdded",
+                RoutingStrategy.Bubble,
+                typeof(ConnectionEventHandler),
+                typeof(Connector));
+
+        public static readonly RoutedEvent OutputAddedEvent =
+            EventManager.RegisterRoutedEvent(
+                "OutputAdded",
                 RoutingStrategy.Bubble,
                 typeof(ConnectionEventHandler),
                 typeof(Connector));
@@ -132,11 +151,19 @@ namespace network
             if (!raiseEvent)
                 return;
             if (this.Mode == ConnectorMode.Output)
+            {
                 //RaiseConnectionAddedEvent(this, other);
                 RaiseEvent(new ConnectionEventArgs(ConnectionAddedEvent, this, other));
+                this.RaiseEvent(new ConnectionEventArgs(OutputAddedEvent, this, other));
+                other.RaiseEvent(new ConnectionEventArgs(InputAddedEvent, this, other));
+            }
             else
+            {
                 //RaiseConnectionAddedEvent(other, this);
                 RaiseEvent(new ConnectionEventArgs(ConnectionAddedEvent, other, this));
+                this.RaiseEvent(new ConnectionEventArgs(InputAddedEvent, other, this));
+                other.RaiseEvent(new ConnectionEventArgs(OutputAddedEvent, other, this));
+            }
         }
 
         /// <summary>

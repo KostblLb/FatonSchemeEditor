@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using FactScheme;
 using Ontology;
 using VocabularyExtractor;
+using System.Windows.Data;
 
 namespace HelloForms
 {
@@ -24,8 +25,8 @@ namespace HelloForms
 
         public static void AddSchemeConnection(Scheme scheme, Connector src, Connector dst)
         {
-            if (dst.Tag == null || src.Tag == null)
-                throw new Exception("connector not attached to attribute");
+            //if (dst.Tag == null || src.Tag == null)
+            //    throw new Exception("connector not attached to attribute");
 
             if (dst.Tag is FactScheme.Result) //very specific code for linking EDIT connector of a result
             {
@@ -223,33 +224,165 @@ namespace HelloForms
             return info;
         }
 
-        public static NodeInfo Convert(FactScheme.Condition condition)
+        public static NodeInfo Convert(FactScheme.Condition condition, Dictionary<string, List<string>> gramtab, List<string> segments)
         {
             var info = new NodeInfo();
             info.Tag = condition;
 
             info.NodeNameProperty = "Условие схемы";
 
-            var positionInfoSection = new NodeInfo.SectionInfo();
-            ComboBox posCb = new ComboBox();
-            posCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
-            posCb.SelectionChanged += (s, e) =>
+            NodeInfo.SectionInfo[] args = { new NodeInfo.SectionInfo(), new NodeInfo.SectionInfo() };
+            var arg1 = args[0];
+            var arg2 = args[1];
+            for (int i = 0; i<2; i++)
             {
-                condition.CPosition = (FactScheme.Condition.ConditionPosition)posCb.SelectedItem;
-            };
-            positionInfoSection.UIPanel = posCb;
+                int j = i; //damn closures
+                var arg = args[i];
+                var lbl = new Label();
+                lbl.Content = String.Format("Arg {0}", i+1);
+                arg.UIPanel = lbl;
+                arg.IsInput = true;
+                arg.InputAdded += (object s, ConnectionEventArgs e) => {
+                    arg.Data = e.SourceConnector.Tag;
+                    condition.Args[j] = (FactScheme.Argument)e.SourceConnector.Tag;
+                };
+                info.Sections.Add(arg);
+            }
 
-            var contactInfoSection = new NodeInfo.SectionInfo();
-            ComboBox contactCb = new ComboBox();
-            contactCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionContact));
-            contactCb.SelectionChanged += (s, e) =>
+            //toggle not\equal button
+            var equalSection = new NodeInfo.SectionInfo();
+            var equalButton = new Button();
+            equalButton.Content = "=";
+            equalButton.Click += (s, e) =>
             {
-                condition.CContact = (FactScheme.Condition.ConditionContact)contactCb.SelectedItem;
+                if (condition.ComparType == FactScheme.Condition.ComparisonType.EQ)
+                {
+                    condition.ComparType = FactScheme.Condition.ComparisonType.NEQ;
+                    equalButton.Content = "≠";
+                }
+                else
+                {
+                    condition.ComparType = FactScheme.Condition.ComparisonType.EQ;
+                    equalButton.Content = "=";
+                }
             };
-            contactInfoSection.UIPanel = contactCb;
+            equalSection.UIPanel = equalButton;
+            info.Sections.Add(equalSection);
 
-            info.Sections.Add(positionInfoSection);
-            info.Sections.Add(contactInfoSection);
+            
+            var contextSelectionPanels = new StackPanel(); //used later
+
+            //type selection
+            var typeInfoSection = new NodeInfo.SectionInfo();
+            ComboBox typeCb = new ComboBox();
+            typeCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionType));
+            typeCb.Text = Locale.SCHEME_CONDITION_TYPE_SELECT;
+            typeCb.SelectionChanged += (s, e) =>
+            {
+                var selection = typeCb.SelectedItem;
+                foreach (FrameworkElement control in contextSelectionPanels.Children)
+                    if (control.Tag.ToString().Equals(selection.ToString()))
+                        control.Visibility = Visibility.Visible;
+                    else
+                        control.Visibility = Visibility.Collapsed;
+                condition.Type = (FactScheme.Condition.ConditionType)selection;
+            };
+            typeCb.Margin = new Thickness(0, 3, 0, 3);
+            typeInfoSection.UIPanel = typeCb;
+            info.Sections.Add(typeInfoSection);
+
+            var contextSelectionSection = new NodeInfo.SectionInfo();
+
+            //position selection
+            var posCombo = new ComboBox();
+            posCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
+            posCombo.SelectionChanged += (s, e) => {
+                condition.Position = (FactScheme.Condition.ConditionPosition)posCombo.SelectedItem;
+            };
+            posCombo.Tag = FactScheme.Condition.ConditionType.POS;
+            posCombo.Visibility = Visibility.Collapsed;
+            contextSelectionPanels.Children.Add(posCombo);
+
+            //contact selection
+            var contactCombo = new ComboBox();
+            contactCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionContact));
+            contactCombo.SelectionChanged += (s, e) =>
+            {
+                condition.Contact = (FactScheme.Condition.ConditionContact)contactCombo.SelectedItem;
+            };
+            contactCombo.Visibility = Visibility.Collapsed;
+            contactCombo.Tag = FactScheme.Condition.ConditionType.CONTACT;
+            contextSelectionPanels.Children.Add(contactCombo);
+
+            //shared segment selection
+            var segSelectionPanel = new ComboBox();
+            segSelectionPanel.Visibility = Visibility.Collapsed;
+            segSelectionPanel.Tag = FactScheme.Condition.ConditionType.SEG;
+            segSelectionPanel.ItemsSource = segments;
+            segSelectionPanel.SelectionChanged += (s, e) =>
+            {
+                condition.Segment = segSelectionPanel.SelectedItem.ToString();
+            };
+            contextSelectionPanels.Children.Add(segSelectionPanel);
+
+            //semantic (attr-to-attr comparison) selection
+            var semSelectionPanel = new StackPanel();
+            semSelectionPanel.Visibility = Visibility.Collapsed;
+            semSelectionPanel.Tag = FactScheme.Condition.ConditionType.SEM;
+
+            ComboBox[] semSelectionArgs = new ComboBox[2];
+            for(int i = 0; i<2; i++)
+            {
+                int j = i; //damn closures
+                semSelectionArgs[j] = new ComboBox();
+                semSelectionArgs[j].DisplayMemberPath = "Name";
+                args[i].PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == "Data")
+                        semSelectionArgs[j].ItemsSource = ((FactScheme.Argument)args[j].Data).Attributes;
+                };
+                semSelectionArgs[i].SelectionChanged += (s, e) =>
+                {
+                    condition.SemAttrs[j] = (OntologyNode.Attribute)semSelectionArgs[j].SelectedItem;
+                };
+
+                semSelectionPanel.Children.Add(semSelectionArgs[i]);
+            }
+            contextSelectionPanels.Children.Add(semSelectionPanel);
+
+
+            //syntactic (actants) selection
+            var syntPanel = new StackPanel();
+            syntPanel.Visibility = Visibility.Collapsed;
+            syntPanel.Tag = FactScheme.Condition.ConditionType.SYNT;
+            for (int i = 0; i<2; i++)
+            {
+                int j = i; //damn closures again
+                string text = String.Format("Arg{0}{1}", i + 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
+                var textBox = new TextBox();
+                textBox.Text = text;
+                textBox.TextChanged += (s, e) =>
+                {
+                    condition.ActantNames[j] = textBox.Text;
+                };
+                syntPanel.Children.Add(textBox);
+            }
+            contextSelectionPanels.Children.Add(syntPanel);
+
+
+            //morph(gramtab) coherence selection
+            var gramtabCombo = new ComboBox();
+            gramtabCombo.Tag = FactScheme.Condition.ConditionType.MORPH;
+            gramtabCombo.Visibility = Visibility.Collapsed;
+            gramtabCombo.ItemsSource = gramtab.Keys;
+            gramtabCombo.SelectionChanged += (s, e) =>
+            {
+                condition.MorphAttr = gramtabCombo.SelectedItem.ToString();
+            };
+            contextSelectionPanels.Children.Add(gramtabCombo);
+
+            contextSelectionSection.UIPanel = contextSelectionPanels;
+            info.Sections.Add(contextSelectionSection);
 
             info.FillColor = System.Windows.Media.Colors.Gold;
 
