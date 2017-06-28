@@ -35,12 +35,23 @@ namespace FactScheme
 
         public List<ISchemeComponent> Up()
         {
-            throw new NotImplementedException();
+            var components = new List<ISchemeComponent>();
+            foreach (var arg in Args)
+            {
+                if (arg != null)
+                    components.Add(arg);
+            }
+            return components;
         }
 
         public void RemoveUpper(ISchemeComponent component)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < Args.Length; i++)
+                if (Args[i] == component)
+                {
+                    Args[i] = null;
+                    return;
+                }
         }
 
         public void Free(object attribute)

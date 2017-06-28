@@ -228,6 +228,46 @@ namespace FactScheme
                 root.Add(xres);
             }
 
+            foreach (var condition in Conditions)
+            {
+                var xcond = new XElement("Condition");
+                var xattrs = new List<XAttribute>();
+                for (int i = 0; i < condition.Args.Count(); i++)
+                {
+                    var argName = string.Format("Arg{0}", i+1);
+                    var xarg = new XAttribute(argName, condition.Args[i].Order);
+                    xattrs.Add(xarg);
+                }
+                xattrs.Add(new XAttribute("Type", condition.Type));
+                xattrs.Add(new XAttribute("Operation", condition.ComparType));
+                switch (condition.Type)
+                    //probably should just replace w/ "Value1=X Value2=Y"
+                {
+                    case Condition.ConditionType.CONTACT:
+                        xattrs.Add(new XAttribute("Contact", condition.Contact));
+                        break;
+                    case Condition.ConditionType.MORPH:
+                        xattrs.Add(new XAttribute("GramtabAttr", condition.MorphAttr));
+                        break;
+                    case Condition.ConditionType.POS:
+                        xattrs.Add(new XAttribute("Position", condition.Position));
+                        break;
+                    case Condition.ConditionType.SEG:
+                        xattrs.Add(new XAttribute("Segment", condition.Segment));
+                        break;
+                    case Condition.ConditionType.SEM:
+                        xattrs.Add(new XAttribute("AttrName1", condition.SemAttrs[0].Name));
+                        xattrs.Add(new XAttribute("AttrName2", condition.SemAttrs[1].Name));
+                        break;
+                    case Condition.ConditionType.SYNT:
+                        xattrs.Add(new XAttribute("ActantName1", condition.ActantNames[0]));
+                        xattrs.Add(new XAttribute("ActantName2", condition.ActantNames[1]));
+                        break;
+                }
+
+                xcond.Add(xattrs);
+                root.Add(xcond);
+            }
             _xml = root;
             _saved = true;
             return root;
