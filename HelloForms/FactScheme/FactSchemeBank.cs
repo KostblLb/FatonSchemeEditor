@@ -47,6 +47,9 @@ namespace HelloForms
                 var results = from x in xscheme.Elements()
                               where x.Name.LocalName == "Result"
                               select x;
+                var conditions = from x in xscheme.Elements()
+                              where x.Name.LocalName == "Condition"
+                              select x;
                 var functors = from x in xscheme.Elements()
                               where x.Name.LocalName == "Functor"
                               select x;
@@ -63,7 +66,7 @@ namespace HelloForms
                         OntologyClass argKlass;
                         foreach (OntologyClass klass in ontology)
                         {
-                            argKlass = klass.Search(xarg.Attribute("ClassName").Value);
+                            argKlass = klass.FindChild(xarg.Attribute("ClassName").Value);
                             if (argKlass == null)
                                 continue;
                             arg = scheme.AddArgument(argKlass);
@@ -79,7 +82,7 @@ namespace HelloForms
                     Result result;
                     foreach(OntologyClass klass in ontology)
                     {
-                        resKlass = klass.Search(xres.Attribute("ClassName").Value);
+                        resKlass = klass.FindChild(xres.Attribute("ClassName").Value);
                         if (resKlass != null)
                             break;
                     }
@@ -108,6 +111,43 @@ namespace HelloForms
                     if (xres.Attribute("ResultEdit") != null)
                         result.EditObject = scheme.Results.Find(x => x.Name == xres.Attribute("ArgEdit").Value);
 
+                }
+
+                foreach(var xcond in conditions)
+                {
+                    var cond = scheme.AddCondition();
+                    cond.ID = uint.Parse(xcond.Attribute("ID").Value);
+                    cond.Type = (Condition.ConditionType)Enum.Parse(typeof(Condition.ConditionType), xcond.Attribute("Type").Value);
+                    cond.ComparType = (Condition.ComparisonType)Enum.Parse(typeof(Condition.ComparisonType), xcond.Attribute("Operation").Value);
+
+                    var arg1 = scheme.Arguments.Find(x =>
+                       x.Order == uint.Parse(xcond.Attribute("Arg1").Value));
+                    var arg2 = scheme.Arguments.Find(x =>
+                       x.Order == uint.Parse(xcond.Attribute("Arg2").Value));
+                    cond.Args[0] = arg1;
+                    cond.Args[1] = arg2;
+                    switch (cond.Type){
+                        case Condition.ConditionType.CONTACT:
+                            cond.Contact = (Condition.ConditionContact)Enum.Parse(typeof(Condition.ConditionType), xcond.Attribute("Contact").Value);
+                            break;
+                        case Condition.ConditionType.MORPH:
+                            cond.MorphAttr = xcond.Attribute("GramtabAttr").Value;
+                            break;
+                        case Condition.ConditionType.POS:
+                            cond.Position = (Condition.ConditionPosition)Enum.Parse(typeof(Condition.ConditionPosition), xcond.Attribute("Position").Value);
+                            break;
+                        case Condition.ConditionType.SEG:
+                            cond.Segment = xcond.Attribute("Segment").Value;
+                            break;
+                        case Condition.ConditionType.SEM:
+                            cond.SemAttrs[0] = arg1.Attributes.Find(x => x.Name.Equals(xcond.Attribute("AttrName1").Value));
+                            cond.SemAttrs[1] = arg1.Attributes.Find(x => x.Name.Equals(xcond.Attribute("AttrName2").Value));
+                            break;
+                        case Condition.ConditionType.SYNT:
+                            cond.ActantNames[0] = xcond.Attribute("ActantName1").Value;
+                            cond.ActantNames[1] = xcond.Attribute("ActantName2").Value;
+                            break;
+                    }
                 }
 
                 bank.Schemes.Add(scheme);

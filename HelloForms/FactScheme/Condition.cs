@@ -15,6 +15,7 @@ namespace FactScheme
         public enum ComparisonType { EQ, NEQ };
 
         //various condition properties
+        public uint ID { get; set; }
         public ConditionType Type { get; set; }
         public string Segment { get; set; } //SEG
         public OntologyNode.Attribute[] SemAttrs; //SEM

@@ -78,8 +78,6 @@ namespace HelloForms
 
             info.Tag = argument;
 
-            info.Sections = new List<NodeInfo.SectionInfo>();
-
             info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
             argument.PropertyChanged += (s, e) =>
             {
@@ -172,15 +170,21 @@ namespace HelloForms
                     attrInfo.IsOutput = true;
                     attrInfo.InputValidation = (s, e) =>
                     {
-                        var src = e.SourceConnector.Tag as OntologyNode.Attribute;
-                        var dst = e.DestConnector.Tag as OntologyNode.Attribute;
+                        var src = e.SourceConnector.Tag;
+                        var dst = e.DestConnector.Tag;
                         if (src == null || dst == null)
                         {
                             e.Valid = false;
                             return;
                         }
-                        if (src.AttrType != dst.AttrType)
-                            e.Valid = false;
+                        if (src is Argument && dst is OntologyNode.Attribute)
+                        {
+                            var parent = ((Argument)src).Klass.FindParent((string)((OntologyClass.Attribute)dst).Opt);
+                            e.Valid = parent != null;
+                            return;
+                        }
+                        if (src is OntologyNode.Attribute && dst is OntologyNode.Attribute)
+                            e.Valid = ((OntologyNode.Attribute)src).AttrType == ((OntologyNode.Attribute)dst).AttrType;
                     };
                     var attrName = new Label();
                     attrName.Content = attr.Name;
@@ -246,6 +250,8 @@ namespace HelloForms
                     arg.Data = e.SourceConnector.Tag;
                     condition.Args[j] = (FactScheme.Argument)e.SourceConnector.Tag;
                 };
+                if (condition.Args[i] != null)
+                    arg.Data = condition.Args[i];
                 info.Sections.Add(arg);
             }
 
@@ -267,10 +273,16 @@ namespace HelloForms
                 }
             };
             equalSection.UIPanel = equalButton;
+            if (condition.ComparType == FactScheme.Condition.ComparisonType.NEQ)
+            {
+                condition.ComparType = FactScheme.Condition.ComparisonType.EQ;
+                equalButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
             info.Sections.Add(equalSection);
 
             
-            var contextSelectionPanels = new StackPanel(); //used later
+            var contextSelectionPanels = new StackPanel();
+            var contextSelectionSection = new NodeInfo.SectionInfo();
 
             //type selection
             var typeInfoSection = new NodeInfo.SectionInfo();
@@ -291,8 +303,6 @@ namespace HelloForms
             typeInfoSection.UIPanel = typeCb;
             info.Sections.Add(typeInfoSection);
 
-            var contextSelectionSection = new NodeInfo.SectionInfo();
-
             //position selection
             var posCombo = new ComboBox();
             posCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
@@ -301,6 +311,7 @@ namespace HelloForms
             };
             posCombo.Tag = FactScheme.Condition.ConditionType.POS;
             posCombo.Visibility = Visibility.Collapsed;
+            posCombo.SelectedValue = condition.Position;
             contextSelectionPanels.Children.Add(posCombo);
 
             //contact selection
@@ -312,6 +323,7 @@ namespace HelloForms
             };
             contactCombo.Visibility = Visibility.Collapsed;
             contactCombo.Tag = FactScheme.Condition.ConditionType.CONTACT;
+            contactCombo.SelectedValue = condition.Contact;
             contextSelectionPanels.Children.Add(contactCombo);
 
             //shared segment selection
@@ -323,6 +335,7 @@ namespace HelloForms
             {
                 condition.Segment = segSelectionPanel.SelectedItem.ToString();
             };
+            segSelectionPanel.SelectedValue = condition.Segment;
             contextSelectionPanels.Children.Add(segSelectionPanel);
 
             //semantic (attr-to-attr comparison) selection
@@ -345,7 +358,7 @@ namespace HelloForms
                 {
                     condition.SemAttrs[j] = (OntologyNode.Attribute)semSelectionArgs[j].SelectedItem;
                 };
-
+                semSelectionArgs[i].SelectedValue = condition.SemAttrs[i];
                 semSelectionPanel.Children.Add(semSelectionArgs[i]);
             }
             contextSelectionPanels.Children.Add(semSelectionPanel);
@@ -358,7 +371,8 @@ namespace HelloForms
             for (int i = 0; i<2; i++)
             {
                 int j = i; //damn closures again
-                string text = String.Format("Arg{0}{1}", i + 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
+                
+                string text = condition.ActantNames[j] ?? String.Format("Arg{0}{1}", i + 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
                 var textBox = new TextBox();
                 textBox.Text = text;
                 textBox.TextChanged += (s, e) =>
@@ -379,10 +393,13 @@ namespace HelloForms
             {
                 condition.MorphAttr = gramtabCombo.SelectedItem.ToString();
             };
+            gramtabCombo.SelectedValue = condition.MorphAttr;
             contextSelectionPanels.Children.Add(gramtabCombo);
 
             contextSelectionSection.UIPanel = contextSelectionPanels;
             info.Sections.Add(contextSelectionSection);
+
+            typeCb.SelectedValue = condition.Type;
 
             info.FillColor = System.Windows.Media.Colors.Gold;
 
@@ -423,7 +440,7 @@ namespace HelloForms
         }
         #endregion various panels
 
-        //connect nodes by hand
+        //connect nodes after opening existing project
         public static void LoadViewFromScheme(NetworkView nv, Scheme scheme)
         {
             var nodes = nv.Nodes;
@@ -434,7 +451,9 @@ namespace HelloForms
                 {
                     var srcNode = nodes.First(x => x.Tag == rule.Reference);
                     var srcConn = srcNode.Connectors.First(x =>
-                        x.Tag == rule.InputAttribute &&
+                        ( (rule.Attribute.AttrType == OntologyNode.Attribute.AttributeType.OBJECT &&
+                            x.Tag == rule.Reference) ||
+                        x.Tag == rule.InputAttribute) &&
                         x.Mode == Connector.ConnectorMode.Output);
                     var dstConn = dstNode.Connectors.First(x => x.Tag == rule.Attribute);
                     nv.AddConnection(srcConn, dstConn, false);
@@ -450,7 +469,18 @@ namespace HelloForms
                         x.Mode == Connector.ConnectorMode.Input);
                     nv.AddConnection(srcConn, dstConn, false);
                 }
-                //add functors and conditions
+            }
+            
+            foreach (var condition in scheme.Conditions)
+            {
+                var dstNode = nodes.First(x => x.Tag == condition);
+                foreach (var arg in condition.Args)
+                {
+                    var argNode = nodes.First(x => x.Tag == arg);
+                    var srcConn = argNode.HeadConnector;
+                    var dstConn = dstNode.Info.Sections.First(x => x.Data == arg).Input;
+                    nv.AddConnection(srcConn, dstConn, false);
+                }
             }
         }
 

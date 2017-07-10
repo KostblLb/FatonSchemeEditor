@@ -21,6 +21,8 @@ namespace network
     public partial class Node : Canvas
     {
         public HashSet<Connector> Connectors { get; }
+        public Connector HeadConnector { get { return pSelfConnector; } }
+        public NodeInfo Info { get; }
 
         HashSet<Node> neighbors(bool incoming)
         {
@@ -72,6 +74,7 @@ namespace network
 
         public Node(NodeInfo info) : this()
         {
+            this.Info = info;
             this.Tag = info.Tag;
             this.pSelfConnector.Tag = info.Tag;
 
@@ -99,6 +102,7 @@ namespace network
                     if (sectInfo.InputAdded != null)
                         conn.InputAdded += sectInfo.InputAdded;
                     conn.Tag = sectInfo.Data;
+                    sectInfo.Input = conn;
                 }
                 if (sectInfo.IsOutput)
                 {
@@ -109,6 +113,7 @@ namespace network
                     if (sectInfo.OutputAdded != null)
                         conn.OutputAdded += sectInfo.OutputAdded;
                     conn.Tag = sectInfo.Data;
+                    sectInfo.Output = conn;
                 }
 
                 if (sectInfo.UIPanel != null)

@@ -1,6 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <FATON_EDITOR_PROJECT>
   <ONTOLOGY>
+    <!-- объекты -->
+    <class name="Небесное тело" />
+    <class name="Звезда">
+      <base>Небесное тело</base>
+    </class>
+    <class name="Планета">
+      <base>Небесное тело</base>
+    </class>
+    <!-- отношения -->
+    <class name="X вращается вокруг Y">
+      <attr type="object" class="Небесное тело">Центр</attr>
+      <attr type="object" class="Небесное тело">Спутник</attr>
+    </class>
+    <class name="---JUNK---" />
     <class name="Деятельность">
       <attr type="domain">Пол</attr>
       <attr type="string">Описание деятельности</attr>
@@ -60,45 +74,24 @@
       <value>Женский</value>
     </domain>
   </ONTOLOGY>
-  <DICTIONARY>
-    <theme name="Наука" />
-    <theme name="Астрономия">
-      <base>Наука</base>
-    </theme>
-    <theme name="Пространство">
-      <base>Астрономия</base>
-    </theme>
-    <theme name="Физика">
-      <base>Наука</base>
-    </theme>
-    <theme name="Небесное тело">
-      <base>Астрономия</base>
-    </theme>
-    <theme name="Технология" />
-    <theme name="персона" />
-    <theme name="Учёный">
-      <base>Наука</base>
-      <base>персона</base>
-    </theme>
-    <theme name="звезда">
-      <base>Небесное тело</base>
-    </theme>
-    <theme name="планета">
-      <base>Небесное тело</base>
-    </theme>
-  </DICTIONARY>
+  <DICTIONARY />
   <FATON_SCHEMES_BANK>
-    <dfg>
-      <Argument Order="1" Type="IOBJECT" ClassName="Деятельность" AllowInheritance="true" />
-      <Result Name="NewResult" ClassName="Организация" Type="Create">
-        <Rule Attribute="Название" Type="DEF" ArgFrom="1" AttrFrom="Дата начала" />
+    <Базовая_Солнечная_Система>
+      <Argument Order="1" Type="IOBJECT" ClassName="Планета" AllowInheritance="true" />
+      <Argument Order="2" Type="IOBJECT" ClassName="Звезда" AllowInheritance="true" />
+      <Result Name="NewResult" ClassName="X вращается вокруг Y" Type="Create">
+        <Rule Attribute="Спутник" Type="DEF" ArgFrom="1" />
+        <Rule Attribute="Центр" Type="DEF" ArgFrom="2" />
       </Result>
-    </dfg>
+      <Condition Id="1" Arg1="2" Arg2="1" Type="SYNT" Operation="NEQ" ActantName1="ЯвляетсяЦентром" ActantName2="ВращаетсяВокруг" />
+    </Базовая_Солнечная_Система>
   </FATON_SCHEMES_BANK>
   <FATON_EDITOR_MARKUP>
-    <dfg>
-      <node type="FactScheme.Argument" id="1" left="36" top="217" />
-      <node type="FactScheme.Result" id="NewResult" left="318" top="353" />
-    </dfg>
+    <Базовая_Солнечная_Система>
+      <node type="FactScheme.Result" id="NewResult" left="411" top="318" />
+      <node type="FactScheme.Argument" id="1" left="77" top="290" />
+      <node type="FactScheme.Argument" id="2" left="80" top="212" />
+      <node type="FactScheme.Condition" id="1" left="392" top="72" />
+    </Базовая_Солнечная_Система>
   </FATON_EDITOR_MARKUP>
 </FATON_EDITOR_PROJECT>

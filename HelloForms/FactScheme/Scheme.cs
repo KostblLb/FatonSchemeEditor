@@ -18,6 +18,7 @@ namespace FactScheme
         List<Result> _results;
         List<Functor> _functors;
         uint _numArgs;
+        uint _numConds;
 
         XElement _xml;
         bool _saved;
@@ -52,6 +53,7 @@ namespace FactScheme
             _functors = new List<Functor>();
             Components = new HashSet<ISchemeComponent>();
             _numArgs = 0;
+            _numConds = 0;
             _saved = false;
         }
 
@@ -87,6 +89,7 @@ namespace FactScheme
         {
             _saved = false;
             Condition cond = new Condition();
+            cond.ID = ++_numConds;
             _conditions.Add(cond);
             Components.Add(cond);
             return cond;
@@ -132,6 +135,8 @@ namespace FactScheme
         {
             if (!Components.Contains(component))
                 return;
+
+            //do something about duplicated Id code
             if(component is Argument)
             { //fix arguments order
                 var argument = component as Argument;
@@ -141,6 +146,16 @@ namespace FactScheme
                 foreach (var arg in argsGreater)
                     arg.Order -= 1;
                 _numArgs -= 1;
+            }
+            if (component is Condition)
+            {
+                var condition = component as Condition;
+                var condsGreater = from x in Conditions
+                                  where x.ID > condition.ID
+                                  select x;
+                foreach (var cond in condsGreater)
+                    cond.ID -= 1;
+                _numConds -= 1;
             }
             Components.Remove(component);
         }
@@ -219,7 +234,8 @@ namespace FactScheme
                             xattrs.Add(new XAttribute("ArgFrom", (rule.Reference as Argument).Order));
                         else
                             xattrs.Add(new XAttribute("ResultFrom", (rule.Reference as Result).Name));
-                        xattrs.Add(new XAttribute("AttrFrom", rule.InputAttribute.Name));
+                        if (rule.Attribute.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
+                            xattrs.Add(new XAttribute("AttrFrom", rule.InputAttribute.Name));
                         xrul = new XElement("Rule", xattrs);
                     }
                     xres.Add(xrul);
@@ -234,10 +250,13 @@ namespace FactScheme
                 var xattrs = new List<XAttribute>();
                 for (int i = 0; i < condition.Args.Count(); i++)
                 {
+                    if (condition.Args[i] == null)
+                        throw new ArgumentNullException("Scheme conditions must have both arguments set");
                     var argName = string.Format("Arg{0}", i+1);
                     var xarg = new XAttribute(argName, condition.Args[i].Order);
                     xattrs.Add(xarg);
                 }
+                xattrs.Add(new XAttribute("ID", condition.ID));
                 xattrs.Add(new XAttribute("Type", condition.Type));
                 xattrs.Add(new XAttribute("Operation", condition.ComparType));
                 switch (condition.Type)

@@ -30,10 +30,18 @@ namespace HelloForms
                                    select x;
                 foreach (XElement attrElement in classAttrs)
                 {
-                    string attrName = ((XText)attrElement.FirstNode).Value; //get inner text of <attr>
-                    string attrTypeStr = attrElement.Attribute("type").Value;
+                    var attrName = ((XText)attrElement.FirstNode).Value; //get inner text of <attr>
+                    var attrTypeStr = attrElement.Attribute("type").Value;
+                    var attrClassName = attrElement.Attribute("class")?.Value;
+                    var attrDomName = attrElement.Attribute("domain")?.Value;
+
                     OntologyNode.Attribute.AttributeType attrType = (OntologyNode.Attribute.AttributeType)Enum.Parse(typeof(OntologyNode.Attribute.AttributeType), attrTypeStr.ToUpper());
-                        currentClass.OwnAttributes.Add(new OntologyNode.Attribute(currentClass, attrType, attrName));
+                    var attr = new OntologyNode.Attribute(attrType, attrName);
+                    if (attrType == OntologyNode.Attribute.AttributeType.OBJECT && attrClassName != null)
+                        attr.Opt = attrClassName;
+                    if (attrType == OntologyNode.Attribute.AttributeType.DOMAIN && attrDomName != null)
+                        attr.Opt = attrDomName;
+                    currentClass.OwnAttributes.Add(attr);
                 }
                 if (classParents.Any())
                 {

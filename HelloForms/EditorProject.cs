@@ -60,7 +60,10 @@ namespace HelloForms
             Markup = root.Element(EditorConstants.XML_EDITOR_MARKUP);
 
             if (xontology != null)
+            {
                 _ontology = OntologyBuilder.fromXml(xontology);
+                _xontology = xontology;
+            }
             if (xthemes != null)
             {
                 _themes = new List<VocTheme>();

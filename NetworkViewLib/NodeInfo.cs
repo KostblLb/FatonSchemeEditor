@@ -19,7 +19,7 @@ namespace network
             public bool NameChangeable;
             public object Data;
         }
-        public HeaderInfo Header;
+        public HeaderInfo Header { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public string NodeNameProperty
@@ -35,11 +35,15 @@ namespace network
         public class SectionInfo : INotifyPropertyChanged
         {
             //connectability
+            public Connector Input;
+            public Connector Output;
             public bool IsInput;
             public bool IsOutput;
             public Connector.ConnectionEventHandler InputValidation;
             public Connector.ConnectionEventHandler InputAdded;
             public Connector.ConnectionEventHandler OutputAdded;
+            //add connection removed events
+
             //data
             object _data;
             //ui
@@ -56,7 +60,7 @@ namespace network
                 }
             }
         }
-        public List<SectionInfo> Sections;
+        public List<SectionInfo> Sections { get; }
         
         public ContextMenu Menu;
 

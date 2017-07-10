@@ -18,21 +18,17 @@ namespace Ontology
         public class Attribute
         {
             //CLASS is attr type for linking ontology classes typically to relation objects
-            public enum AttributeType { STRING, INT, CLASS, DOMAIN};
-            //VocTheme _theme; //if type is voctheme
-
-            readonly OntologyNode _parent;
+            public enum AttributeType { STRING, INT, OBJECT, DOMAIN};
+            
             AttributeType _attrType;
             string _name;
+            //optional value (like classname)
+            public object Opt { get; set; }
+
             public Attribute(AttributeType myType, string myName)
             {
-                _parent = null;
                 _attrType = myType;
                 _name = myName;
-            }
-            public Attribute(OntologyNode myParent, AttributeType myType, string myName) : this(myType, myName)
-            {
-                _parent = myParent;
             }
 
             public AttributeType AttrType
@@ -140,7 +136,7 @@ namespace Ontology
             _parents.Add(p);
         }
 
-        public OntologyClass Search(string name)
+        private OntologyClass find(string name, bool up)
         {
             OntologyClass klass = null;
             HashSet<OntologyClass> viewed = new HashSet<OntologyClass>();
@@ -149,18 +145,19 @@ namespace Ontology
             while (s.Any())
             {
                 OntologyClass currentKlass = s.Pop();
-                if (currentKlass.Name == name)
+                if (currentKlass.Name.Equals(name))
                 {
                     klass = currentKlass;
                     break;
                 }
-                if (currentKlass.Children.Count > 0)
+                var collection = up ? currentKlass.Parents : currentKlass.Children;
+                if (collection.Count > 0)
                 {
                     var currentKlassViewed = true;
-                    foreach (OntologyClass child in currentKlass.Children)
-                        if (!viewed.Contains(child))
+                    foreach (OntologyClass el in collection)
+                        if (!viewed.Contains(el))
                         {
-                            s.Push(child);
+                            s.Push(el);
                             currentKlassViewed = false;
                         }
                     if (currentKlassViewed)
@@ -168,6 +165,16 @@ namespace Ontology
                 }
             }
             return klass;
+        }
+
+        public OntologyClass FindParent(string name)
+        {
+            return find(name, true);
+        }
+
+        public OntologyClass FindChild(string name)
+        {
+            return find(name, false);
         }
     }
     

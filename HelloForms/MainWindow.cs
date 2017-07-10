@@ -235,6 +235,11 @@ namespace HelloForms
                             Functor f = scheme.Functors.First(x => x.ID == xel.Attribute("id").Value);
                             node = nv.AddNode(Medium.Convert(f));
                         }
+                        else if (xel.Attribute("type").Value == typeof(Condition).ToString())
+                        {
+                            Condition cond = scheme.Conditions.Find(x => x.ID == uint.Parse(xel.Attribute("id").Value));
+                            node = nv.AddNode(Medium.Convert(cond, CurrentProject.Gramtab, CurrentProject.Segments));
+                        }
                         else
                             continue;
                         int left = int.Parse(xel.Attribute("left").Value);
@@ -263,6 +268,8 @@ namespace HelloForms
                     string id;
                     if (node.Tag is Argument)
                         id = (node.Tag as Argument).Order.ToString();
+                    else if (node.Tag is Condition)
+                        id = ((Condition)node.Tag).ID.ToString();
                     else
                         id = (node.TagName);
                     XElement xnode = new XElement("node",
@@ -288,7 +295,8 @@ namespace HelloForms
         private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             string path = importDictionaryFileDialog.FileName;
-            CurrentProject.LoadDictionary(path);
+            var themes = CurrentProject.LoadDictionary(path);
+            buildDictionaryTree(themes);
         }
         private void importGramtabFileDialog_FileOk(object sender, CancelEventArgs e)
         {
