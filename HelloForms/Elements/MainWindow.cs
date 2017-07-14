@@ -277,7 +277,9 @@ namespace HelloForms
         private void importOntologyFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = importOntologyFileDialog.OpenFile();
-            loadOntologyTree(fstream);
+            var path = importOntologyFileDialog.FileName;
+            var ontology = CurrentProject.LoadOntology(fstream, path);
+            buildOntologyTree(ontology);
             fstream.Close();
         }
         private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -289,13 +291,15 @@ namespace HelloForms
         private void importGramtabFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = importGramtabFileDialog.OpenFile();
-            CurrentProject.LoadGramtab(fstream);
+            var path = importGramtabFileDialog.FileName;
+            CurrentProject.LoadGramtab(fstream, path);
             fstream.Close();
         }
         private void importSegmentsFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = importSegmentsFileDialog.OpenFile();
-            CurrentProject.LoadSegments(fstream);
+            var path = importSegmentsFileDialog.FileName;
+            CurrentProject.LoadSegments(fstream, path);
             fstream.Close();
         }
         #endregion open/save
@@ -342,12 +346,6 @@ namespace HelloForms
 
 
         #region resource loading
-        private void loadOntologyTree(Stream fstream)
-        {
-            List<OntologyNode> ontology = CurrentProject.LoadOntology(fstream);
-            fstream.Close();
-            buildOntologyTree(ontology);
-        }
         private void buildOntologyTree(List<OntologyNode> ontology)
         {
             ontologyTreeView.Nodes.Clear();

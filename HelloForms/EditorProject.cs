@@ -24,12 +24,12 @@ namespace HelloForms
     /// </summary>
     class EditorProject
     {
-        private XElement _xontology;
         private FactSchemeBank _bank;
         private List<OntologyNode> _ontology;
         private List<VocTheme> _themes;
         private Dictionary<string, List<string>> _gramtab;
         private List<string> _segments;
+        private Dictionary<string, string> _paths;
 
         public FactSchemeBank Bank { get { return _bank; } }
         public List<OntologyNode> Ontology { get { return _ontology; } }
@@ -40,14 +40,20 @@ namespace HelloForms
 
         public EditorProject()
         {
-            _xontology = new XElement(EditorConstants.XML_PROJECT_ONTOLOGY);
+            _paths = new Dictionary<string, string>();
             _ontology = new List<OntologyNode>();
             _themes = new List<VocTheme>();
             _bank = new FactSchemeBank();
             _gramtab = new Dictionary<string, List<string>>();
             _segments = new List<string>();
         }
-
+        
+        private Stream GetStream(XElement root, string xelement)
+        {
+            string path = root.Element(xelement).Value;
+            Stream stream = new FileStream(path, FileMode.Open);
+            return stream;
+        }
         public EditorProject(Stream fstream) : this()
         {
             StreamReader sr = new StreamReader(fstream);
@@ -55,40 +61,56 @@ namespace HelloForms
             XDocument doc = XDocument.Parse(xmlString);
 
             XElement root = doc.Element(EditorConstants.XML_EDITOR_ROOT_NAME);
-            XElement xontology = root.Element(EditorConstants.XML_PROJECT_ONTOLOGY);
-            XElement xthemes = root.Element(EditorConstants.XML_PROJECT_DICTIONARY);
+            //load ontology
+            var ontPath = root.Element(EditorConstants.XML_PROJECT_ONTOLOGY).Value;
+            var ontStream = new FileStream(ontPath, FileMode.Open);
+            LoadOntology(ontStream, ontPath);
+            ontStream.Close();
+
+            //load dictionary
+            var themesPath = root.Element(EditorConstants.XML_PROJECT_DICTIONARY).Value;
+            _themes = LoadDictionary(themesPath);
+
+            //load segments
+            var segPath = root.Element(EditorConstants.XML_PROJECT_SEGMENTS).Value;
+            var segStream = new FileStream(segPath, FileMode.Open);
+            _segments = LoadSegments(segStream, segPath);
+            segStream.Close();
+
+            //load gramtab
+            var gramtabPath = root.Element(EditorConstants.XML_PROJECT_GRAMTAB).Value;
+            var gramtabStream = new FileStream(gramtabPath, FileMode.Open);
+            _gramtab = LoadGramtab(gramtabStream, gramtabPath);
+            gramtabStream.Close();
+            
             XElement xbank = root.Element(FatonConstants.XML_BANK_NAME);
             Markup = root.Element(EditorConstants.XML_EDITOR_MARKUP);
 
-            if (xontology != null)
-            {
-                _ontology = OntologyBuilder.fromXml(xontology);
-                _xontology = xontology;
-            }
-            if (xthemes != null)
-            {
-                _themes = new List<VocTheme>();
-                foreach (XElement xtheme in xthemes.Elements())
-                {
-                    string name = xtheme.Attribute(EditorConstants.XML_PROJECT_DICTIONARYTHEMENAME).Value;
-                    VocTheme theme = new VocTheme(ref name);
-                    if (xtheme.Elements().Count() > 0)
-                        theme.root = false;
-                    foreach (XElement xbase in xtheme.Elements())
-                    {
-                        string basename = xbase.Value;
-                        VocTheme parent = Themes.Find(x => x.name == basename);
-                        if (parent == null)
-                            throw new Exception(string.Format(Locale.ERR_DICTIONARY_NOPARENT, basename, theme.name));
-                        else
-                        {
-                            parent.children.Add(theme);
-                            theme.parents.Add(parent);
-                        }
-                    }
-                    _themes.Add(theme);
-                }
-            }
+            //saved for the future
+            //if (xthemes != null)
+            //{
+            //    _themes = new List<VocTheme>();
+            //    foreach (XElement xtheme in xthemes.Elements())
+            //    {
+            //        string name = xtheme.Attribute(EditorConstants.XML_PROJECT_DICTIONARYTHEMENAME).Value;
+            //        VocTheme theme = new VocTheme(ref name);
+            //        if (xtheme.Elements().Count() > 0)
+            //            theme.root = false;
+            //        foreach (XElement xbase in xtheme.Elements())
+            //        {
+            //            string basename = xbase.Value;
+            //            VocTheme parent = Themes.Find(x => x.name == basename);
+            //            if (parent == null)
+            //                throw new Exception(string.Format(Locale.ERR_DICTIONARY_NOPARENT, basename, theme.name));
+            //            else
+            //            {
+            //                parent.children.Add(theme);
+            //                theme.parents.Add(parent);
+            //            }
+            //        }
+            //        _themes.Add(theme);
+            //    }
+            //}
 
             if (xbank != null)
             {
@@ -109,22 +131,21 @@ namespace HelloForms
                     xtheme.Add(new XElement(EditorConstants.XML_PROJECT_DICTIONARYBASE, parent.name));
                 xthemes.Add(xtheme);
             }
-            doc.Root.Add(_xontology);
-            doc.Root.Add(xthemes);
+            foreach (var path in _paths)
+                doc.Root.Add(new XElement(path.Key, path.Value));
             doc.Root.Add(Bank.ToXml().Root);
             doc.Root.Add(Markup);
             doc.Save(fstream);
         }
         public void Export(string filename, FactSchemeBank bank) { }
 
-        public List<OntologyNode> LoadOntology(Stream fstream)
+        public List<OntologyNode> LoadOntology(Stream fstream, string path)
         {
             StreamReader sr = new StreamReader(fstream);
             string xmlString = sr.ReadToEnd();
             XDocument doc = XDocument.Parse(xmlString);
-            _xontology = new XElement(doc.Root);
-            _xontology.Name = EditorConstants.XML_PROJECT_ONTOLOGY;
-            _ontology = OntologyBuilder.fromXml(_xontology);
+            _ontology = OntologyBuilder.fromXml(doc.Root);
+            _paths[EditorConstants.XML_PROJECT_ONTOLOGY] = path;
 
             return _ontology;
         }
@@ -139,10 +160,11 @@ namespace HelloForms
             _themes = ex.Themes();
             FloatingPointReset.Action();
 
+            _paths[EditorConstants.XML_PROJECT_DICTIONARY] = path;
             return _themes;
         }
 
-        public Dictionary<string, List<string>> LoadGramtab(Stream fstream)
+        public Dictionary<string, List<string>> LoadGramtab(Stream fstream, string path)
         {
             StreamReader sr = new StreamReader(fstream);
             String fstring = sr.ReadToEnd();
@@ -165,10 +187,12 @@ namespace HelloForms
                 _gramtab.Add(paramName, gramtabParam);
                 str = reader.ReadLine();
             } while (!string.IsNullOrEmpty(str) && !str.First().Equals('<'));
-                return _gramtab;
+
+            _paths[EditorConstants.XML_PROJECT_GRAMTAB] = path;
+            return _gramtab;
         }
 
-        public List<string> LoadSegments(Stream fstream)
+        public List<string> LoadSegments(Stream fstream, string path)
         {
             var resut = new List<string>();
 
@@ -180,6 +204,7 @@ namespace HelloForms
                 resut.Add(xclass.Attribute("name").Value);
 
             _segments = resut;
+            _paths[EditorConstants.XML_PROJECT_SEGMENTS] = path;
             return _segments;
         }
     }

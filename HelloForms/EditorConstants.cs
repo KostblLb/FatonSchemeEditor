@@ -24,6 +24,8 @@ namespace HelloForms
         public static string XML_EDITOR_MARKUP = "FATON_EDITOR_MARKUP";
         public static string XML_PROJECT_ONTOLOGY = "ONTOLOGY";
         public static string XML_PROJECT_DICTIONARY = "DICTIONARY";
+        public static string XML_PROJECT_GRAMTAB = "GRAMTAB";
+        public static string XML_PROJECT_SEGMENTS = "SEGMENTS";
         public static string XML_PROJECT_BANK = "BANK";
 
         public static string XML_PROJECT_DICTIONARYTHEME = "theme";

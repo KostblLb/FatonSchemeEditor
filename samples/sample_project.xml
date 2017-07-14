@@ -1,37 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <FATON_EDITOR_PROJECT>
-  <ONTOLOGY>
-    <!-- классы -->
-    <class name="Небесное тело" />
-    <attr type="int">Масса</attr>
-    <attr type="int">Размер</attr>
-    <class name="Звезда">
-      <base>Небесное тело</base>
-      <attr type="domain" domain="Виды звёзд">Вид</attr>
-    </class>
-    <class name="Планета">
-      <base>Небесное тело</base>
-    </class>
-    <!-- отношения -->
-    <class name="X вращается вокруг Y">
-      <attr type="object" class="Небесное тело">Центр</attr>
-      <attr type="object" class="Небесное тело">Спутник</attr>
-    </class>
-    <!-- домены -->
-    <domain name="Виды звёзд">
-      <value>Коричневый карлик</value>
-      <value>Белый карлик</value>
-      <value>Красный гигант</value>
-      <value>Сверхновая</value>
-    </domain>
-  </ONTOLOGY>
-  <DICTIONARY />
+  <ONTOLOGY>../../../samples/sample_ontology.xml</ONTOLOGY>
+  <DICTIONARY>../../../samples/eso.vc</DICTIONARY>
+  <SEGMENTS>../../../samples/sample_segments.xml</SEGMENTS>
+  <GRAMTAB>../../../samples/gramtab.ini</GRAMTAB>
   <FATON_SCHEMES_BANK>
     <Базовая_Солнечная_Система>
       <Argument Order="1" Type="IOBJECT" ClassName="Планета" AllowInheritance="true" />
       <Argument Order="2" Type="IOBJECT" ClassName="Звезда" AllowInheritance="true">
-        <Condition Attribute="Вид" Type="SEG" ComparType="EQ" Value="Абзац" />
-        <Condition Attribute="Вид" Type="SEG" ComparType="NEQ" Value="Заголовок" />
+        <Condition Attribute="Вид" Type="MORPH" ComparType="EQ" Value="Число;ед" />
+        <Condition Attribute="Вид" Type="MORPH" ComparType="EQ" Value="Одушевленность;но" />
       </Argument>
       <Result Name="NewResult" ClassName="X вращается вокруг Y" Type="Create">
         <Rule Attribute="Спутник" Type="DEF" ArgFrom="1" />

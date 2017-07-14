@@ -725,10 +725,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.DataGridViewComboBoxColumn conditionTypeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn attributeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewComboBoxColumn comparisonTypeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn valueDataGridViewTextBoxColumn;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripNewScheme;
         private System.Windows.Forms.ContextMenuStrip ontologyTreeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem addArgumentMenuItem;

@@ -67,6 +67,9 @@ namespace HelloForms
 
                     var segCombo = new ComboBox();
                     segCombo.DataSource = CurrentProject.Segments.ToList();
+                    segCombo.BindingContext = new BindingContext();
+                    if (condition.CondType == Argument.ArgumentCondition.ConditionType.SEG)
+                        segCombo.SelectedItem = condition.Value;
                     segCombo.SelectionChangeCommitted += (s, e) =>
                     {
                         condition.Value = ((ComboBox)s).SelectedItem.ToString();
@@ -82,13 +85,20 @@ namespace HelloForms
                     var gramTypeCombo = new ComboBox();
                     gramTypeCombo.DataSource = CurrentProject.Gramtab.Keys.ToList();
                     gramTypeCombo.BindingContext = new BindingContext();
-                    gramTypeCombo.SelectedItem = values[0];
+                    gramTypeCombo.SelectedItem =
+                        condition.CondType == Argument.ArgumentCondition.ConditionType.MORPH ?
+                        values[0] :
+                        CurrentProject.Gramtab.First().Key;
+
                     var gramValueCombo = new ComboBox();
                     gramValueCombo.DataSource = CurrentProject.Gramtab.ContainsKey(values[0]) ?
                         CurrentProject.Gramtab[values[0]].ToList() :
-                        new List<string>();
+                        CurrentProject.Gramtab.First().Value.ToList();
                     gramValueCombo.BindingContext = new BindingContext();
-                    gramValueCombo.SelectedItem = values.Length > 1 ? values[1] : null;
+                    gramValueCombo.SelectedItem = values.Length > 1 ? 
+                        values[1] : 
+                        gramTypeCombo.Items[0];
+
                     gramTypeCombo.SelectedValueChanged += (s, e) =>
                     {
                         gramValueCombo.DataSource = CurrentProject.Gramtab[gramTypeCombo.SelectedItem.ToString()].ToList();
