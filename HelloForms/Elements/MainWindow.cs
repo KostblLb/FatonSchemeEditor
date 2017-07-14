@@ -25,8 +25,9 @@ namespace HelloForms
         Dictionary<Scheme, ElementHost> NVHosts;
         System.Windows.Controls.ContextMenu NVViewContextMenu;
 
-        Scheme CurrentScheme {
-            get {return schemeTabViewPage.Tag as Scheme;}
+        Scheme CurrentScheme
+        {
+            get { return schemeTabViewPage.Tag as Scheme; }
             set
             {
                 schemeTabViewPage.Controls.RemoveByKey(EditorConstants.TABPAGE_WPF_HOST_NAME);
@@ -50,9 +51,7 @@ namespace HelloForms
 
             ontologyTreeView.NodeMouseClick += (s, e) => ontologyTreeView.SelectedNode = e.Node;
             dictionaryTreeView.NodeMouseClick += (s, e) => dictionaryTreeView.SelectedNode = e.Node;
-
-            Medium.onAttributeSetup += (attr, arg) => updateDataGrid(attr, arg);
-
+            
             NVHosts = new Dictionary<Scheme, ElementHost>();
             NVViewContextMenu = new System.Windows.Controls.ContextMenu();
             NVViewContextMenu.Items.Add("N.View context menu");
@@ -60,17 +59,6 @@ namespace HelloForms
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //ontologyTreeView.ItemDrag += new ItemDragEventHandler(treeView_ItemDrag);
-            dataGridView1.AutoGenerateColumns = false;
-
-            var conditionTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_TYPE_COL] as DataGridViewComboBoxColumn;
-            conditionTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ConditionType);
-            conditionTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ConditionType));
-
-            var comparTypeColumn = dataGridView1.Columns[EditorConstants.CONDITION_DATAGRID_COMPAR_COL] as DataGridViewComboBoxColumn;
-            comparTypeColumn.ValueType = typeof(Argument.ArgumentCondition.ComparisonType);
-            comparTypeColumn.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ComparisonType));
-
             CurrentProject = new EditorProject();
             createScheme();
         }
@@ -316,28 +304,29 @@ namespace HelloForms
         {
             listView1.Clear();
             OntologyNode node = (OntologyNode)e.Node.Tag;
-            if (node is OntologyClass){
+            if (node is OntologyClass)
+            {
                 listView1.Columns.Add("Атрибут"); //bad hardcode, use localization
                 listView1.Columns.Add("Тип");
                 listView1.Columns.Add("Унаследован");
                 List<OntologyNode.Attribute> attrs = ((OntologyClass)node).OwnAttributes;
-                
+
                 List<Tuple<OntologyNode.Attribute, OntologyClass>> inheritedAttrs = ((OntologyClass)node).InheritedAttributes;
 
-                foreach(OntologyNode.Attribute attr in attrs)
+                foreach (OntologyNode.Attribute attr in attrs)
                 {
                     string[] values = { attr.Name, attr.AttrType.ToString(), "" };
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
-                foreach(Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
+                foreach (Tuple<OntologyNode.Attribute, OntologyClass> inheritedAtt in inheritedAttrs)
                 {
-                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString(), inheritedAtt.Item2.Name};
+                    string[] values = { inheritedAtt.Item1.Name, inheritedAtt.Item1.AttrType.ToString(), inheritedAtt.Item2.Name };
                     ListViewItem item = new ListViewItem(values);
                     listView1.Items.Add(item);
                 }
             }
-            
+
         }
 
         private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
@@ -350,9 +339,9 @@ namespace HelloForms
             }
         }
 
-        
 
-#region resource loading
+
+        #region resource loading
         private void loadOntologyTree(Stream fstream)
         {
             List<OntologyNode> ontology = CurrentProject.LoadOntology(fstream);
@@ -433,7 +422,7 @@ namespace HelloForms
             //Themes = themes;
         }
 
-#endregion
+        #endregion
 
         private void updateBankListView()
         {
@@ -457,7 +446,7 @@ namespace HelloForms
 
             //create a networkview
             network.NetworkView nv = new network.NetworkView();
-            
+
             nv.Drop += Nv_Drop;
             nv.NodeAdded += NV_NodeAdded;
             nv.NodeRemoving += NV_NodeRemoving;
@@ -466,6 +455,8 @@ namespace HelloForms
             nv.ContextMenu = NVViewContextMenu;
             nv.NodeSelected += (s, e) =>
             {
+                if (nv.SelectedNode.Tag is Argument)
+                    OpenPropsPanel((Argument)nv.SelectedNode.Tag);
             };
 
             elementHost.Child = nv;
@@ -487,7 +478,6 @@ namespace HelloForms
             updateBankListView();
 
             initNVHost(scheme);
-            dataGridView1.Enabled = false;
             CurrentScheme = scheme;
         }
 
@@ -515,7 +505,7 @@ namespace HelloForms
             if (!e.Data.GetDataPresent(typeof(DataContainer)))
                 return;
             DataContainer ontologyClassContainer = (DataContainer)e.Data.GetData(typeof(DataContainer));
-            
+
             OntologyClass ontologyClass = ontologyClassContainer.Data as OntologyClass;
 
             //Layout layout;
@@ -524,7 +514,7 @@ namespace HelloForms
 
             FactScheme.Argument arg = scheme.AddArgument(ontologyClass);
 
-            network.Node node = nv.AddNode(Medium.Convert(arg), true); 
+            network.Node node = nv.AddNode(Medium.Convert(arg), true);
         }
 
         private void NV_NodeAdded(object sender, network.NodeAddedEventArgs e)
@@ -535,14 +525,13 @@ namespace HelloForms
         private void NV_NodeRemoving(object sender, System.Windows.RoutedEventArgs e)
         {
             var node = e.Source as network.Node;
-            
+
             ISchemeComponent comp = ((network.Node)e.Source).Tag as ISchemeComponent;
             var oneighbors = node.OutgoingNeighbors;
             foreach (var neighbor in oneighbors)
                 (neighbor.Tag as ISchemeComponent).RemoveUpper(comp);
             CurrentScheme.RemoveComponent(comp);
             Console.WriteLine("NV_NodeRemoving!");
-            dataGridView1.Enabled = false;
         }
 
         private void NV_ConnectionAdded(object sender, network.ConnectionEventArgs e)
@@ -578,7 +567,6 @@ namespace HelloForms
             if ((sender as ListView).SelectedItems.Count == 0)
                 return;
             CurrentScheme = ((sender as ListView).SelectedItems[0].Tag as Scheme);
-            dataGridView1.Enabled = false;
         }
 
         private void schemesTabControl_Selected(object sender, TabControlEventArgs e)
@@ -611,19 +599,17 @@ namespace HelloForms
                 scheme.Name = e.Label;
         }
 
-        private void updateDataGrid(OntologyNode.Attribute attr, Argument arg)
+        private void bankListFilter_TextChanged(object sender, EventArgs e)
         {
-            dataGridView1.Tag = arg;
-            dataGridView1.Enabled = true;
-            argumentConditionsGroupBox.Text = String.Format(
-                "Ограничения arg{0} {1} :: Атрибут {2}",
-                arg.Order, arg.Name, attr.Name);
-            //updateDataGrid();
-            var binding = new BindingSource();
-            if (!arg.Сonditions.ContainsKey(attr))
-                arg.Сonditions.Add(attr, new List<Argument.ArgumentCondition>());
-            binding.DataSource = arg.Сonditions[attr];
-            dataGridView1.DataSource = binding;
+            var filterText = bankListFilter.Text.ToLower();
+            bankListView.Clear();
+            foreach (var scheme in CurrentProject.Bank.Schemes)
+                if (scheme.Name.ToLower().Contains(filterText))
+                {
+                    var item = new ListViewItem(scheme.Name);
+                    item.Tag = scheme;
+                    bankListView.Items.Add(item);
+                }
         }
 
         private void addSchemeConditionButton_Click(object sender, EventArgs e)
@@ -631,7 +617,6 @@ namespace HelloForms
             Condition cond = CurrentScheme.AddCondition();
             getCurrentNetworkView().AddNode(Medium.Convert(cond, CurrentProject.Gramtab, CurrentProject.Segments));
         }
-
 
     }
 }

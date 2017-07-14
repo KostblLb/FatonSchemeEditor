@@ -20,9 +20,10 @@ namespace FactScheme
 
         public class ArgumentCondition
         {
-            public enum ConditionType { SEM, SEG, MORPH, SYNT }
+            public enum ConditionType { SEM, SEG, MORPH }
             public enum ComparisonType { EQ, NEQ };
 
+            
             public ConditionType CondType { get; set; }
             //public OntologyNode.Attribute Attribute { get; set; }
             public ComparisonType ComparType { get; set; }
@@ -42,7 +43,7 @@ namespace FactScheme
         //string _name;
         bool _useInheritance;
         protected uint _order;
-        public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Сonditions { get; set; }
+        public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Conditions { get; set; }
 
         public ArgumentType ArgType
         {
@@ -92,18 +93,23 @@ namespace FactScheme
             _argType = ArgumentType.IOBJECT;
             _klass = klass;
             _useInheritance = inherit;
-            Сonditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
+            Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             
             _attrs = klass.AllAttributes;
+            foreach (var attr in _attrs)
+            {
+                Conditions.Add(attr, new List<ArgumentCondition>());
+            }
         }
 
         public Argument(VocTheme theme)
         {
             _argType = ArgumentType.TERMIN;
             _theme = theme;
-            Сonditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
+            Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             _attrs = new List<OntologyNode.Attribute>();
             _attrs.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, theme.name));
+            Conditions.Add(_attrs[0], new List<ArgumentCondition>());
         }
 
         #region ISchemeComponent implementation

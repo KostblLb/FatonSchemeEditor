@@ -45,6 +45,7 @@ namespace HelloForms
             _themes = new List<VocTheme>();
             _bank = new FactSchemeBank();
             _gramtab = new Dictionary<string, List<string>>();
+            _segments = new List<string>();
         }
 
         public EditorProject(Stream fstream) : this()

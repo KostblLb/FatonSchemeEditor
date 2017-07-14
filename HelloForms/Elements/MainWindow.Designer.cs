@@ -57,19 +57,19 @@
             this.importDictionaryFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tabsAndBankContainer = new System.Windows.Forms.SplitContainer();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.bankGroupBox = new System.Windows.Forms.GroupBox();
             this.bankListView = new System.Windows.Forms.ListView();
-            this.nvAndConditionsContainer = new System.Windows.Forms.SplitContainer();
+            this.bankListFilter = new System.Windows.Forms.TextBox();
+            this.propsGroupBox = new System.Windows.Forms.GroupBox();
+            this.propsPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
             this.addSchemeConditionButton = new System.Windows.Forms.Button();
             this.schemeTabXMLPage = new System.Windows.Forms.TabPage();
             this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
-            this.argumentConditionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.CondType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.ComparType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.ontologyAndDictionaryTabsBox = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -92,16 +92,17 @@
             this.tabsAndBankContainer.Panel1.SuspendLayout();
             this.tabsAndBankContainer.Panel2.SuspendLayout();
             this.tabsAndBankContainer.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).BeginInit();
-            this.nvAndConditionsContainer.Panel1.SuspendLayout();
-            this.nvAndConditionsContainer.Panel2.SuspendLayout();
-            this.nvAndConditionsContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.bankGroupBox.SuspendLayout();
+            this.propsGroupBox.SuspendLayout();
+            this.propsPanel.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.schemesTabControl.SuspendLayout();
             this.schemeTabViewPage.SuspendLayout();
             this.schemeTabXMLPage.SuspendLayout();
-            this.argumentConditionsGroupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -337,12 +338,12 @@
             // 
             // tabsAndBankContainer.Panel1
             // 
-            this.tabsAndBankContainer.Panel1.Controls.Add(this.groupBox2);
+            this.tabsAndBankContainer.Panel1.Controls.Add(this.splitContainer1);
             this.tabsAndBankContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // tabsAndBankContainer.Panel2
             // 
-            this.tabsAndBankContainer.Panel2.Controls.Add(this.nvAndConditionsContainer);
+            this.tabsAndBankContainer.Panel2.Controls.Add(this.schemesTabControl);
             this.tabsAndBankContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tabsAndBankContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tabsAndBankContainer.Size = new System.Drawing.Size(705, 688);
@@ -350,18 +351,39 @@
             this.tabsAndBankContainer.TabIndex = 1;
             this.tabsAndBankContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.window_SplitterMoved);
             // 
-            // groupBox2
+            // splitContainer1
             // 
-            this.groupBox2.Controls.Add(this.bankListView);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.groupBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox2.Size = new System.Drawing.Size(140, 688);
-            this.groupBox2.TabIndex = 0;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Банк схем";
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.bankGroupBox);
+            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.propsGroupBox);
+            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer1.Size = new System.Drawing.Size(283, 688);
+            this.splitContainer1.SplitterDistance = 175;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // bankGroupBox
+            // 
+            this.bankGroupBox.Controls.Add(this.bankListView);
+            this.bankGroupBox.Controls.Add(this.bankListFilter);
+            this.bankGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bankGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.bankGroupBox.Name = "bankGroupBox";
+            this.bankGroupBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.bankGroupBox.Size = new System.Drawing.Size(283, 175);
+            this.bankGroupBox.TabIndex = 0;
+            this.bankGroupBox.TabStop = false;
+            this.bankGroupBox.Text = "Банк";
             // 
             // bankListView
             // 
@@ -370,39 +392,66 @@
             this.bankListView.FullRowSelect = true;
             this.bankListView.GridLines = true;
             this.bankListView.LabelEdit = true;
-            this.bankListView.Location = new System.Drawing.Point(3, 20);
+            this.bankListView.Location = new System.Drawing.Point(3, 40);
             this.bankListView.Name = "bankListView";
-            this.bankListView.Size = new System.Drawing.Size(134, 665);
+            this.bankListView.Size = new System.Drawing.Size(277, 132);
             this.bankListView.TabIndex = 0;
             this.bankListView.UseCompatibleStateImageBehavior = false;
             this.bankListView.View = System.Windows.Forms.View.List;
             this.bankListView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.bankListView_AfterLabelEdit);
             this.bankListView.DoubleClick += new System.EventHandler(this.bankListView_DoubleClick);
             // 
-            // nvAndConditionsContainer
+            // bankListFilter
             // 
-            this.nvAndConditionsContainer.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::HelloForms.Properties.Settings.Default, "ArgGridViewSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.nvAndConditionsContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nvAndConditionsContainer.Location = new System.Drawing.Point(0, 0);
-            this.nvAndConditionsContainer.Margin = new System.Windows.Forms.Padding(4);
-            this.nvAndConditionsContainer.Name = "nvAndConditionsContainer";
-            this.nvAndConditionsContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.bankListFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            this.bankListFilter.Location = new System.Drawing.Point(3, 18);
+            this.bankListFilter.Name = "bankListFilter";
+            this.bankListFilter.Size = new System.Drawing.Size(277, 22);
+            this.bankListFilter.TabIndex = 0;
+            this.bankListFilter.TextChanged += new System.EventHandler(this.bankListFilter_TextChanged);
             // 
-            // nvAndConditionsContainer.Panel1
+            // propsGroupBox
             // 
-            this.nvAndConditionsContainer.Panel1.Controls.Add(this.schemesTabControl);
-            this.nvAndConditionsContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.propsGroupBox.Controls.Add(this.propsPanel);
+            this.propsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propsGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.propsGroupBox.Name = "propsGroupBox";
+            this.propsGroupBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.propsGroupBox.Size = new System.Drawing.Size(283, 509);
+            this.propsGroupBox.TabIndex = 0;
+            this.propsGroupBox.TabStop = false;
+            this.propsGroupBox.Text = "Свойства";
             // 
-            // nvAndConditionsContainer.Panel2
+            // propsPanel
             // 
-            this.nvAndConditionsContainer.Panel2.Controls.Add(this.argumentConditionsGroupBox);
-            this.nvAndConditionsContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.nvAndConditionsContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.nvAndConditionsContainer.Size = new System.Drawing.Size(561, 688);
-            this.nvAndConditionsContainer.SplitterDistance = global::HelloForms.Properties.Settings.Default.ArgGridViewSplitter;
-            this.nvAndConditionsContainer.SplitterWidth = 5;
-            this.nvAndConditionsContainer.TabIndex = 1;
-            this.nvAndConditionsContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.window_SplitterMoved);
+            this.propsPanel.Controls.Add(this.flowLayoutPanel2);
+            this.propsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.propsPanel.Location = new System.Drawing.Point(3, 18);
+            this.propsPanel.Name = "propsPanel";
+            this.propsPanel.Size = new System.Drawing.Size(277, 488);
+            this.propsPanel.TabIndex = 0;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.AutoSize = true;
+            this.flowLayoutPanel2.Controls.Add(this.label1);
+            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(261, 51);
+            this.flowLayoutPanel2.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(255, 51);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Здесь будут отображаться ограничения атрибутов выделенного аргумента";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // schemesTabControl
             // 
@@ -412,8 +461,9 @@
             this.schemesTabControl.Location = new System.Drawing.Point(0, 0);
             this.schemesTabControl.Margin = new System.Windows.Forms.Padding(4);
             this.schemesTabControl.Name = "schemesTabControl";
+            this.schemesTabControl.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.schemesTabControl.SelectedIndex = 0;
-            this.schemesTabControl.Size = new System.Drawing.Size(561, 500);
+            this.schemesTabControl.Size = new System.Drawing.Size(418, 688);
             this.schemesTabControl.TabIndex = 0;
             this.schemesTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.schemesTabControl_Selected);
             // 
@@ -422,7 +472,7 @@
             this.schemeTabViewPage.Controls.Add(this.addSchemeConditionButton);
             this.schemeTabViewPage.Location = new System.Drawing.Point(4, 25);
             this.schemeTabViewPage.Name = "schemeTabViewPage";
-            this.schemeTabViewPage.Size = new System.Drawing.Size(553, 471);
+            this.schemeTabViewPage.Size = new System.Drawing.Size(410, 659);
             this.schemeTabViewPage.TabIndex = 0;
             this.schemeTabViewPage.Text = "Сеть";
             this.schemeTabViewPage.UseVisualStyleBackColor = true;
@@ -442,7 +492,7 @@
             this.schemeTabXMLPage.Controls.Add(this.schemeXMLTextBox);
             this.schemeTabXMLPage.Location = new System.Drawing.Point(4, 25);
             this.schemeTabXMLPage.Name = "schemeTabXMLPage";
-            this.schemeTabXMLPage.Size = new System.Drawing.Size(553, 471);
+            this.schemeTabXMLPage.Size = new System.Drawing.Size(410, 659);
             this.schemeTabXMLPage.TabIndex = 1;
             this.schemeTabXMLPage.Text = "XML";
             this.schemeTabXMLPage.UseVisualStyleBackColor = true;
@@ -455,64 +505,10 @@
             this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
             this.schemeXMLTextBox.Name = "schemeXMLTextBox";
             this.schemeXMLTextBox.ReadOnly = true;
-            this.schemeXMLTextBox.Size = new System.Drawing.Size(553, 471);
+            this.schemeXMLTextBox.Size = new System.Drawing.Size(410, 659);
             this.schemeXMLTextBox.TabIndex = 0;
             this.schemeXMLTextBox.Text = "";
             this.schemeXMLTextBox.WordWrap = false;
-            // 
-            // argumentConditionsGroupBox
-            // 
-            this.argumentConditionsGroupBox.Controls.Add(this.dataGridView1);
-            this.argumentConditionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.argumentConditionsGroupBox.Location = new System.Drawing.Point(0, 0);
-            this.argumentConditionsGroupBox.Margin = new System.Windows.Forms.Padding(4);
-            this.argumentConditionsGroupBox.Name = "argumentConditionsGroupBox";
-            this.argumentConditionsGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.argumentConditionsGroupBox.Size = new System.Drawing.Size(561, 183);
-            this.argumentConditionsGroupBox.TabIndex = 0;
-            this.argumentConditionsGroupBox.TabStop = false;
-            this.argumentConditionsGroupBox.Text = "Ограничения аргумента";
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToOrderColumns = true;
-            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ActiveBorder;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.CondType,
-            this.ComparType,
-            this.Value});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridView1.Enabled = false;
-            this.dataGridView1.Location = new System.Drawing.Point(4, 19);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(553, 160);
-            this.dataGridView1.TabIndex = 1;
-            // 
-            // CondType
-            // 
-            this.CondType.DataPropertyName = "CondType";
-            this.CondType.HeaderText = "Тип условия";
-            this.CondType.Name = "CondType";
-            this.CondType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // ComparType
-            // 
-            this.ComparType.DataPropertyName = "ComparType";
-            this.ComparType.HeaderText = "Тип сравнения";
-            this.ComparType.Name = "ComparType";
-            // 
-            // Value
-            // 
-            this.Value.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Value.DataPropertyName = "Value";
-            this.Value.HeaderText = "Значение";
-            this.Value.Name = "Value";
             // 
             // splitContainer2
             // 
@@ -692,16 +688,20 @@
             this.tabsAndBankContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).EndInit();
             this.tabsAndBankContainer.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.nvAndConditionsContainer.Panel1.ResumeLayout(false);
-            this.nvAndConditionsContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nvAndConditionsContainer)).EndInit();
-            this.nvAndConditionsContainer.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.bankGroupBox.ResumeLayout(false);
+            this.bankGroupBox.PerformLayout();
+            this.propsGroupBox.ResumeLayout(false);
+            this.propsPanel.ResumeLayout(false);
+            this.propsPanel.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.schemesTabControl.ResumeLayout(false);
             this.schemeTabViewPage.ResumeLayout(false);
             this.schemeTabXMLPage.ResumeLayout(false);
-            this.argumentConditionsGroupBox.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -753,19 +753,11 @@
         private System.Windows.Forms.SaveFileDialog saveProjectFileDialog;
         private System.Windows.Forms.ToolStripMenuItem сегментовToolStripMenuItem;
         private System.Windows.Forms.SplitContainer tabsAndBankContainer;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.ListView bankListView;
-        private System.Windows.Forms.SplitContainer nvAndConditionsContainer;
         private System.Windows.Forms.TabControl schemesTabControl;
         private System.Windows.Forms.TabPage schemeTabViewPage;
         private System.Windows.Forms.Button addSchemeConditionButton;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
-        private System.Windows.Forms.GroupBox argumentConditionsGroupBox;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewComboBoxColumn CondType;
-        private System.Windows.Forms.DataGridViewComboBoxColumn ComparType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TabControl ontologyAndDictionaryTabsBox;
         private System.Windows.Forms.TabPage tabPage1;
@@ -780,6 +772,14 @@
         private System.Windows.Forms.SplitContainer mainContainer;
         private System.Windows.Forms.OpenFileDialog importGramtabFileDialog;
         private System.Windows.Forms.OpenFileDialog importSegmentsFileDialog;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.GroupBox bankGroupBox;
+        private System.Windows.Forms.GroupBox propsGroupBox;
+        private System.Windows.Forms.ListView bankListView;
+        private System.Windows.Forms.TextBox bankListFilter;
+        private System.Windows.Forms.FlowLayoutPanel propsPanel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Label label1;
     }
 }
 

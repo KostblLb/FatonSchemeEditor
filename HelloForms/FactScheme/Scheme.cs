@@ -175,7 +175,7 @@ namespace FactScheme
                         new XAttribute("Type", arg.ArgType),
                         new XAttribute("ClassName", arg.Name),
                         new XAttribute("AllowInheritance", arg.Inheritance));
-                foreach(var pair in arg.Сonditions)
+                foreach(var pair in arg.Conditions)
                 {
                     foreach (var cond in pair.Value)
                     {
@@ -184,7 +184,7 @@ namespace FactScheme
                                 new XAttribute("Attribute", pair.Key.Name),
                                 new XAttribute("Type", cond.CondType),
                                 new XAttribute("ComparType", cond.ComparType),
-                                new XAttribute("Values", cond.Value));
+                                new XAttribute("Value", cond.Value));
                         xarg.Add(xcond);
                     }
                 }

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using FactScheme;
 using Faton;
 using Ontology;
 using Shared;
+using System.Xml;
 
 namespace HelloForms
 { 
@@ -75,6 +77,19 @@ namespace HelloForms
                     }
                     arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
                     arg.Order = uint.Parse(xarg.Attribute("Order").Value);
+                    foreach(XElement xcond in xarg.Elements("Condition"))
+                    {
+                        var condition = new Argument.ArgumentCondition();
+                        var attrName = xcond.Attribute("Attribute").Value;
+                        var type = xcond.Attribute("Type").Value;
+                        var comparType = xcond.Attribute("ComparType").Value;
+                        var value = xcond.Attribute("Value").Value;
+                        condition.ComparType = (Argument.ArgumentCondition.ComparisonType) Enum.Parse(typeof(Argument.ArgumentCondition.ComparisonType), comparType);
+                        condition.CondType = (Argument.ArgumentCondition.ConditionType)Enum.Parse(typeof(Argument.ArgumentCondition.ConditionType), type);
+                        condition.Value = value;
+                        var attr = arg.Attributes.Find(x => x.Name.Equals(attrName));
+                        arg.Conditions[attr].Add(condition);
+                    }
                 }
                 foreach (XElement xres in results)
                 {
@@ -96,8 +111,12 @@ namespace HelloForms
                         if (ruleType == Result.RuleType.DEF)
                         {
                             Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute("ArgFrom").Value));
-                            OntologyNode.Attribute inputAttr = arg.Attributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
                             OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute("Attribute").Value);
+                            OntologyNode.Attribute inputAttr = null;
+                            if (attr.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
+                            {
+                                inputAttr = arg.Attributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
+                            }
                             result.AddRule(ruleType, attr, arg, inputAttr);
                         }
                         

@@ -20,9 +20,6 @@ namespace HelloForms
     /// </summary>
     public class Medium
     {
-        public delegate void AttributeSetup(OntologyNode.Attribute attr, Argument arg);
-        public static event AttributeSetup onAttributeSetup;
-
         public static void AddSchemeConnection(Scheme scheme, Connector src, Connector dst)
         {
             //if (dst.Tag == null || src.Tag == null)
@@ -98,21 +95,21 @@ namespace HelloForms
                     attrName.Content = "Значение";
                 attrName.ToolTip = attr.AttrType;
 
-                WrapPanel panel = new WrapPanel();
-                Button attrSetup = new Button();
-                attrSetup.Height = 16;
-                attrSetup.Width = 16;
-                attrSetup.Content = "::";
-                attrSetup.ToolTip = "Изменить ограничения атрибута";
-                attrSetup.HorizontalAlignment = HorizontalAlignment.Right;
-                attrSetup.Click += (s, e) =>
-                {
-                    Medium.onAttributeSetup(attr, argument);
-                };
+                //WrapPanel panel = new WrapPanel();
+                //Button attrSetup = new Button();
+                //attrSetup.Height = 16;
+                //attrSetup.Width = 16;
+                //attrSetup.Content = "::";
+                //attrSetup.ToolTip = "Изменить ограничения атрибута";
+                //attrSetup.HorizontalAlignment = HorizontalAlignment.Right;
+                //attrSetup.Click += (s, e) =>
+                //{
+                //    Medium.onAttributeSetup(attr, argument);
+                //};
 
-                panel.Children.Add(attrName);
-                panel.Children.Add(attrSetup);
-                attrInfo.UIPanel = panel;
+                //panel.Children.Add(attrName);
+                //panel.Children.Add(attrSetup);
+                attrInfo.UIPanel = attrName;
                 info.Sections.Add(attrInfo);
             }
 
@@ -406,8 +403,6 @@ namespace HelloForms
             return info;
         }
         #endregion convertations
-        private static Style typeNameStyle;
-        private static Style infoTextStyle;
 
         #region various panels
         private static StackPanel ResultInfoPanel(FactScheme.Result result)
