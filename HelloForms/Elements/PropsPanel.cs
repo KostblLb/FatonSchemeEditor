@@ -14,6 +14,8 @@ namespace HelloForms
             var mainPanel = new FlowLayoutPanel();
             mainPanel.AutoSize = true;
             mainPanel.FlowDirection = FlowDirection.TopDown;
+            mainPanel.WrapContents = false;
+            mainPanel.AutoScroll = true;
 
             foreach (var attr in arg.Attributes)
             {
@@ -114,11 +116,15 @@ namespace HelloForms
                     morphPanel.Visible = false;
                     wrapPanel.Controls.Add(morphPanel);
 
-                    var semCombo = new ComboBox();
-                    semCombo.DataSource = new List<string>();
-                    semCombo.Tag = Argument.ArgumentCondition.ConditionType.SEM;
+                    var semTextBox = new TextBox();
+                    semTextBox.Text = condition.Value;
+                    semTextBox.TextChanged += (s, e) =>
+                    {
+                        condition.Value = semTextBox.Text;
+                    };
+                    semTextBox.Tag = Argument.ArgumentCondition.ConditionType.SEM;
                     //semCombo.Visible = false;
-                    wrapPanel.Controls.Add(semCombo);
+                    wrapPanel.Controls.Add(semTextBox);
 
                     var removeCondButton = new Button();
                     removeCondButton.Width = 16;
