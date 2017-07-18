@@ -21,3 +21,5 @@ Shared/Debug
 Shared/Release
 
 .vs/*
+/Debug.7z
+*.7z
