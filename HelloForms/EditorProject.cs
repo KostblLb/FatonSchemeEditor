@@ -54,7 +54,7 @@ namespace HelloForms
             Stream stream = new FileStream(path, FileMode.Open);
             return stream;
         }
-        public EditorProject(Stream fstream) : this()
+        public EditorProject(Stream fstream, string path) : this()
         {
             StreamReader sr = new StreamReader(fstream);
             string xmlString = sr.ReadToEnd();
@@ -63,22 +63,30 @@ namespace HelloForms
             XElement root = doc.Element(EditorConstants.XML_EDITOR_ROOT_NAME);
             //load ontology
             var ontPath = root.Element(EditorConstants.XML_PROJECT_ONTOLOGY).Value;
+            if (!System.IO.Path.IsPathRooted(ontPath))
+                ontPath = path + ontPath;
             var ontStream = new FileStream(ontPath, FileMode.Open);
             LoadOntology(ontStream, ontPath);
             ontStream.Close();
 
             //load dictionary
             var themesPath = root.Element(EditorConstants.XML_PROJECT_DICTIONARY).Value;
+            if (!System.IO.Path.IsPathRooted(themesPath))
+                themesPath = path + themesPath;
             _themes = LoadDictionary(themesPath);
 
             //load segments
             var segPath = root.Element(EditorConstants.XML_PROJECT_SEGMENTS).Value;
+            if (!System.IO.Path.IsPathRooted(segPath))
+                segPath = path + segPath;
             var segStream = new FileStream(segPath, FileMode.Open);
             _segments = LoadSegments(segStream, segPath);
             segStream.Close();
 
             //load gramtab
             var gramtabPath = root.Element(EditorConstants.XML_PROJECT_GRAMTAB).Value;
+            if (!System.IO.Path.IsPathRooted(gramtabPath))
+                gramtabPath = path + gramtabPath;
             var gramtabStream = new FileStream(gramtabPath, FileMode.Open);
             _gramtab = LoadGramtab(gramtabStream, gramtabPath);
             gramtabStream.Close();
@@ -116,6 +124,8 @@ namespace HelloForms
             {
                 _bank = FactSchemeBank.FromXml(xbank, Ontology);
             }
+
+            _paths[EditorConstants.XML_EDITOR_ROOT_NAME] = path;
         }
         public void Save(Stream fstream)
         {

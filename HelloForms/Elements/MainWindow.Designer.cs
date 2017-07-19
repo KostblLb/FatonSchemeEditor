@@ -62,9 +62,6 @@
             this.bankListView = new System.Windows.Forms.ListView();
             this.bankListFilter = new System.Windows.Forms.TextBox();
             this.propsGroupBox = new System.Windows.Forms.GroupBox();
-            this.propsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
             this.addSchemeConditionButton = new System.Windows.Forms.Button();
@@ -84,6 +81,7 @@
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.importGramtabFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.importSegmentsFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.propsPanel = new System.Windows.Forms.Integration.ElementHost();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
             this.dictionaryTreeMenuStrip.SuspendLayout();
@@ -98,8 +96,6 @@
             this.splitContainer1.SuspendLayout();
             this.bankGroupBox.SuspendLayout();
             this.propsGroupBox.SuspendLayout();
-            this.propsPanel.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.schemesTabControl.SuspendLayout();
             this.schemeTabViewPage.SuspendLayout();
             this.schemeTabXMLPage.SuspendLayout();
@@ -422,37 +418,6 @@
             this.propsGroupBox.TabStop = false;
             this.propsGroupBox.Text = "Свойства";
             // 
-            // propsPanel
-            // 
-            this.propsPanel.Controls.Add(this.flowLayoutPanel2);
-            this.propsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.propsPanel.Location = new System.Drawing.Point(3, 18);
-            this.propsPanel.Name = "propsPanel";
-            this.propsPanel.Size = new System.Drawing.Size(277, 488);
-            this.propsPanel.TabIndex = 0;
-            // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.Controls.Add(this.label1);
-            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(261, 51);
-            this.flowLayoutPanel2.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(255, 51);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Здесь будут отображаться ограничения атрибутов выделенного аргумента";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // schemesTabControl
             // 
             this.schemesTabControl.Controls.Add(this.schemeTabViewPage);
@@ -665,6 +630,16 @@
             this.importSegmentsFileDialog.Filter = "Segments|*.xml|Any|*.*";
             this.importSegmentsFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.importSegmentsFileDialog_FileOk);
             // 
+            // propsPanel
+            // 
+            this.propsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propsPanel.Location = new System.Drawing.Point(3, 18);
+            this.propsPanel.Name = "propsPanel";
+            this.propsPanel.Size = new System.Drawing.Size(277, 488);
+            this.propsPanel.TabIndex = 0;
+            this.propsPanel.Text = "elementHost1";
+            this.propsPanel.Child = null;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -695,10 +670,6 @@
             this.bankGroupBox.ResumeLayout(false);
             this.bankGroupBox.PerformLayout();
             this.propsGroupBox.ResumeLayout(false);
-            this.propsPanel.ResumeLayout(false);
-            this.propsPanel.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
             this.schemesTabControl.ResumeLayout(false);
             this.schemeTabViewPage.ResumeLayout(false);
             this.schemeTabXMLPage.ResumeLayout(false);
@@ -773,9 +744,7 @@
         private System.Windows.Forms.GroupBox propsGroupBox;
         private System.Windows.Forms.ListView bankListView;
         private System.Windows.Forms.TextBox bankListFilter;
-        private System.Windows.Forms.FlowLayoutPanel propsPanel;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Integration.ElementHost propsPanel;
     }
 }
 

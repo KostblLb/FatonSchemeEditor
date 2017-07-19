@@ -68,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorProject.cs" />
+    <Compile Include="Elements\PropsPanelV2.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
@@ -88,6 +91,7 @@
     </Compile>
     <Compile Include="Medium.cs" />
     <Compile Include="misc\FloatingPointReset.cs" />
+    <Compile Include="misc\RelPath.cs" />
     <Compile Include="Ontology\OntologyNode.cs" />
     <Compile Include="Ontology\OntologyBuilder.cs" />
     <Compile Include="Program.cs" />

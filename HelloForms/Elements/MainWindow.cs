@@ -190,7 +190,9 @@ namespace HelloForms
         private void openProjectDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = openProjectDialog.OpenFile();
-            CurrentProject = new EditorProject(fstream);
+            var path = System.IO.Path.GetDirectoryName(openProjectDialog.FileName) +
+                System.IO.Path.DirectorySeparatorChar;
+            CurrentProject = new EditorProject(fstream, path);
             fstream.Close();
 
             buildOntologyTree(CurrentProject.Ontology);
@@ -454,7 +456,7 @@ namespace HelloForms
             nv.NodeSelected += (s, e) =>
             {
                 if (nv.SelectedNode.Tag is Argument)
-                    OpenPropsPanel((Argument)nv.SelectedNode.Tag);
+                    OpenPropsPanelV2((Argument)nv.SelectedNode.Tag);
             };
 
             elementHost.Child = nv;
