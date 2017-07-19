@@ -15,6 +15,7 @@ namespace HelloForms
             host.Dock = System.Windows.Forms.DockStyle.Fill;
 
             var mainPanel = new StackPanel();
+            mainPanel.CanVerticallyScroll = true;
 
             propsPanel.Tag = arg;
             
@@ -32,7 +33,7 @@ namespace HelloForms
                     cd[j] = new ColumnDefinition();
                 cd[0].Width = GridLength.Auto;
                 cd[1].Width = new GridLength(16);
-                cd[2].Width = GridLength.Auto;
+                cd[2].Width = new GridLength(32, GridUnitType.Star);
                 cd[3].Width = new GridLength(16);
                 foreach (var def in cd)
                     grid.ColumnDefinitions.Add(def);

@@ -2,9 +2,10 @@
 
 <ontology>
     <!-- классы -->
-    <class name="Небесное тело"/>
+    <class name="Небесное тело">
         <attr type="int">Масса</attr>
         <attr type="int">Размер</attr>
+    </class>
     <class name="Звезда">
         <base>Небесное тело</base>
         <attr type="domain" domain="Виды звёзд">Вид</attr>
