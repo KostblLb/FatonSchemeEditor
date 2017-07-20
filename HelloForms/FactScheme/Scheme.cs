@@ -279,8 +279,8 @@ namespace FactScheme
                         xattrs.Add(new XAttribute("AttrName2", condition.SemAttrs[1].Name));
                         break;
                     case Condition.ConditionType.SYNT:
-                        xattrs.Add(new XAttribute("ActantName1", condition.ActantNames[0]));
-                        xattrs.Add(new XAttribute("ActantName2", condition.ActantNames[1]));
+                        xattrs.Add(new XAttribute("ActantName", condition.ActantNames[0]));
+                        //xattrs.Add(new XAttribute("ActantName2", condition.ActantNames[1]));
                         break;
                 }
 

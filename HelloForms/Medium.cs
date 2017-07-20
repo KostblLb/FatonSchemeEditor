@@ -235,15 +235,16 @@ namespace HelloForms
             NodeInfo.SectionInfo[] args = { new NodeInfo.SectionInfo(), new NodeInfo.SectionInfo() };
             var arg1 = args[0];
             var arg2 = args[1];
-            for (int i = 0; i<2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 int j = i; //damn closures
                 var arg = args[i];
                 var lbl = new Label();
-                lbl.Content = String.Format("Arg {0}", i+1);
+                lbl.Content = String.Format("Arg {0}", i + 1);
                 arg.UIPanel = lbl;
                 arg.IsInput = true;
-                arg.InputAdded += (object s, ConnectionEventArgs e) => {
+                arg.InputAdded += (object s, ConnectionEventArgs e) =>
+                {
                     arg.Data = e.SourceConnector.Tag;
                     condition.Args[j] = (FactScheme.Argument)e.SourceConnector.Tag;
                 };
@@ -277,7 +278,7 @@ namespace HelloForms
             }
             info.Sections.Add(equalSection);
 
-            
+
             var contextSelectionPanels = new StackPanel();
             var contextSelectionSection = new NodeInfo.SectionInfo();
 
@@ -303,7 +304,8 @@ namespace HelloForms
             //position selection
             var posCombo = new ComboBox();
             posCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
-            posCombo.SelectionChanged += (s, e) => {
+            posCombo.SelectionChanged += (s, e) =>
+            {
                 condition.Position = (FactScheme.Condition.ConditionPosition)posCombo.SelectedItem;
             };
             posCombo.Tag = FactScheme.Condition.ConditionType.POS;
@@ -341,7 +343,7 @@ namespace HelloForms
             semSelectionPanel.Tag = FactScheme.Condition.ConditionType.SEM;
 
             ComboBox[] semSelectionArgs = new ComboBox[2];
-            for(int i = 0; i<2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 int j = i; //damn closures
                 semSelectionArgs[j] = new ComboBox();
@@ -365,19 +367,17 @@ namespace HelloForms
             var syntPanel = new StackPanel();
             syntPanel.Visibility = Visibility.Collapsed;
             syntPanel.Tag = FactScheme.Condition.ConditionType.SYNT;
-            for (int i = 0; i<2; i++)
+            
+            //wrap in cycle if actants number > 1
+            string text = condition.ActantNames[0] ?? String.Format("Arg{0}{1}", 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
+            var textBox = new TextBox();
+            textBox.Text = text;
+            textBox.TextChanged += (s, e) =>
             {
-                int j = i; //damn closures again
-                
-                string text = condition.ActantNames[j] ?? String.Format("Arg{0}{1}", i + 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
-                var textBox = new TextBox();
-                textBox.Text = text;
-                textBox.TextChanged += (s, e) =>
-                {
-                    condition.ActantNames[j] = textBox.Text;
-                };
-                syntPanel.Children.Add(textBox);
-            }
+                condition.ActantNames[0] = textBox.Text;
+            };
+
+            syntPanel.Children.Add(textBox);
             contextSelectionPanels.Children.Add(syntPanel);
 
 
@@ -446,7 +446,7 @@ namespace HelloForms
                 {
                     var srcNode = nodes.First(x => x.Tag == rule.Reference);
                     var srcConn = srcNode.Connectors.First(x =>
-                        ( (rule.Attribute.AttrType == OntologyNode.Attribute.AttributeType.OBJECT &&
+                        ((rule.Attribute.AttrType == OntologyNode.Attribute.AttributeType.OBJECT &&
                             x.Tag == rule.Reference) ||
                         x.Tag == rule.InputAttribute) &&
                         x.Mode == Connector.ConnectorMode.Output);
@@ -465,7 +465,7 @@ namespace HelloForms
                     nv.AddConnection(srcConn, dstConn, false);
                 }
             }
-            
+
             foreach (var condition in scheme.Conditions)
             {
                 var dstNode = nodes.First(x => x.Tag == condition);

@@ -163,8 +163,8 @@ namespace HelloForms
                             cond.SemAttrs[1] = arg1.Attributes.Find(x => x.Name.Equals(xcond.Attribute("AttrName2").Value));
                             break;
                         case Condition.ConditionType.SYNT:
-                            cond.ActantNames[0] = xcond.Attribute("ActantName1").Value;
-                            cond.ActantNames[1] = xcond.Attribute("ActantName2").Value;
+                            cond.ActantNames[0] = xcond.Attribute("ActantName").Value;
+                            //cond.ActantNames[1] = xcond.Attribute("ActantName2").Value;
                             break;
                     }
                 }
