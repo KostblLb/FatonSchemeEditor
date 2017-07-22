@@ -34,11 +34,11 @@ namespace HelloForms
                     wrapPanel.BorderStyle = BorderStyle.Fixed3D;
 
                     var condTypeCombo = new ComboBox();
-                    condTypeCombo.DataSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ConditionType));
+                    condTypeCombo.DataSource = Enum.GetValues(typeof(ArgumentConditionType));
                     condTypeCombo.BindingContext = new BindingContext(); //hack!
                     condTypeCombo.SelectedValueChanged += (s, e) =>
                     {
-                        condition.CondType = (Argument.ArgumentCondition.ConditionType)condTypeCombo.SelectedItem;
+                        condition.CondType = (ArgumentConditionType)condTypeCombo.SelectedItem;
                         foreach (Control control in wrapPanel.Controls)
                         {
                             if (control.Tag != null && !control.Tag.Equals(condTypeCombo.SelectedItem))
@@ -51,17 +51,17 @@ namespace HelloForms
 
                     var equalButton = new Button();
                     equalButton.Width = 16;
-                    equalButton.Text = condition.ComparType == Argument.ArgumentCondition.ComparisonType.EQ ? "=" : "≠";
+                    equalButton.Text = condition.ComparType == ArgumentConditionOperation.EQ ? "=" : "≠";
                     equalButton.Click += (s, e) =>
                     {
-                        if (condition.ComparType == Argument.ArgumentCondition.ComparisonType.EQ)
+                        if (condition.ComparType == ArgumentConditionOperation.EQ)
                         {
-                            condition.ComparType = Argument.ArgumentCondition.ComparisonType.NEQ;
+                            condition.ComparType = ArgumentConditionOperation.NEQ;
                             equalButton.Text = "≠";
                         }
                         else
                         {
-                            condition.ComparType = Argument.ArgumentCondition.ComparisonType.EQ;
+                            condition.ComparType = ArgumentConditionOperation.EQ;
                             equalButton.Text = "=";
                         }
                     };
@@ -70,13 +70,13 @@ namespace HelloForms
                     var segCombo = new ComboBox();
                     segCombo.DataSource = CurrentProject.Segments.ToList();
                     segCombo.BindingContext = new BindingContext();
-                    if (condition.CondType == Argument.ArgumentCondition.ConditionType.SEG)
+                    if (condition.CondType == ArgumentConditionType.SEG)
                         segCombo.SelectedItem = condition.Value;
                     segCombo.SelectionChangeCommitted += (s, e) =>
                     {
                         condition.Value = ((ComboBox)s).SelectedItem.ToString();
                     };
-                    segCombo.Tag = Argument.ArgumentCondition.ConditionType.SEG;
+                    segCombo.Tag = ArgumentConditionType.SEG;
                     segCombo.Visible = false;
                     wrapPanel.Controls.Add(segCombo);
 
@@ -88,7 +88,7 @@ namespace HelloForms
                     gramTypeCombo.DataSource = CurrentProject.Gramtab.Keys.ToList();
                     gramTypeCombo.BindingContext = new BindingContext();
                     gramTypeCombo.SelectedItem =
-                        condition.CondType == Argument.ArgumentCondition.ConditionType.MORPH ?
+                        condition.CondType == ArgumentConditionType.MORPH ?
                         values[0] :
                         CurrentProject.Gramtab.First().Key;
 
@@ -112,7 +112,7 @@ namespace HelloForms
                     };
                     morphPanel.Controls.Add(gramTypeCombo);
                     morphPanel.Controls.Add(gramValueCombo);
-                    morphPanel.Tag = Argument.ArgumentCondition.ConditionType.MORPH;
+                    morphPanel.Tag = ArgumentConditionType.MORPH;
                     morphPanel.Visible = false;
                     wrapPanel.Controls.Add(morphPanel);
 
@@ -122,7 +122,7 @@ namespace HelloForms
                     {
                         condition.Value = semTextBox.Text;
                     };
-                    semTextBox.Tag = Argument.ArgumentCondition.ConditionType.SEM;
+                    semTextBox.Tag = ArgumentConditionType.SEM;
                     //semCombo.Visible = false;
                     wrapPanel.Controls.Add(semTextBox);
 

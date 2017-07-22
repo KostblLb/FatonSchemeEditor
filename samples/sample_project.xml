@@ -5,24 +5,24 @@
   <SEGMENTS>./sample_segments.xml</SEGMENTS>
   <GRAMTAB>./gramtab.ini</GRAMTAB>
   <FATON_SCHEMES_BANK>
-    <Базовая_Солнечная_Система>
-      <Argument Order="1" Type="IOBJECT" ClassName="Планета" AllowInheritance="true" />
-      <Argument Order="2" Type="IOBJECT" ClassName="Звезда" AllowInheritance="true">
-        <Condition Attribute="Вид" Type="MORPH" ComparType="EQ" Value="Число;ед" />
-        <Condition Attribute="Вид" Type="MORPH" ComparType="EQ" Value="Одушевленность;но" />
+    <Scheme Name="Базовая_Солнечная_Система">
+      <Argument Order="1" ObjectType="IOBJECT" ClassName="Планета" AllowInheritance="true" />
+      <Argument Order="2" ObjectType="IOBJECT" ClassName="Звезда" AllowInheritance="true">
+        <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Число;ед" />
+        <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Одушевленность;но" />
       </Argument>
-      <Result Name="NewResult" ClassName="X вращается вокруг Y" Type="Create">
+      <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE" ObjectType="IOBJECT">
         <Rule Attribute="Спутник" Type="DEF" ArgFrom="1" />
         <Rule Attribute="Центр" Type="DEF" ArgFrom="2" />
       </Result>
-      <Condition Arg1="2" Arg2="1" ID="1" Type="SYNT" Operation="NEQ" ActantName1="ЯвляетсяЦентром" ActantName2="ВращаетсяВокруг" />
-    </Базовая_Солнечная_Система>
+      <Condition Arg1="1" Arg2="2" ID="1" Type="SYNT" Operation="EQ" ActantName="ВращаетсяВокруг" />
+    </Scheme>
   </FATON_SCHEMES_BANK>
   <FATON_EDITOR_MARKUP>
     <Базовая_Солнечная_Система>
-      <node type="FactScheme.Result" id="NewResult" left="411" top="318" />
+      <node type="FactScheme.Result" id="система" left="411" top="318" />
       <node type="FactScheme.Argument" id="1" left="77" top="290" />
-      <node type="FactScheme.Argument" id="2" left="80" top="212" />
+      <node type="FactScheme.Argument" id="2" left="76" top="139" />
       <node type="FactScheme.Condition" id="1" left="392" top="72" />
     </Базовая_Солнечная_Система>
   </FATON_EDITOR_MARKUP>

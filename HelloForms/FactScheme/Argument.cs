@@ -5,28 +5,26 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using Ontology;
+using Faton;
 using Shared;
 
 namespace FactScheme
 {
-    //public partial class FactScheme
-    //{
+    public enum ArgumentType { IOBJECT, TERMIN };
+    public enum ArgumentConditionType { SEM, SEG, MORPH }
+    public enum ArgumentConditionOperation { EQ, NEQ, GT, LT, GEQ, LEQ };
     public class Argument : ISchemeComponent, INotifyPropertyChanged
     {
 
-        public enum ArgumentType { IOBJECT, TERMIN };
-
         public class ArgumentCondition
         {
-            public enum ConditionType { SEM, SEG, MORPH }
-            public enum ComparisonType { EQ, NEQ };
-
-            
-            public ConditionType CondType { get; set; }
-            //public OntologyNode.Attribute Attribute { get; set; }
-            public ComparisonType ComparType { get; set; }
+            [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_TYPE)]
+            public ArgumentConditionType CondType { get; set; }
+            [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_OPERATION)]
+            public ArgumentConditionOperation ComparType { get; set; }
             public string Value { get; set; }
 
             public ArgumentCondition()
@@ -43,25 +41,42 @@ namespace FactScheme
         //string _name;
         bool _useInheritance;
         protected uint _order;
-        public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Conditions { get; set; }
 
+        [XmlIgnore]
+        public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Conditions { get; set; }
+        [System.Xml.Serialization.XmlElement("Condition")]
+        public List<ArgumentCondition> XMLConditions
+        {
+            get
+            {
+                var list = new List<ArgumentCondition>();
+                foreach (var entry in Conditions)
+                    list.AddRange(entry.Value);
+                return list;
+            }
+        }
+
+        [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_OBJECTTYPE)]
         public ArgumentType ArgType
         {
             get { return _argType; }
         }
+        [XmlIgnore]
         public OntologyClass Klass
         {
             get { return _klass; }
         }
+        [XmlIgnore]
         public VocTheme Theme
         {
             get { return _theme; }
         }
-
+        [XmlIgnore]
         public List<OntologyNode.Attribute> Attributes
         {
             get { return _attrs; }
         }
+        [XmlIgnore]
         public string Name
         {
             get
@@ -72,12 +87,15 @@ namespace FactScheme
                     return Theme.name;
             }
         }
+
+        [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_GROUPTYPE)] //correct?
         public bool Inheritance
         {
             get { return _useInheritance; }
             set { _useInheritance = value; }
         }
 
+        [XmlAttribute]
         public uint Order
         {
             get { return _order; }
@@ -88,13 +106,17 @@ namespace FactScheme
             }
         }
 
-        public Argument(OntologyClass klass, string name = null, bool inherit = true)
+        public Argument()
+        {
+            Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
+        }
+
+        public Argument(OntologyClass klass, string name = null, bool inherit = true) : this()
         {
             _argType = ArgumentType.IOBJECT;
             _klass = klass;
             _useInheritance = inherit;
-            Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
-            
+
             _attrs = klass.AllAttributes;
             foreach (var attr in _attrs)
             {
@@ -102,7 +124,7 @@ namespace FactScheme
             }
         }
 
-        public Argument(VocTheme theme)
+        public Argument(VocTheme theme) : this()
         {
             _argType = ArgumentType.TERMIN;
             _theme = theme;
@@ -118,10 +140,6 @@ namespace FactScheme
             return new List<ISchemeComponent>(); // return empty list for arguments cant have inputs
         }
         public void RemoveUpper(ISchemeComponent upper) { }
-        public List<Connection> Connections(ISchemeComponent other)
-        {
-            return new List<Connection>();
-        }
         public void Free(object attr)
         {
             return;

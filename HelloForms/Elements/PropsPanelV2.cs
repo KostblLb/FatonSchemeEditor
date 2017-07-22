@@ -45,11 +45,11 @@ namespace HelloForms
                     var wrapPanel = new WrapPanel();
 
                     var condTypeCombo = new ComboBox();
-                    condTypeCombo.ItemsSource = Enum.GetValues(typeof(Argument.ArgumentCondition.ConditionType));
+                    condTypeCombo.ItemsSource = Enum.GetValues(typeof(ArgumentConditionType));
                     int k = i;
                     condTypeCombo.SelectionChanged += (s, e) =>
                     {
-                        condition.CondType = (Argument.ArgumentCondition.ConditionType)e.AddedItems[0];
+                        condition.CondType = (ArgumentConditionType)e.AddedItems[0];
                         foreach (FrameworkElement control in grid.Children)
                         {
                             if (Grid.GetRow(control) != k)
@@ -67,17 +67,17 @@ namespace HelloForms
 
                     var equalButton = new Button();
                     equalButton.Width = 16;
-                    equalButton.Content = condition.ComparType == Argument.ArgumentCondition.ComparisonType.EQ ? "=" : "≠";
+                    equalButton.Content = condition.ComparType == ArgumentConditionOperation.EQ ? "=" : "≠";
                     equalButton.Click += (s, e) =>
                     {
-                        if (condition.ComparType == Argument.ArgumentCondition.ComparisonType.EQ)
+                        if (condition.ComparType == ArgumentConditionOperation.EQ)
                         {
-                            condition.ComparType = Argument.ArgumentCondition.ComparisonType.NEQ;
+                            condition.ComparType = ArgumentConditionOperation.NEQ;
                             equalButton.Content = "≠";
                         }
                         else
                         {
-                            condition.ComparType = Argument.ArgumentCondition.ComparisonType.EQ;
+                            condition.ComparType = ArgumentConditionOperation.EQ;
                             equalButton.Content = "=";
                         }
                     };
@@ -88,13 +88,13 @@ namespace HelloForms
 
                     var segCombo = new ComboBox();
                     segCombo.ItemsSource = CurrentProject.Segments.ToList();
-                    if (condition.CondType == Argument.ArgumentCondition.ConditionType.SEG)
+                    if (condition.CondType == ArgumentConditionType.SEG)
                         segCombo.SelectedItem = condition.Value;
                     segCombo.SelectionChanged += (s, e) =>
                     {
                         condition.Value = ((ComboBox)s).SelectedItem.ToString();
                     };
-                    segCombo.Tag = Argument.ArgumentCondition.ConditionType.SEG;
+                    segCombo.Tag = ArgumentConditionType.SEG;
                     segCombo.Visibility = System.Windows.Visibility.Collapsed;
                     Grid.SetRow(segCombo, i);
                     Grid.SetColumn(segCombo, 2);
@@ -106,7 +106,7 @@ namespace HelloForms
                     var gramTypeCombo = new ComboBox();
                     gramTypeCombo.ItemsSource = CurrentProject.Gramtab.Keys.ToList();
                     gramTypeCombo.SelectedItem =
-                        condition.CondType == Argument.ArgumentCondition.ConditionType.MORPH ?
+                        condition.CondType == ArgumentConditionType.MORPH ?
                         values[0] :
                         CurrentProject.Gramtab.First().Key;
 
@@ -129,7 +129,7 @@ namespace HelloForms
                     };
                     morphPanel.Children.Add(gramTypeCombo);
                     morphPanel.Children.Add(gramValueCombo);
-                    morphPanel.Tag = Argument.ArgumentCondition.ConditionType.MORPH;
+                    morphPanel.Tag = ArgumentConditionType.MORPH;
                     morphPanel.Visibility = System.Windows.Visibility.Collapsed;
                     Grid.SetRow(morphPanel, i);
                     Grid.SetColumn(morphPanel, 2);
@@ -142,7 +142,7 @@ namespace HelloForms
                     {
                         condition.Value = semTextBox.Text;
                     };
-                    semTextBox.Tag = Argument.ArgumentCondition.ConditionType.SEM;
+                    semTextBox.Tag = ArgumentConditionType.SEM;
                     Grid.SetColumn(semTextBox, 2);
                     Grid.SetRow(semTextBox, i);
                     grid.Children.Add(semTextBox);

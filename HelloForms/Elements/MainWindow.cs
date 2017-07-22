@@ -618,5 +618,22 @@ namespace HelloForms
             getCurrentNetworkView().AddNode(Medium.Convert(cond, CurrentProject.Gramtab, CurrentProject.Segments));
         }
 
+        private void exportFatonCfgToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFatonCfgFileDialog.ShowDialog();
+        }
+
+        private void saveFatonCfgFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            CurrentProject.GenFatonCfg(saveFatonCfgFileDialog.FileName);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var ser = new System.Xml.Serialization.XmlSerializer(typeof(FactSchemeBank));
+            var fs = new FileStream("ser_text.xml", FileMode.Create);
+            ser.Serialize(fs, CurrentProject.Bank);
+            fs.Close();
+        }
     }
 }

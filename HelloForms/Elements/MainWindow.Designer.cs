@@ -35,6 +35,7 @@
             this.openProjectToolStripMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportFatonCfgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importOntologyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,6 +63,7 @@
             this.bankListView = new System.Windows.Forms.ListView();
             this.bankListFilter = new System.Windows.Forms.TextBox();
             this.propsGroupBox = new System.Windows.Forms.GroupBox();
+            this.propsPanel = new System.Windows.Forms.Integration.ElementHost();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
             this.addSchemeConditionButton = new System.Windows.Forms.Button();
@@ -81,7 +83,8 @@
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.importGramtabFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.importSegmentsFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.propsPanel = new System.Windows.Forms.Integration.ElementHost();
+            this.saveFatonCfgFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
             this.dictionaryTreeMenuStrip.SuspendLayout();
@@ -120,7 +123,8 @@
             this.mainToolStripNewScheme,
             this.openProjectToolStripMenu,
             this.saveProjectToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
+            this.saveAsToolStripMenuItem,
+            this.exportFatonCfgToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -128,7 +132,7 @@
             // newProjectToolStripMenuItem
             // 
             this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(285, 26);
             this.newProjectToolStripMenuItem.Text = "Новый проект";
             this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
@@ -136,7 +140,7 @@
             // 
             this.mainToolStripNewScheme.Name = "mainToolStripNewScheme";
             this.mainToolStripNewScheme.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.mainToolStripNewScheme.Size = new System.Drawing.Size(269, 26);
+            this.mainToolStripNewScheme.Size = new System.Drawing.Size(285, 26);
             this.mainToolStripNewScheme.Text = "Новая схема";
             this.mainToolStripNewScheme.Click += new System.EventHandler(this.handleCreateSchemeToolstrip);
             // 
@@ -144,7 +148,7 @@
             // 
             this.openProjectToolStripMenu.Name = "openProjectToolStripMenu";
             this.openProjectToolStripMenu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openProjectToolStripMenu.Size = new System.Drawing.Size(269, 26);
+            this.openProjectToolStripMenu.Size = new System.Drawing.Size(285, 26);
             this.openProjectToolStripMenu.Text = "Открыть проект...";
             this.openProjectToolStripMenu.Click += new System.EventHandler(this.openProjectToolStripMenu_Click);
             // 
@@ -152,16 +156,24 @@
             // 
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
             this.saveProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(285, 26);
             this.saveProjectToolStripMenuItem.Text = "Сохранить проект...";
             this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
-            this.saveAsToolStripMenuItem.Text = "Экспортировать банк...";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(285, 26);
+            this.saveAsToolStripMenuItem.Text = "Экспорт банка";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // exportFatonCfgToolStripMenuItem
+            // 
+            this.exportFatonCfgToolStripMenuItem.Enabled = false;
+            this.exportFatonCfgToolStripMenuItem.Name = "exportFatonCfgToolStripMenuItem";
+            this.exportFatonCfgToolStripMenuItem.Size = new System.Drawing.Size(285, 26);
+            this.exportFatonCfgToolStripMenuItem.Text = "Экспорт конфигурации Faton";
+            this.exportFatonCfgToolStripMenuItem.Click += new System.EventHandler(this.exportFatonCfgToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -418,6 +430,16 @@
             this.propsGroupBox.TabStop = false;
             this.propsGroupBox.Text = "Свойства";
             // 
+            // propsPanel
+            // 
+            this.propsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propsPanel.Location = new System.Drawing.Point(3, 18);
+            this.propsPanel.Name = "propsPanel";
+            this.propsPanel.Size = new System.Drawing.Size(277, 488);
+            this.propsPanel.TabIndex = 0;
+            this.propsPanel.Text = "elementHost1";
+            this.propsPanel.Child = null;
+            // 
             // schemesTabControl
             // 
             this.schemesTabControl.Controls.Add(this.schemeTabViewPage);
@@ -434,6 +456,7 @@
             // 
             // schemeTabViewPage
             // 
+            this.schemeTabViewPage.Controls.Add(this.button1);
             this.schemeTabViewPage.Controls.Add(this.addSchemeConditionButton);
             this.schemeTabViewPage.Location = new System.Drawing.Point(4, 25);
             this.schemeTabViewPage.Name = "schemeTabViewPage";
@@ -630,15 +653,19 @@
             this.importSegmentsFileDialog.Filter = "Segments|*.xml|Any|*.*";
             this.importSegmentsFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.importSegmentsFileDialog_FileOk);
             // 
-            // propsPanel
+            // saveFatonCfgFileDialog
             // 
-            this.propsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propsPanel.Location = new System.Drawing.Point(3, 18);
-            this.propsPanel.Name = "propsPanel";
-            this.propsPanel.Size = new System.Drawing.Size(277, 488);
-            this.propsPanel.TabIndex = 0;
-            this.propsPanel.Text = "elementHost1";
-            this.propsPanel.Child = null;
+            this.saveFatonCfgFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFatonCfgFileDialog_FileOk);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 637);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainWindow
             // 
@@ -745,6 +772,9 @@
         private System.Windows.Forms.ListView bankListView;
         private System.Windows.Forms.TextBox bankListFilter;
         private System.Windows.Forms.Integration.ElementHost propsPanel;
+        private System.Windows.Forms.ToolStripMenuItem exportFatonCfgToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFatonCfgFileDialog;
+        private System.Windows.Forms.Button button1;
     }
 }
 

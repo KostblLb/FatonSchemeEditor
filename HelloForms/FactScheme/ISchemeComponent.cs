@@ -15,6 +15,7 @@ namespace FactScheme
             src = mysrc; dst = mydst;
         }
     }
+
     public interface ISchemeComponent
     {
         //go up in objects tree

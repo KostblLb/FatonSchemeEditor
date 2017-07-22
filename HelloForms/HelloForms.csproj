@@ -74,7 +74,6 @@
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
-    <Compile Include="FactScheme\Relation.cs" />
     <Compile Include="misc\DataContainer.cs" />
     <Compile Include="misc\DataObject.cs" />
     <Compile Include="EditorConstants.cs" />

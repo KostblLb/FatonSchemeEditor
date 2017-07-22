@@ -89,7 +89,7 @@ namespace HelloForms
                 attrInfo.IsInput = false;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
-                if (argument.ArgType == Argument.ArgumentType.IOBJECT)
+                if (argument.ArgType == ArgumentType.IOBJECT)
                     attrName.Content = attr.Name;
                 else
                     attrName.Content = "Значение";
@@ -225,6 +225,18 @@ namespace HelloForms
             return info;
         }
 
+
+        private static NodeInfo.SectionInfo ConditionArgSection(Argument arg)
+        {
+            var argInfo = new NodeInfo.SectionInfo();
+            var lbl = new Label();
+            lbl.Content = "Arg";
+            argInfo.UIPanel = lbl;
+            argInfo.IsInput = true;
+            if (arg != null)
+                argInfo.Data = arg;
+            return argInfo;
+        }
         public static NodeInfo Convert(FactScheme.Condition condition, Dictionary<string, List<string>> gramtab, List<string> segments)
         {
             var info = new NodeInfo();
@@ -232,26 +244,19 @@ namespace HelloForms
 
             info.NodeNameProperty = "Условие схемы";
 
-            NodeInfo.SectionInfo[] args = { new NodeInfo.SectionInfo(), new NodeInfo.SectionInfo() };
-            var arg1 = args[0];
-            var arg2 = args[1];
-            for (int i = 0; i < 2; i++)
+            var argInfo1 = Medium.ConditionArgSection(condition.Arg1);
+            argInfo1.InputAdded += (object s, ConnectionEventArgs e) =>
             {
-                int j = i; //damn closures
-                var arg = args[i];
-                var lbl = new Label();
-                lbl.Content = String.Format("Arg {0}", i + 1);
-                arg.UIPanel = lbl;
-                arg.IsInput = true;
-                arg.InputAdded += (object s, ConnectionEventArgs e) =>
-                {
-                    arg.Data = e.SourceConnector.Tag;
-                    condition.Args[j] = (FactScheme.Argument)e.SourceConnector.Tag;
-                };
-                if (condition.Args[i] != null)
-                    arg.Data = condition.Args[i];
-                info.Sections.Add(arg);
-            }
+                argInfo1.Data = e.SourceConnector.Tag;
+                condition.Arg1 = (FactScheme.Argument)e.SourceConnector.Tag;
+            };
+            var argInfo2 = Medium.ConditionArgSection(condition.Arg2);
+            argInfo2.InputAdded += (object s, ConnectionEventArgs e) =>
+            {
+                argInfo2.Data = e.SourceConnector.Tag;
+                condition.Arg2 = (FactScheme.Argument)e.SourceConnector.Tag;
+            };
+            NodeInfo.SectionInfo[] args = { argInfo1, argInfo2 };
 
             //toggle not\equal button
             var equalSection = new NodeInfo.SectionInfo();
@@ -259,22 +264,21 @@ namespace HelloForms
             equalButton.Content = "=";
             equalButton.Click += (s, e) =>
             {
-                if (condition.ComparType == FactScheme.Condition.ComparisonType.EQ)
+                if (condition.Operation == ConditionOperation.EQ)
                 {
-                    condition.ComparType = FactScheme.Condition.ComparisonType.NEQ;
+                    condition.Operation = ConditionOperation.NEQ;
                     equalButton.Content = "≠";
                 }
                 else
                 {
-                    condition.ComparType = FactScheme.Condition.ComparisonType.EQ;
+                    condition.Operation = ConditionOperation.EQ;
                     equalButton.Content = "=";
                 }
             };
             equalSection.UIPanel = equalButton;
-            if (condition.ComparType == FactScheme.Condition.ComparisonType.NEQ)
+            if (condition.Operation == ConditionOperation.NEQ)
             {
-                condition.ComparType = FactScheme.Condition.ComparisonType.EQ;
-                equalButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                equalButton.Content = "≠";
             }
             info.Sections.Add(equalSection);
 
@@ -285,7 +289,7 @@ namespace HelloForms
             //type selection
             var typeInfoSection = new NodeInfo.SectionInfo();
             ComboBox typeCb = new ComboBox();
-            typeCb.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionType));
+            typeCb.ItemsSource = Enum.GetValues(typeof(ConditionType));
             typeCb.Text = Locale.SCHEME_CONDITION_TYPE_SELECT;
             typeCb.SelectionChanged += (s, e) =>
             {
@@ -295,7 +299,7 @@ namespace HelloForms
                         control.Visibility = Visibility.Visible;
                     else
                         control.Visibility = Visibility.Collapsed;
-                condition.Type = (FactScheme.Condition.ConditionType)selection;
+                condition.Type = (ConditionType)selection;
             };
             typeCb.Margin = new Thickness(0, 3, 0, 3);
             typeInfoSection.UIPanel = typeCb;
@@ -303,46 +307,47 @@ namespace HelloForms
 
             //position selection
             var posCombo = new ComboBox();
-            posCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionPosition));
+            posCombo.ItemsSource = Enum.GetValues(typeof(ConditionPosition));
             posCombo.SelectionChanged += (s, e) =>
             {
-                condition.Position = (FactScheme.Condition.ConditionPosition)posCombo.SelectedItem;
+                condition.Data = (string)posCombo.SelectedItem;
             };
-            posCombo.Tag = FactScheme.Condition.ConditionType.POS;
+            posCombo.Tag = ConditionType.POS;
             posCombo.Visibility = Visibility.Collapsed;
-            posCombo.SelectedValue = condition.Position;
+            posCombo.SelectedValue = condition.Data;
             contextSelectionPanels.Children.Add(posCombo);
 
             //contact selection
             var contactCombo = new ComboBox();
-            contactCombo.ItemsSource = Enum.GetValues(typeof(FactScheme.Condition.ConditionContact));
+            contactCombo.ItemsSource = Enum.GetValues(typeof(ConditionContact));
             contactCombo.SelectionChanged += (s, e) =>
             {
-                condition.Contact = (FactScheme.Condition.ConditionContact)contactCombo.SelectedItem;
+                condition.Data = (string)contactCombo.SelectedItem;
             };
             contactCombo.Visibility = Visibility.Collapsed;
-            contactCombo.Tag = FactScheme.Condition.ConditionType.CONTACT;
-            contactCombo.SelectedValue = condition.Contact;
+            contactCombo.Tag = ConditionType.CONTACT;
+            contactCombo.SelectedValue = condition.Data;
             contextSelectionPanels.Children.Add(contactCombo);
 
             //shared segment selection
             var segSelectionPanel = new ComboBox();
             segSelectionPanel.Visibility = Visibility.Collapsed;
-            segSelectionPanel.Tag = FactScheme.Condition.ConditionType.SEG;
+            segSelectionPanel.Tag = ConditionType.SEG;
             segSelectionPanel.ItemsSource = segments;
             segSelectionPanel.SelectionChanged += (s, e) =>
             {
-                condition.Segment = segSelectionPanel.SelectedItem.ToString();
+                condition.Data = (string)segSelectionPanel.SelectedItem;
             };
-            segSelectionPanel.SelectedValue = condition.Segment;
+            segSelectionPanel.SelectedValue = condition.Data;
             contextSelectionPanels.Children.Add(segSelectionPanel);
 
             //semantic (attr-to-attr comparison) selection
             var semSelectionPanel = new StackPanel();
             semSelectionPanel.Visibility = Visibility.Collapsed;
-            semSelectionPanel.Tag = FactScheme.Condition.ConditionType.SEM;
+            semSelectionPanel.Tag = ConditionType.SEM;
 
             ComboBox[] semSelectionArgs = new ComboBox[2];
+            string[] vals = condition.Data.Split(';');
             for (int i = 0; i < 2; i++)
             {
                 int j = i; //damn closures
@@ -355,9 +360,12 @@ namespace HelloForms
                 };
                 semSelectionArgs[i].SelectionChanged += (s, e) =>
                 {
-                    condition.SemAttrs[j] = (OntologyNode.Attribute)semSelectionArgs[j].SelectedItem;
+                    condition.Data = String.Format("{0};{1}",
+                        (string)semSelectionArgs[0].SelectedItem,
+                        (string)semSelectionArgs[1].SelectedItem);
                 };
-                semSelectionArgs[i].SelectedValue = condition.SemAttrs[i];
+                semSelectionArgs[i].SelectedValue = vals.Length > i ?
+                    vals[i] : null;
                 semSelectionPanel.Children.Add(semSelectionArgs[i]);
             }
             contextSelectionPanels.Children.Add(semSelectionPanel);
@@ -366,31 +374,43 @@ namespace HelloForms
             //syntactic (actants) selection
             var syntPanel = new StackPanel();
             syntPanel.Visibility = Visibility.Collapsed;
-            syntPanel.Tag = FactScheme.Condition.ConditionType.SYNT;
-            
-            //wrap in cycle if actants number > 1
-            string text = condition.ActantNames[0] ?? String.Format("Arg{0}{1}", 1, Locale.SCHEME_CONDITION_ACTANT_NAME_DEFAULT);
-            var textBox = new TextBox();
-            textBox.Text = text;
-            textBox.TextChanged += (s, e) =>
+            syntPanel.Tag = ConditionType.SYNT;
+
+            var modelName = new TextBox();
+            var actantName = new TextBox();
+            string[] syntData = condition.Data.Split(';');
+            string modelNameText = syntData.Length > 0 ?
+                syntData[0] : "ModelName";
+            modelName.TextChanged += (s, e) =>
             {
-                condition.ActantNames[0] = textBox.Text;
+                condition.Data = String.Format("{0};{1}",
+                    modelName.Text, actantName.Text);
             };
 
-            syntPanel.Children.Add(textBox);
+            string actantNameText = syntData.Length > 1 ?
+                syntData[0] : "ActantName";
+            actantName.Text = actantNameText;
+            actantName.TextChanged += (s, e) =>
+            {
+                condition.Data = String.Format("{0};{1}",
+                    modelName.Text, actantName.Text);
+            };
+
+            syntPanel.Children.Add(modelName);
+            syntPanel.Children.Add(actantName);
             contextSelectionPanels.Children.Add(syntPanel);
 
 
             //morph(gramtab) coherence selection
             var gramtabCombo = new ComboBox();
-            gramtabCombo.Tag = FactScheme.Condition.ConditionType.MORPH;
+            gramtabCombo.Tag = ConditionType.MORPH;
             gramtabCombo.Visibility = Visibility.Collapsed;
             gramtabCombo.ItemsSource = gramtab.Keys;
             gramtabCombo.SelectionChanged += (s, e) =>
             {
-                condition.MorphAttr = gramtabCombo.SelectedItem.ToString();
+                condition.Data = (string)gramtabCombo.SelectedItem;
             };
-            gramtabCombo.SelectedValue = condition.MorphAttr;
+            gramtabCombo.SelectedValue = condition.Data;
             contextSelectionPanels.Children.Add(gramtabCombo);
 
             contextSelectionSection.UIPanel = contextSelectionPanels;
@@ -420,16 +440,16 @@ namespace HelloForms
 
             cb.SelectionChanged += (s, e) =>
             {
-                if (e.AddedItems.Contains(FactScheme.ResultType.Create))
+                if (e.AddedItems.Contains(FactScheme.ResultType.CREATE))
                 {
-                    result.Type = ResultType.Create;
+                    result.Type = ResultType.CREATE;
                 }
                 else
                 {
-                    result.Type = ResultType.Edit;
+                    result.Type = ResultType.EDIT;
                 }
             };
-            cb.SelectedValue = FactScheme.ResultType.Create;
+            cb.SelectedValue = FactScheme.ResultType.CREATE;
 
             return stackPanel;
         }
@@ -469,7 +489,8 @@ namespace HelloForms
             foreach (var condition in scheme.Conditions)
             {
                 var dstNode = nodes.First(x => x.Tag == condition);
-                foreach (var arg in condition.Args)
+                Argument[] args = { condition.Arg1, condition.Arg2 };
+                foreach (var arg in args)
                 {
                     var argNode = nodes.First(x => x.Tag == arg);
                     var srcConn = argNode.HeadConnector;

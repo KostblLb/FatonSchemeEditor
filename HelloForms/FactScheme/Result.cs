@@ -3,27 +3,80 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Ontology;
+using Faton;
 
 namespace FactScheme
 {
     //public partial class FactScheme
     //{
-    public enum ResultType { Create, Edit }
+    public enum ResultType { CREATE, EDIT }
+    public enum RuleResourceType { ARG, RES, FUN}
+
     public partial class Result : ISchemeComponent
     {
-        public enum RuleType { DEF, FUNC }
+        public enum RuleType { DEF, FUNC, ATTR }
         public class Rule
         {
-            RuleType _type;
-            OntologyNode.Attribute _attr;
-            OntologyNode.Attribute _inputAttr;
-            ISchemeComponent _ref;
-            //string _value; //int, enum also
-            public RuleType Type { get { return _type; } }
-            public OntologyNode.Attribute Attribute { get { return _attr; } }
-            public ISchemeComponent Reference { get { return _ref; } }
-            public OntologyNode.Attribute InputAttribute { get { return _inputAttr; } }
+            private OntologyNode.Attribute _attribute;
+            private ISchemeComponent _reference;
+            [XmlIgnore]
+            public string ReferenceName { get; private set; }
+            [XmlIgnore]
+            public string InputAttributeName { get; private set; }
+
+            [XmlAttribute]
+            public RuleResourceType ResourceType { get; set; }
+
+            [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_TYPE)]
+            public RuleType Type { get; set; }
+
+            [XmlIgnore]
+            public ISchemeComponent Reference //arg or result or functor
+            {
+                get { return _reference; }
+                set { _reference = value; }
+            }
+            [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_RESOURCE)]
+            public string XMLReference
+            {
+                get
+                {
+                    if (ResourceType == RuleResourceType.ARG)
+                        return ((Argument)Reference).Order.ToString();
+                    else if (ResourceType == RuleResourceType.RES)
+                        return ((Result)Reference).Name;
+                    else { return ""; }
+                }
+                set { ReferenceName = value; }
+            }
+
+            [XmlIgnore]
+            public OntologyNode.Attribute Attribute {
+                get { return _attribute; }
+                set { _attribute = value; }
+            }
+            [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_ATTR)]
+            public string XMLAttribute
+            {
+                get { return _attribute.Name; }
+                set {
+                    if (ResourceType == RuleResourceType.ARG)
+                        _attribute = ((Argument)Reference).Klass.AllAttributes.Find(x => x.Name.Equals(value));
+                    else if (ResourceType == RuleResourceType.RES)
+                        _attribute = ((Result)Reference).Reference.AllAttributes.Find(x => x.Name.Equals(value));
+                    else { } //functor block
+                }
+            }
+
+            [XmlIgnore]
+            public OntologyNode.Attribute InputAttribute { get; set; }
+            [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_ATTRFROM)]
+            public string XMLInputAttribute {
+                get { return InputAttribute.Name; }
+                set { InputAttributeName = value; }
+            }
 
             /// <summary>
             /// 
@@ -34,11 +87,14 @@ namespace FactScheme
             /// <param name="inputAttr">may be null if 'reference' is a functor</param>
             public Rule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)
             {
-                _type = type;
-                _attr = attr;
-                _ref = reference;
-                _inputAttr = inputAttr;
-                //_value = value;
+                Type = type;
+                Attribute = attr;
+                Reference = reference;
+                InputAttribute = inputAttr;
+            }
+            public Rule()
+            {
+                Type = RuleType.DEF;
             }
         }
 
@@ -46,6 +102,14 @@ namespace FactScheme
         List<Rule> _rules;
         ResultType _type;
         String _name;
+
+        public Result()
+        {
+            _name = "newresult";
+            _type = ResultType.CREATE;
+            _rules = new List<Rule>();
+            _reference = null;
+        }
 
         public Result(String name, ResultType type, OntologyClass reference = null)
         {
@@ -55,25 +119,37 @@ namespace FactScheme
             _reference = reference;
         }
 
+        [XmlAttribute]
         public String Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        [XmlAttribute]
         public ResultType Type
         {
             get { return _type; }
             set { _type = value; }
         }
+
+        [XmlIgnore]
         public ISchemeComponent EditObject;
 
+        [XmlIgnore]
         public OntologyClass Reference
         {
             get { return _reference; }
             set { _reference = value; }
         }
 
+        [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_CLASSNAME)]
+        public string XMLReference
+        {
+            get { return _reference.Name; }
+        }
+
+        [XmlElement(ElementName = Faton.FatonConstants.XML_RESULT_RULE_TAG)]
         public List<Rule> Rules
         {
             get { return _rules; }
@@ -88,8 +164,8 @@ namespace FactScheme
         #region ISchemeComponent implementation
         public List<ISchemeComponent> Up()
         {
-            var components =  new List<ISchemeComponent>();
-            foreach(Rule rule in Rules)
+            var components = new List<ISchemeComponent>();
+            foreach (Rule rule in Rules)
             {
                 components.Add(rule.Reference as ISchemeComponent);
             }

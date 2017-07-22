@@ -5,41 +5,47 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Ontology;
 using Shared;
+using Faton;
 
 namespace FactScheme
 {
     public class Scheme
     {
         string _name;
-        List<Argument> _arguments;
-        List<Condition> _conditions;
-        List<Result> _results;
-        List<Functor> _functors;
         uint _numArgs;
         uint _numConds;
 
         XElement _xml;
         bool _saved;
 
+        [XmlAttribute]
         public string Name { get { return _name; } set { _name = value; } }
-        public string XMLName { get { return _name.Replace(' ', '_'); } }
 
-        //TODO remove separate component accessors, leave only Components
+        [XmlIgnore]
+        public string XMLName { get { return _name.Replace(' ', '_'); } }
+        
+        [XmlIgnore]
         public readonly HashSet<ISchemeComponent> Components;
+        
+        [XmlElement(ElementName = FatonConstants.XML_ARGUMENT_TAG)]
         public List<Argument> Arguments
         {
             get { return Components.OfType<Argument>().ToList(); }
         }
+        [XmlElement(ElementName = FatonConstants.XML_ARGUMENT_CONDITION_TAG)]
         public List<Condition> Conditions
         {
             get { return Components.OfType<Condition>().ToList(); }
         }
+        [XmlElement(ElementName = FatonConstants.XML_RESULT_TAG)]
         public List<Result> Results
         {
             get { return Components.OfType<Result>().ToList(); }
         }
+        [XmlIgnore] //ignore so far
         public List<Functor> Functors
         {
             get { return Components.OfType<Functor>().ToList(); }
@@ -47,10 +53,6 @@ namespace FactScheme
 
         public Scheme()
         {
-            _arguments = new List<Argument>();
-            _conditions = new List<Condition>();
-            _results = new List<Result>();
-            _functors = new List<Functor>();
             Components = new HashSet<ISchemeComponent>();
             _numArgs = 0;
             _numConds = 0;
@@ -67,7 +69,6 @@ namespace FactScheme
             _saved = false;
             Argument arg = new Argument(theme);
             arg.Order = ++_numArgs;
-            _arguments.Add(arg);
             Components.Add(arg);
 
             return arg;
@@ -78,7 +79,6 @@ namespace FactScheme
             _saved = false;
             Argument arg = new Argument(klass, klass.Name);
             arg.Order = ++_numArgs;
-            _arguments.Add(arg);
             Components.Add(arg);
 
             return arg;
@@ -90,7 +90,6 @@ namespace FactScheme
             _saved = false;
             Condition cond = new Condition();
             cond.ID = ++_numConds;
-            _conditions.Add(cond);
             Components.Add(cond);
             return cond;
         }
@@ -101,16 +100,15 @@ namespace FactScheme
             if (name == null)
                 name = Faton.FatonConstants.RESULT_NAME_NEW;
             int defaultNamesCount = 0;
-            foreach (Result r in _results)
+            foreach (Result r in Results)
             {
                 if (r.Name.Contains(name))
                     defaultNamesCount++;
             }
             if (defaultNamesCount > 0)
                 name += string.Format("({0})", defaultNamesCount);
-            Result res = new Result(name, ResultType.Create, ontologyClass);
-
-            _results.Add(res);
+            Result res = new Result(name, ResultType.CREATE, ontologyClass);
+            
             Components.Add(res);
 
             return res;
@@ -123,12 +121,6 @@ namespace FactScheme
 
             Components.Add(func);
             return func;
-        }
-
-        public Relation AddRelation()
-        {
-            Relation rel = new Relation();
-            return rel;
         }
         
         public void RemoveComponent(ISchemeComponent component)
@@ -166,7 +158,8 @@ namespace FactScheme
             //if (_saved)
             //    return _xml;
 
-            XElement root = new XElement(XMLName);
+            XElement root = new XElement(FatonConstants.XML_SCHEME_TAG, 
+                new XAttribute(FatonConstants.XML_SCHEME_NAME, Name));
             foreach(Argument arg in Arguments)
             {
                 XElement xarg =
@@ -197,7 +190,7 @@ namespace FactScheme
                 xattrs_.Add(new XAttribute("Name", res.Name));
                 xattrs_.Add(new XAttribute("ClassName", (res.Reference as OntologyClass).Name));
                 xattrs_.Add(new XAttribute("Type", res.Type));
-                if (res.Type == ResultType.Edit)
+                if (res.Type == ResultType.EDIT)
                 {
                     if (res.EditObject == null)
                         throw new Exception("Result type is EDIT, but no argument set");
@@ -248,41 +241,14 @@ namespace FactScheme
             {
                 var xcond = new XElement("Condition");
                 var xattrs = new List<XAttribute>();
-                for (int i = 0; i < condition.Args.Count(); i++)
-                {
-                    if (condition.Args[i] == null)
-                        throw new ArgumentNullException("Scheme conditions must have both arguments set");
-                    var argName = string.Format("Arg{0}", i+1);
-                    var xarg = new XAttribute(argName, condition.Args[i].Order);
-                    xattrs.Add(xarg);
-                }
-                xattrs.Add(new XAttribute("ID", condition.ID));
-                xattrs.Add(new XAttribute("Type", condition.Type));
-                xattrs.Add(new XAttribute("Operation", condition.ComparType));
-                switch (condition.Type)
-                    //probably should just replace w/ "Value1=X Value2=Y"
-                {
-                    case Condition.ConditionType.CONTACT:
-                        xattrs.Add(new XAttribute("Contact", condition.Contact));
-                        break;
-                    case Condition.ConditionType.MORPH:
-                        xattrs.Add(new XAttribute("GramtabAttr", condition.MorphAttr));
-                        break;
-                    case Condition.ConditionType.POS:
-                        xattrs.Add(new XAttribute("Position", condition.Position));
-                        break;
-                    case Condition.ConditionType.SEG:
-                        xattrs.Add(new XAttribute("Segment", condition.Segment));
-                        break;
-                    case Condition.ConditionType.SEM:
-                        xattrs.Add(new XAttribute("AttrName1", condition.SemAttrs[0].Name));
-                        xattrs.Add(new XAttribute("AttrName2", condition.SemAttrs[1].Name));
-                        break;
-                    case Condition.ConditionType.SYNT:
-                        xattrs.Add(new XAttribute("ActantName", condition.ActantNames[0]));
-                        //xattrs.Add(new XAttribute("ActantName2", condition.ActantNames[1]));
-                        break;
-                }
+                if (condition.Arg1 == null || condition.Arg2 == null)
+                    throw new ArgumentNullException("Scheme conditions must have both arguments set");
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ID, condition.ID));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE, condition.Type));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION, condition.Operation));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1, condition.Arg1));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2, condition.Arg2));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA, condition.Data));
 
                 xcond.Add(xattrs);
                 root.Add(xcond);

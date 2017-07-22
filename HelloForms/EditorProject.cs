@@ -30,6 +30,7 @@ namespace HelloForms
         private Dictionary<string, List<string>> _gramtab;
         private List<string> _segments;
         private Dictionary<string, string> _paths;
+        private string _projectPath;
 
         public FactSchemeBank Bank { get { return _bank; } }
         public List<OntologyNode> Ontology { get { return _ontology; } }
@@ -63,35 +64,41 @@ namespace HelloForms
             XElement root = doc.Element(EditorConstants.XML_EDITOR_ROOT_NAME);
             //load ontology
             var ontPath = root.Element(EditorConstants.XML_PROJECT_ONTOLOGY).Value;
+            _paths[EditorConstants.XML_PROJECT_ONTOLOGY] = ontPath;
             if (!System.IO.Path.IsPathRooted(ontPath))
                 ontPath = path + ontPath;
             var ontStream = new FileStream(ontPath, FileMode.Open);
-            LoadOntology(ontStream, ontPath);
+            LoadOntology(ontStream);
             ontStream.Close();
 
             //load dictionary
             var themesPath = root.Element(EditorConstants.XML_PROJECT_DICTIONARY).Value;
+            var tmp = themesPath;
             if (!System.IO.Path.IsPathRooted(themesPath))
                 themesPath = path + themesPath;
             _themes = LoadDictionary(themesPath);
+            _paths[EditorConstants.XML_PROJECT_DICTIONARY] = tmp;
+
 
             //load segments
             var segPath = root.Element(EditorConstants.XML_PROJECT_SEGMENTS).Value;
+            _paths[EditorConstants.XML_PROJECT_SEGMENTS] = segPath;
             if (!System.IO.Path.IsPathRooted(segPath))
                 segPath = path + segPath;
             var segStream = new FileStream(segPath, FileMode.Open);
-            _segments = LoadSegments(segStream, segPath);
+            _segments = LoadSegments(segStream);
             segStream.Close();
 
             //load gramtab
             var gramtabPath = root.Element(EditorConstants.XML_PROJECT_GRAMTAB).Value;
+            _paths[EditorConstants.XML_PROJECT_GRAMTAB] = gramtabPath;
             if (!System.IO.Path.IsPathRooted(gramtabPath))
                 gramtabPath = path + gramtabPath;
             var gramtabStream = new FileStream(gramtabPath, FileMode.Open);
-            _gramtab = LoadGramtab(gramtabStream, gramtabPath);
+            _gramtab = LoadGramtab(gramtabStream);
             gramtabStream.Close();
             
-            XElement xbank = root.Element(FatonConstants.XML_BANK_NAME);
+            XElement xbank = root.Element(FatonConstants.XML_BANK_TAG);
             Markup = root.Element(EditorConstants.XML_EDITOR_MARKUP);
 
             //saved for the future
@@ -125,7 +132,7 @@ namespace HelloForms
                 _bank = FactSchemeBank.FromXml(xbank, Ontology);
             }
 
-            _paths[EditorConstants.XML_EDITOR_ROOT_NAME] = path;
+            _projectPath = path;
         }
         public void Save(Stream fstream)
         {
@@ -148,14 +155,30 @@ namespace HelloForms
             doc.Save(fstream);
         }
         public void Export(string filename, FactSchemeBank bank) { }
+        public void GenFatonCfg(string filename)
+        {
+            Dictionary<string, string> cfg = new Dictionary<string, string>();
+            cfg[FatonConstants.CFG_ONT_PATH] = _paths[EditorConstants.XML_PROJECT_ONTOLOGY];
+            cfg[FatonConstants.CFG_KLANVOC_PATH] = _paths[EditorConstants.XML_PROJECT_DICTIONARY];
+            //cfg[FatonConstants.CFG_SCHEMES_PATH] = 
+            cfg[FatonConstants.CFG_SEG_PATH] = _paths[EditorConstants.XML_PROJECT_SEGMENTS];
+            //var fstream = new FileStream(filename, FileMode.Create);
+            var sw = new StreamWriter(filename);
+            foreach (var entry in cfg)
+            {
+                sw.WriteLine(String.Format("{0}={1}", entry.Key, entry.Value));
+            }
+            sw.Close();
+        }
 
-        public List<OntologyNode> LoadOntology(Stream fstream, string path)
+        public List<OntologyNode> LoadOntology(Stream fstream, string path = null)
         {
             StreamReader sr = new StreamReader(fstream);
             string xmlString = sr.ReadToEnd();
             XDocument doc = XDocument.Parse(xmlString);
             _ontology = OntologyBuilder.fromXml(doc.Root);
-            _paths[EditorConstants.XML_PROJECT_ONTOLOGY] = path;
+            if (path != null)
+                _paths[EditorConstants.XML_PROJECT_ONTOLOGY] = path;
 
             return _ontology;
         }
@@ -169,12 +192,12 @@ namespace HelloForms
             ex.ParseKlanVocabulary(ref path);
             _themes = ex.Themes();
             FloatingPointReset.Action();
-
-            _paths[EditorConstants.XML_PROJECT_DICTIONARY] = path;
+            if (path != null)
+                _paths[EditorConstants.XML_PROJECT_DICTIONARY] = path;
             return _themes;
         }
 
-        public Dictionary<string, List<string>> LoadGramtab(Stream fstream, string path)
+        public Dictionary<string, List<string>> LoadGramtab(Stream fstream, string path = null)
         {
             StreamReader sr = new StreamReader(fstream);
             String fstring = sr.ReadToEnd();
@@ -197,12 +220,12 @@ namespace HelloForms
                 _gramtab.Add(paramName, gramtabParam);
                 str = reader.ReadLine();
             } while (!string.IsNullOrEmpty(str) && !str.First().Equals('<'));
-
-            _paths[EditorConstants.XML_PROJECT_GRAMTAB] = path;
+            if (path != null)
+                _paths[EditorConstants.XML_PROJECT_GRAMTAB] = path;
             return _gramtab;
         }
 
-        public List<string> LoadSegments(Stream fstream, string path)
+        public List<string> LoadSegments(Stream fstream, string path = null)
         {
             var resut = new List<string>();
 
@@ -214,7 +237,8 @@ namespace HelloForms
                 resut.Add(xclass.Attribute("name").Value);
 
             _segments = resut;
-            _paths[EditorConstants.XML_PROJECT_SEGMENTS] = path;
+            if (path != null)
+                _paths[EditorConstants.XML_PROJECT_SEGMENTS] = path;
             return _segments;
         }
     }

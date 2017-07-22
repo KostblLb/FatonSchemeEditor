@@ -25,6 +25,11 @@ namespace Ontology
             //optional value (like classname)
             public object Opt { get; set; }
 
+            public Attribute()
+            {
+                _attrType = AttributeType.STRING;
+                _name = "";
+            }
             public Attribute(AttributeType myType, string myName)
             {
                 _attrType = myType;
@@ -61,6 +66,11 @@ namespace Ontology
         public List<Attribute> OwnAttributes
         {
             get { return attrs; }
+        }
+        public OntologyNode()
+        {
+            _name = "";
+            attrs = new List<Attribute>();
         }
         public OntologyNode(string myName)
         {
@@ -120,6 +130,11 @@ namespace Ontology
                 }
                 return allAttrs;
             }
+        }
+
+        public OntologyClass() : base() {
+            _children = new List<OntologyClass>();
+            _parents = new List<OntologyClass>();
         }
         public OntologyClass(string myName) : base(myName)
         {
