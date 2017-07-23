@@ -74,7 +74,7 @@ namespace FactScheme
             public OntologyNode.Attribute InputAttribute { get; set; }
             [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_ATTRFROM)]
             public string XMLInputAttribute {
-                get { return InputAttribute.Name; }
+                get { return InputAttribute?.Name; }
                 set { InputAttributeName = value; }
             }
 

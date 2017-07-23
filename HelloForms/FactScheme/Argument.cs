@@ -14,8 +14,9 @@ using Shared;
 namespace FactScheme
 {
     public enum ArgumentType { IOBJECT, TERMIN };
+    public enum ArgumentCompareType { EQUAL, PLUS_CHILD }
     public enum ArgumentConditionType { SEM, SEG, MORPH }
-    public enum ArgumentConditionOperation { EQ, NEQ, GT, LT, GEQ, LEQ };
+    public enum ArgumentConditionOperation { EQ, NEQ };
     public class Argument : ISchemeComponent, INotifyPropertyChanged
     {
 
@@ -24,7 +25,7 @@ namespace FactScheme
             [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_TYPE)]
             public ArgumentConditionType CondType { get; set; }
             [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_OPERATION)]
-            public ArgumentConditionOperation ComparType { get; set; }
+            public ArgumentConditionOperation Operation { get; set; }
             public string Value { get; set; }
 
             public ArgumentCondition()
@@ -34,13 +35,13 @@ namespace FactScheme
             }
         }
 
-        ArgumentType _argType;
         OntologyClass _klass;
         VocTheme _theme;
         List<OntologyNode.Attribute> _attrs;
-        //string _name;
-        bool _useInheritance;
         protected uint _order;
+
+        [XmlIgnore]
+        public string ClassName { get; private set; }
 
         [XmlIgnore]
         public Dictionary<OntologyNode.Attribute, List<ArgumentCondition>> Conditions { get; set; }
@@ -56,15 +57,21 @@ namespace FactScheme
             }
         }
 
+        [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_COMPARETYPE)]
+        public ArgumentCompareType CompareType { get; set; }
+
         [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_OBJECTTYPE)]
-        public ArgumentType ArgType
-        {
-            get { return _argType; }
-        }
+        public ArgumentType ArgType { get; set; }
         [XmlIgnore]
         public OntologyClass Klass
         {
             get { return _klass; }
+        }
+        [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CLASSNAME)]
+        public string XMLClassName
+        {
+            get { return _klass.Name; }
+            set { ClassName = value; }
         }
         [XmlIgnore]
         public VocTheme Theme
@@ -88,13 +95,6 @@ namespace FactScheme
             }
         }
 
-        [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_GROUPTYPE)] //correct?
-        public bool Inheritance
-        {
-            get { return _useInheritance; }
-            set { _useInheritance = value; }
-        }
-
         [XmlAttribute]
         public uint Order
         {
@@ -109,13 +109,13 @@ namespace FactScheme
         public Argument()
         {
             Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
+            CompareType = ArgumentCompareType.EQUAL;
         }
 
         public Argument(OntologyClass klass, string name = null, bool inherit = true) : this()
         {
-            _argType = ArgumentType.IOBJECT;
+            ArgType = ArgumentType.IOBJECT;
             _klass = klass;
-            _useInheritance = inherit;
 
             _attrs = klass.AllAttributes;
             foreach (var attr in _attrs)
@@ -126,7 +126,7 @@ namespace FactScheme
 
         public Argument(VocTheme theme) : this()
         {
-            _argType = ArgumentType.TERMIN;
+            ArgType = ArgumentType.TERMIN;
             _theme = theme;
             Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             _attrs = new List<OntologyNode.Attribute>();

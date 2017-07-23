@@ -46,11 +46,7 @@ namespace Faton
 
         public const string XML_CONDITIONCOMPLEX_TAG = "ConditionComplex";
         public const string XML_CONDITIONCOMPLEX_CONDITION_TAG = "Condition";
-
-        public const string XML_ATTR_ARG_INHERITANCE = "AllowInheritance";
-        public const string XML_ATTR_ARG_TYPE = "Type";
-        public const string XML_ATTR_ARG_TYPE_IOBJECt = "IOBJECT";
-        public const string XML_ATTR_ARG_TYPE_TERMIN = "TERMIN";
+        
 
         //constants for generating ini config files for faton
         public const string CFG_SEG_PATH = "segments";

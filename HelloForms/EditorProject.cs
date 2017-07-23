@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using Ontology;
@@ -22,9 +22,8 @@ namespace HelloForms
     /// * schemes bank
     /// * editor markup
     /// </summary>
-    class EditorProject
+    public class EditorProject
     {
-        private FactSchemeBank _bank;
         private List<OntologyNode> _ontology;
         private List<VocTheme> _themes;
         private Dictionary<string, List<string>> _gramtab;
@@ -32,11 +31,47 @@ namespace HelloForms
         private Dictionary<string, string> _paths;
         private string _projectPath;
 
-        public FactSchemeBank Bank { get { return _bank; } }
+        private string getPath(string key)
+        {
+            if (_paths.ContainsKey(key))
+                return _paths[key];
+            else
+                return null;
+        }
+        
+        public FactSchemeBank Bank { get; set; }
+        [XmlIgnore]
         public List<OntologyNode> Ontology { get { return _ontology; } }
-        public List<VocTheme> Themes { get { return _themes; } }
+        [XmlElement(ElementName = EditorConstants.XML_PROJECT_ONTOLOGY)]
+        public string OntologyPath
+        {
+            get { return getPath(EditorConstants.XML_PROJECT_ONTOLOGY); }
+            set { _paths[EditorConstants.XML_PROJECT_ONTOLOGY] = value; }
+        }
+        [XmlIgnore]
+        public List<VocTheme> Dictionary { get { return _themes; } }
+        [XmlElement(ElementName = EditorConstants.XML_PROJECT_DICTIONARY)]
+        public string DictionaryPath
+        {
+            get { return getPath(EditorConstants.XML_PROJECT_DICTIONARY); }
+            set { _paths[EditorConstants.XML_PROJECT_DICTIONARY] = value; }
+        }
+        [XmlIgnore]
         public Dictionary<string, List<string>> Gramtab { get { return _gramtab; } }
+        [XmlElement(ElementName = EditorConstants.XML_PROJECT_GRAMTAB)]
+        public string GramtabPath
+        {
+            get { return getPath(EditorConstants.XML_PROJECT_GRAMTAB); }
+            set { _paths[EditorConstants.XML_PROJECT_GRAMTAB] = value; }
+        }
+        [XmlIgnore]
         public List<string> Segments { get { return _segments; } }
+        [XmlElement(ElementName = EditorConstants.XML_PROJECT_SEGMENTS)]
+        public string SegmentsPath
+        {
+            get { return getPath(EditorConstants.XML_PROJECT_SEGMENTS); }
+            set { _paths[EditorConstants.XML_PROJECT_SEGMENTS] = value; }
+        }
         public XElement Markup { get; set; }
 
         public EditorProject()
@@ -44,7 +79,7 @@ namespace HelloForms
             _paths = new Dictionary<string, string>();
             _ontology = new List<OntologyNode>();
             _themes = new List<VocTheme>();
-            _bank = new FactSchemeBank();
+            Bank = new FactSchemeBank();
             _gramtab = new Dictionary<string, List<string>>();
             _segments = new List<string>();
         }
@@ -129,7 +164,7 @@ namespace HelloForms
 
             if (xbank != null)
             {
-                _bank = FactSchemeBank.FromXml(xbank, Ontology);
+                Bank = FactSchemeBank.FromXml(xbank, Ontology);
             }
 
             _projectPath = path;

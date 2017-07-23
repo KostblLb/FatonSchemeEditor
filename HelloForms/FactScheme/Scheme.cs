@@ -82,7 +82,6 @@ namespace FactScheme
             Components.Add(arg);
 
             return arg;
-
         }
 
         public Condition AddCondition()
@@ -167,7 +166,7 @@ namespace FactScheme
                         new XAttribute("Order", arg.Order),
                         new XAttribute("Type", arg.ArgType),
                         new XAttribute("ClassName", arg.Name),
-                        new XAttribute("AllowInheritance", arg.Inheritance));
+                        new XAttribute("TypeCompare", arg.CompareType));
                 foreach(var pair in arg.Conditions)
                 {
                     foreach (var cond in pair.Value)
@@ -176,7 +175,7 @@ namespace FactScheme
                             new XElement("Condition",
                                 new XAttribute("Attribute", pair.Key.Name),
                                 new XAttribute("Type", cond.CondType),
-                                new XAttribute("ComparType", cond.ComparType),
+                                new XAttribute("Operation", cond.Operation),
                                 new XAttribute("Value", cond.Value));
                         xarg.Add(xcond);
                     }

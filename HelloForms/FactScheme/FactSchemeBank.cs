@@ -65,7 +65,7 @@ namespace HelloForms
                 foreach (XElement xarg in arguments)
                 {
                     Argument arg = null;
-                    if (xarg.Attribute(FatonConstants.XML_ATTR_ARG_TYPE).Value == FatonConstants.XML_ATTR_ARG_TYPE_TERMIN)
+                    if (xarg.Attribute(FatonConstants.XML_ARGUMENT_OBJECTTYPE).Value.Equals(ArgumentType.TERMIN.ToString()))
                     {
                         //var theme = themes.Find(x => x.name == xarg.Attribute("ClassName").Value);
                         //arg = scheme.AddArgument(theme);
@@ -82,7 +82,6 @@ namespace HelloForms
                             break;
                         }
                     }
-                    arg.Inheritance = bool.Parse(xarg.Attribute(FatonConstants.XML_ATTR_ARG_INHERITANCE).Value);
                     arg.Order = uint.Parse(xarg.Attribute(FatonConstants.XML_ARGUMENT_ORDER).Value);
                     foreach(XElement xcond in xarg.Elements(FatonConstants.XML_ARGUMENT_CONDITION_TAG))
                     {
@@ -91,7 +90,7 @@ namespace HelloForms
                         var type = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE).Value;
                         var comparType = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION).Value;
                         var value = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA).Value;
-                        condition.ComparType = (ArgumentConditionOperation) Enum.Parse(typeof(ArgumentConditionOperation), comparType);
+                        condition.Operation = (ArgumentConditionOperation) Enum.Parse(typeof(ArgumentConditionOperation), comparType);
                         condition.CondType = (ArgumentConditionType)Enum.Parse(typeof(ArgumentConditionType), type);
                         condition.Value = value;
                         var attr = arg.Attributes.Find(x => x.Name.Equals(attrName));

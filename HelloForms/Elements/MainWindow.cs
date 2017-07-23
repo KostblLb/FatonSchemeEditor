@@ -196,7 +196,7 @@ namespace HelloForms
             fstream.Close();
 
             buildOntologyTree(CurrentProject.Ontology);
-            buildDictionaryTree(CurrentProject.Themes);
+            buildDictionaryTree(CurrentProject.Dictionary);
 
             XElement xmarkup = CurrentProject.Markup;
             if (xmarkup != null)
@@ -628,11 +628,11 @@ namespace HelloForms
             CurrentProject.GenFatonCfg(saveFatonCfgFileDialog.FileName);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void serializationTestButton_Click(object sender, EventArgs e)
         {
-            var ser = new System.Xml.Serialization.XmlSerializer(typeof(FactSchemeBank));
+            var ser = new System.Xml.Serialization.XmlSerializer(typeof(EditorProject));
             var fs = new FileStream("ser_text.xml", FileMode.Create);
-            ser.Serialize(fs, CurrentProject.Bank);
+            ser.Serialize(fs, CurrentProject);
             fs.Close();
         }
     }

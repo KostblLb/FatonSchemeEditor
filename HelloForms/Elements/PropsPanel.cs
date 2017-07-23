@@ -51,17 +51,17 @@ namespace HelloForms
 
                     var equalButton = new Button();
                     equalButton.Width = 16;
-                    equalButton.Text = condition.ComparType == ArgumentConditionOperation.EQ ? "=" : "≠";
+                    equalButton.Text = condition.Operation == ArgumentConditionOperation.EQ ? "=" : "≠";
                     equalButton.Click += (s, e) =>
                     {
-                        if (condition.ComparType == ArgumentConditionOperation.EQ)
+                        if (condition.Operation == ArgumentConditionOperation.EQ)
                         {
-                            condition.ComparType = ArgumentConditionOperation.NEQ;
+                            condition.Operation = ArgumentConditionOperation.NEQ;
                             equalButton.Text = "≠";
                         }
                         else
                         {
-                            condition.ComparType = ArgumentConditionOperation.EQ;
+                            condition.Operation = ArgumentConditionOperation.EQ;
                             equalButton.Text = "=";
                         }
                     };
