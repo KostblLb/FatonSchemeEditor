@@ -30,15 +30,35 @@ namespace FactScheme
         [XmlIgnore]
         public readonly HashSet<ISchemeComponent> Components;
         
+        
         [XmlElement(ElementName = FatonConstants.XML_ARGUMENT_TAG)]
         public List<Argument> Arguments
         {
             get { return Components.OfType<Argument>().ToList(); }
         }
-        [XmlElement(ElementName = FatonConstants.XML_ARGUMENT_CONDITION_TAG)]
+        //[XmlElement(ElementName = FatonConstants.XML_ARGUMENT_CONDITION_TAG)]
+        [XmlIgnore]
         public List<Condition> Conditions
         {
             get { return Components.OfType<Condition>().ToList(); }
+        }
+        [XmlElement(ElementName = FatonConstants.XML_CONDITIONCOMPLEX_TAG)]
+        public List<ConditionComplex> XMLConditionComplexes {
+            get {
+                var result = new List<ConditionComplex>();
+                var comps = new Dictionary<Tuple<Argument, Argument>, ConditionComplex>();
+                foreach (var cond in Conditions)
+                {
+                    var argsTup = new Tuple<Argument, Argument>(cond.Arg1, cond.Arg2);
+                    if (!comps.ContainsKey(argsTup))
+                        comps[argsTup] = new ConditionComplex(cond.Arg1, cond.Arg2);
+                    comps[argsTup].Conditions.Add(cond);
+                }
+                foreach (var pair in comps)                
+                    result.Add(pair.Value);
+                return result;
+            }
+            set { return; }
         }
         [XmlElement(ElementName = FatonConstants.XML_RESULT_TAG)]
         public List<Result> Results
@@ -162,21 +182,21 @@ namespace FactScheme
             foreach(Argument arg in Arguments)
             {
                 XElement xarg =
-                    new XElement("Argument",
-                        new XAttribute("Order", arg.Order),
-                        new XAttribute("Type", arg.ArgType),
-                        new XAttribute("ClassName", arg.Name),
-                        new XAttribute("TypeCompare", arg.CompareType));
+                    new XElement(FatonConstants.XML_ARGUMENT_TAG,
+                        new XAttribute(FatonConstants.XML_ARGUMENT_ORDER, arg.Order),
+                        new XAttribute(FatonConstants.XML_ARGUMENT_OBJECTTYPE, arg.ArgType),
+                        new XAttribute(FatonConstants.XML_ARGUMENT_CLASSNAME, arg.Name),
+                        new XAttribute(FatonConstants.XML_ARGUMENT_COMPARETYPE, arg.CompareType));
                 foreach(var pair in arg.Conditions)
                 {
                     foreach (var cond in pair.Value)
                     {
                         XElement xcond =
-                            new XElement("Condition",
-                                new XAttribute("Attribute", pair.Key.Name),
-                                new XAttribute("Type", cond.CondType),
-                                new XAttribute("Operation", cond.Operation),
-                                new XAttribute("Value", cond.Value));
+                            new XElement(FatonConstants.XML_ARGUMENT_CONDITION_TAG,
+                                new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ATTRNAME, pair.Key.Name),
+                                new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE, cond.CondType),
+                                new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION, cond.Operation),
+                                new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA, cond.Data));
                         xarg.Add(xcond);
                     }
                 }
@@ -186,27 +206,27 @@ namespace FactScheme
             foreach (Result res in Results)
             {
                 List<XAttribute> xattrs_ = new List<XAttribute>();
-                xattrs_.Add(new XAttribute("Name", res.Name));
-                xattrs_.Add(new XAttribute("ClassName", (res.Reference as OntologyClass).Name));
-                xattrs_.Add(new XAttribute("Type", res.Type));
+                xattrs_.Add(new XAttribute(FatonConstants.XML_RESULT_NAME, res.Name));
+                xattrs_.Add(new XAttribute(FatonConstants.XML_RESULT_CLASSNAME, (res.Reference as OntologyClass).Name));
+                xattrs_.Add(new XAttribute(FatonConstants.XML_RESULT_TYPE, res.Type));
                 if (res.Type == ResultType.EDIT)
                 {
                     if (res.EditObject == null)
                         throw new Exception("Result type is EDIT, but no argument set");
                     if (res.EditObject is Argument)
-                        xattrs_.Add(new XAttribute("ArgEdit", ((Argument)res.EditObject).Order));
+                        xattrs_.Add(new XAttribute(FatonConstants.XML_RESULT_ARGEDIT, ((Argument)res.EditObject).Order));
                     else if (res.EditObject is Result)
-                        xattrs_.Add(new XAttribute("ResultEdit", ((Result)res.EditObject).Name));
+                        xattrs_.Add(new XAttribute(FatonConstants.XML_RESULT_RESEDIT, ((Result)res.EditObject).Name));
                 }
 
-                XElement xres = new XElement("Result", xattrs_);
+                XElement xres = new XElement(FatonConstants.XML_RESULT_TAG, xattrs_);
 
                 foreach (Result.Rule rule in res.Rules)
                 {
                     XElement xrul;
                     List<XAttribute> xattrs = new List<XAttribute>();
-                    xattrs.Add(new XAttribute("Attribute", rule.Attribute.Name));
-                    xattrs.Add(new XAttribute("Type", rule.Type));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_ATTR, rule.Attribute.Name));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_TYPE, rule.Type));
 
                     if (rule.Type == Result.RuleType.FUNC)
                     {
@@ -222,13 +242,14 @@ namespace FactScheme
                     }
                     else
                     {
+                        xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCETYPE, rule.ResourceType));
                         if (rule.Reference is Argument)
-                            xattrs.Add(new XAttribute("ArgFrom", (rule.Reference as Argument).Order));
+                            xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCE, (rule.Reference as Argument).Order));
                         else
-                            xattrs.Add(new XAttribute("ResultFrom", (rule.Reference as Result).Name));
+                            xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCE, (rule.Reference as Result).Name));
                         if (rule.Attribute.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
-                            xattrs.Add(new XAttribute("AttrFrom", rule.InputAttribute.Name));
-                        xrul = new XElement("Rule", xattrs);
+                            xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_ATTRFROM, rule.InputAttribute.Name));
+                        xrul = new XElement(FatonConstants.XML_RESULT_RULE_TAG, xattrs);
                     }
                     xres.Add(xrul);
                 }
@@ -238,7 +259,7 @@ namespace FactScheme
 
             foreach (var condition in Conditions)
             {
-                var xcond = new XElement("Condition");
+                var xcond = new XElement(FatonConstants.XML_ARGUMENT_CONDITION_TAG);
                 var xattrs = new List<XAttribute>();
                 if (condition.Arg1 == null || condition.Arg2 == null)
                     throw new ArgumentNullException("Scheme conditions must have both arguments set");

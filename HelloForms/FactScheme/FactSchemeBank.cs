@@ -92,7 +92,7 @@ namespace HelloForms
                         var value = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA).Value;
                         condition.Operation = (ArgumentConditionOperation) Enum.Parse(typeof(ArgumentConditionOperation), comparType);
                         condition.CondType = (ArgumentConditionType)Enum.Parse(typeof(ArgumentConditionType), type);
-                        condition.Value = value;
+                        condition.Data = value;
                         var attr = arg.Attributes.Find(x => x.Name.Equals(attrName));
                         arg.Conditions[attr].Add(condition);
                     }
@@ -103,27 +103,29 @@ namespace HelloForms
                     Result result;
                     foreach(OntologyClass klass in ontology)
                     {
-                        resKlass = klass.FindChild(xres.Attribute("ClassName").Value);
+                        resKlass = klass.FindChild(xres.Attribute(FatonConstants.XML_RESULT_CLASSNAME).Value);
                         if (resKlass != null)
                             break;
                     }
                     if (resKlass == null)
                         continue;
-                    result = scheme.AddResult(resKlass, xres.Attribute("Name").Value);
+                    result = scheme.AddResult(resKlass, xres.Attribute(FatonConstants.XML_RESULT_NAME).Value);
                     foreach(XElement xrul in xres.Elements())
                     {
                         Result.RuleType ruleType = (Result.RuleType) Enum.Parse(typeof(Result.RuleType),
-                            xrul.Attribute("Type").Value);
+                            xrul.Attribute(FatonConstants.XML_RESULT_RULE_TYPE).Value);
                         if (ruleType == Result.RuleType.DEF)
                         {
-                            Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute("ArgFrom").Value));
-                            OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute("Attribute").Value);
+                            Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCE).Value));
+                            OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute(FatonConstants.XML_RESULT_RULE_ATTR).Value);
                             OntologyNode.Attribute inputAttr = null;
                             if (attr.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
                             {
-                                inputAttr = arg.Attributes.Find(x => x.Name == xrul.Attribute("AttrFrom").Value);
+                                inputAttr = arg.Attributes.Find(x => x.Name == xrul.Attribute(FatonConstants.XML_RESULT_RULE_ATTRFROM).Value);
                             }
-                            result.AddRule(ruleType, attr, arg, inputAttr);
+                            var rule = result.AddRule(ruleType, attr, arg, inputAttr);
+                            rule.ResourceType = (RuleResourceType)Enum.Parse(typeof(RuleResourceType),
+                                xrul.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCETYPE).Value);
                         }
                         
                         if(ruleType == Result.RuleType.FUNC)
@@ -131,10 +133,10 @@ namespace HelloForms
 
                         }
                     }
-                    if (xres.Attribute("ArgEdit") != null)
-                        result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute("ArgEdit").Value));                    
-                    if (xres.Attribute("ResultEdit") != null)
-                        result.EditObject = scheme.Results.Find(x => x.Name == xres.Attribute("ArgEdit").Value);
+                    if (xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT) != null)
+                        result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT).Value));                    
+                    if (xres.Attribute(FatonConstants.XML_RESULT_RESEDIT) != null)
+                        result.EditObject = scheme.Results.Find(x => x.Name .Equals(xres.Attribute(FatonConstants.XML_RESULT_RESEDIT).Value));
 
                 }
 

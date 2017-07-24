@@ -72,6 +72,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FactScheme\Condition.cs" />
+    <Compile Include="FactScheme\ConditionComplex.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
     <Compile Include="misc\DataContainer.cs" />

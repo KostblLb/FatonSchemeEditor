@@ -89,10 +89,10 @@ namespace HelloForms
                     var segCombo = new ComboBox();
                     segCombo.ItemsSource = CurrentProject.Segments.ToList();
                     if (condition.CondType == ArgumentConditionType.SEG)
-                        segCombo.SelectedItem = condition.Value;
+                        segCombo.SelectedItem = condition.Data;
                     segCombo.SelectionChanged += (s, e) =>
                     {
-                        condition.Value = ((ComboBox)s).SelectedItem.ToString();
+                        condition.Data = ((ComboBox)s).SelectedItem.ToString();
                     };
                     segCombo.Tag = ArgumentConditionType.SEG;
                     segCombo.Visibility = System.Windows.Visibility.Collapsed;
@@ -102,7 +102,7 @@ namespace HelloForms
                     //wrapPanel.Children.Add(segCombo);
 
                     var morphPanel = new StackPanel();
-                    var values = condition.Value.Split(';');
+                    var values = condition.Data.Split(';');
                     var gramTypeCombo = new ComboBox();
                     gramTypeCombo.ItemsSource = CurrentProject.Gramtab.Keys.ToList();
                     gramTypeCombo.SelectedItem =
@@ -125,7 +125,7 @@ namespace HelloForms
                     };
                     gramValueCombo.SelectionChanged += (s, e) =>
                     {
-                        condition.Value = String.Format("{0};{1}", gramTypeCombo.SelectedItem, gramValueCombo.SelectedItem);
+                        condition.Data = String.Format("{0};{1}", gramTypeCombo.SelectedItem, gramValueCombo.SelectedItem);
                     };
                     morphPanel.Children.Add(gramTypeCombo);
                     morphPanel.Children.Add(gramValueCombo);
@@ -137,10 +137,10 @@ namespace HelloForms
                     //wrapPanel.Children.Add(morphPanel);
 
                     var semTextBox = new TextBox();
-                    semTextBox.Text = condition.Value;
+                    semTextBox.Text = condition.Data;
                     semTextBox.TextChanged += (s, e) =>
                     {
-                        condition.Value = semTextBox.Text;
+                        condition.Data = semTextBox.Text;
                     };
                     semTextBox.Tag = ArgumentConditionType.SEM;
                     Grid.SetColumn(semTextBox, 2);

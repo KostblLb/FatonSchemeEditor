@@ -256,6 +256,8 @@ namespace HelloForms
                 argInfo2.Data = e.SourceConnector.Tag;
                 condition.Arg2 = (FactScheme.Argument)e.SourceConnector.Tag;
             };
+            info.Sections.Add(argInfo1);
+            info.Sections.Add(argInfo2);
             NodeInfo.SectionInfo[] args = { argInfo1, argInfo2 };
 
             //toggle not\equal button
@@ -310,7 +312,7 @@ namespace HelloForms
             posCombo.ItemsSource = Enum.GetValues(typeof(ConditionPosition));
             posCombo.SelectionChanged += (s, e) =>
             {
-                condition.Data = (string)posCombo.SelectedItem;
+                condition.Data = ((ConditionPosition)posCombo.SelectedItem).ToString();
             };
             posCombo.Tag = ConditionType.POS;
             posCombo.Visibility = Visibility.Collapsed;
@@ -322,7 +324,7 @@ namespace HelloForms
             contactCombo.ItemsSource = Enum.GetValues(typeof(ConditionContact));
             contactCombo.SelectionChanged += (s, e) =>
             {
-                condition.Data = (string)contactCombo.SelectedItem;
+                condition.Data = ((ConditionContact)contactCombo.SelectedItem).ToString();
             };
             contactCombo.Visibility = Visibility.Collapsed;
             contactCombo.Tag = ConditionType.CONTACT;
@@ -347,7 +349,7 @@ namespace HelloForms
             semSelectionPanel.Tag = ConditionType.SEM;
 
             ComboBox[] semSelectionArgs = new ComboBox[2];
-            string[] vals = condition.Data.Split(';');
+            string[] vals = condition.Data?.Split(';');
             for (int i = 0; i < 2; i++)
             {
                 int j = i; //damn closures
@@ -364,7 +366,7 @@ namespace HelloForms
                         (string)semSelectionArgs[0].SelectedItem,
                         (string)semSelectionArgs[1].SelectedItem);
                 };
-                semSelectionArgs[i].SelectedValue = vals.Length > i ?
+                semSelectionArgs[i].SelectedValue = vals?.Length > i ?
                     vals[i] : null;
                 semSelectionPanel.Children.Add(semSelectionArgs[i]);
             }
@@ -378,8 +380,8 @@ namespace HelloForms
 
             var modelName = new TextBox();
             var actantName = new TextBox();
-            string[] syntData = condition.Data.Split(';');
-            string modelNameText = syntData.Length > 0 ?
+            string[] syntData = condition.Data?.Split(';');
+            string modelNameText = syntData?.Length > 0 ?
                 syntData[0] : "ModelName";
             modelName.TextChanged += (s, e) =>
             {
@@ -387,7 +389,7 @@ namespace HelloForms
                     modelName.Text, actantName.Text);
             };
 
-            string actantNameText = syntData.Length > 1 ?
+            string actantNameText = syntData?.Length > 1 ?
                 syntData[0] : "ActantName";
             actantName.Text = actantNameText;
             actantName.TextChanged += (s, e) =>

@@ -26,11 +26,11 @@ namespace FactScheme
             public ArgumentConditionType CondType { get; set; }
             [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_OPERATION)]
             public ArgumentConditionOperation Operation { get; set; }
-            public string Value { get; set; }
+            public string Data { get; set; }
 
             public ArgumentCondition()
             {
-                Value = "";
+                Data = "";
                 //Attribute = null;
             }
         }

@@ -71,17 +71,17 @@ namespace HelloForms
                     segCombo.DataSource = CurrentProject.Segments.ToList();
                     segCombo.BindingContext = new BindingContext();
                     if (condition.CondType == ArgumentConditionType.SEG)
-                        segCombo.SelectedItem = condition.Value;
+                        segCombo.SelectedItem = condition.Data;
                     segCombo.SelectionChangeCommitted += (s, e) =>
                     {
-                        condition.Value = ((ComboBox)s).SelectedItem.ToString();
+                        condition.Data = ((ComboBox)s).SelectedItem.ToString();
                     };
                     segCombo.Tag = ArgumentConditionType.SEG;
                     segCombo.Visible = false;
                     wrapPanel.Controls.Add(segCombo);
 
                     var morphPanel = new FlowLayoutPanel();
-                    var values = condition.Value.Split(';');
+                    var values = condition.Data.Split(';');
                     morphPanel.AutoSize = true;
                     morphPanel.FlowDirection = FlowDirection.TopDown;
                     var gramTypeCombo = new ComboBox();
@@ -108,7 +108,7 @@ namespace HelloForms
                     };
                     gramValueCombo.SelectedValueChanged += (s, e) =>
                     {
-                        condition.Value = String.Format("{0};{1}", gramTypeCombo.SelectedItem, gramValueCombo.SelectedItem);
+                        condition.Data = String.Format("{0};{1}", gramTypeCombo.SelectedItem, gramValueCombo.SelectedItem);
                     };
                     morphPanel.Controls.Add(gramTypeCombo);
                     morphPanel.Controls.Add(gramValueCombo);
@@ -117,10 +117,10 @@ namespace HelloForms
                     wrapPanel.Controls.Add(morphPanel);
 
                     var semTextBox = new TextBox();
-                    semTextBox.Text = condition.Value;
+                    semTextBox.Text = condition.Data;
                     semTextBox.TextChanged += (s, e) =>
                     {
-                        condition.Value = semTextBox.Text;
+                        condition.Data = semTextBox.Text;
                     };
                     semTextBox.Tag = ArgumentConditionType.SEM;
                     //semCombo.Visible = false;

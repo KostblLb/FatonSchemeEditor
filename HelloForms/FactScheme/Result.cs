@@ -155,10 +155,13 @@ namespace FactScheme
             get { return _rules; }
         }
 
-        public void AddRule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)//, string value)
+        //why not just Rules.Add()?
+        //FUG
+        public Rule AddRule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)//, string value)
         {
             Rule rule = new Rule(type, attr, reference, inputAttr);
             _rules.Add(rule);
+            return rule;
         }
 
         #region ISchemeComponent implementation

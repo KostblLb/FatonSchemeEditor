@@ -19,11 +19,17 @@ namespace FactScheme
     {
 
         //various condition properties
+        [XmlAttribute]
         public uint ID { get; set; }
+        [XmlAttribute]
         public ConditionType Type { get; set; }
+        [XmlAttribute]
         public ConditionOperation Operation { get; set; }
+        [XmlAttribute]
         public string Data { get; set; }
+        [XmlIgnore]
         public Argument Arg1 { get; set; }
+        [XmlIgnore]
         public Argument Arg2 { get; set; }
 
         public List<ISchemeComponent> Up()

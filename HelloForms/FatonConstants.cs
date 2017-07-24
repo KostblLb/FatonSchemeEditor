@@ -34,9 +34,12 @@ namespace Faton
         public const string XML_ARGUMENT_CONDITION_ARG2 = "Arg2";
 
         public const string XML_RESULT_TAG = "Result";
+        public const string XML_RESULT_NAME = "Name";
         public const string XML_RESULT_TYPE = "Type";
         public const string XML_RESULT_OBJECTTYPE = "ObjectType";
         public const string XML_RESULT_CLASSNAME = "ClassName";
+        public const string XML_RESULT_ARGEDIT = "ArgEdit";
+        public const string XML_RESULT_RESEDIT = "ResEdit";
         public const string XML_RESULT_RULE_TAG = "Rule";
         public const string XML_RESULT_RULE_TYPE = "Type";
         public const string XML_RESULT_RULE_ATTR = "AttrName";
