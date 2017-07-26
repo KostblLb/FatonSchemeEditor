@@ -88,7 +88,7 @@ namespace HelloForms
                     gramTypeCombo.DataSource = CurrentProject.Gramtab.Keys.ToList();
                     gramTypeCombo.BindingContext = new BindingContext();
                     gramTypeCombo.SelectedItem =
-                        condition.CondType == ArgumentConditionType.MORPH ?
+                        condition.CondType == ArgumentConditionType.MORH ?
                         values[0] :
                         CurrentProject.Gramtab.First().Key;
 
@@ -112,7 +112,7 @@ namespace HelloForms
                     };
                     morphPanel.Controls.Add(gramTypeCombo);
                     morphPanel.Controls.Add(gramValueCombo);
-                    morphPanel.Tag = ArgumentConditionType.MORPH;
+                    morphPanel.Tag = ArgumentConditionType.MORH;
                     morphPanel.Visible = false;
                     wrapPanel.Controls.Add(morphPanel);
 

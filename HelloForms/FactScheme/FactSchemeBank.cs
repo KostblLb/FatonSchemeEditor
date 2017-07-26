@@ -12,7 +12,7 @@ using Shared;
 using System.Xml;
 
 namespace HelloForms
-{ 
+{
     [XmlRoot(ElementName = FatonConstants.XML_BANK_TAG)]
     public class FactSchemeBank
     {
@@ -47,21 +47,21 @@ namespace HelloForms
         public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology)
         {
             FactSchemeBank bank = new FactSchemeBank();
-            foreach(XElement xscheme in root.Elements())
+            foreach (XElement xscheme in root.Elements())
             {
                 Scheme scheme = new Scheme(xscheme.Attribute(FatonConstants.XML_SCHEME_NAME).Value);
                 var arguments = from x in xscheme.Elements()
-                              where x.Name.LocalName == FatonConstants.XML_ARGUMENT_TAG
-                              select x;
+                                where x.Name.LocalName == FatonConstants.XML_ARGUMENT_TAG
+                                select x;
                 var results = from x in xscheme.Elements()
                               where x.Name.LocalName == FatonConstants.XML_RESULT_TAG
                               select x;
-                var conditions = from x in xscheme.Elements()
-                              where x.Name.LocalName == "Condition"
-                              select x;
+                var conditionComplexes = from x in xscheme.Elements()
+                                         where x.Name.LocalName == FatonConstants.XML_CONDITIONCOMPLEX_TAG
+                                         select x;
                 var functors = from x in xscheme.Elements()
-                              where x.Name.LocalName == "Functor"
-                              select x;
+                               where x.Name.LocalName == "Functor"
+                               select x;
                 foreach (XElement xarg in arguments)
                 {
                     Argument arg = null;
@@ -83,14 +83,14 @@ namespace HelloForms
                         }
                     }
                     arg.Order = uint.Parse(xarg.Attribute(FatonConstants.XML_ARGUMENT_ORDER).Value);
-                    foreach(XElement xcond in xarg.Elements(FatonConstants.XML_ARGUMENT_CONDITION_TAG))
+                    foreach (XElement xcond in xarg.Elements(FatonConstants.XML_ARGUMENT_CONDITION_TAG))
                     {
                         var condition = new Argument.ArgumentCondition();
                         var attrName = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_ATTRNAME).Value;
                         var type = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE).Value;
                         var comparType = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION).Value;
                         var value = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA).Value;
-                        condition.Operation = (ArgumentConditionOperation) Enum.Parse(typeof(ArgumentConditionOperation), comparType);
+                        condition.Operation = (ArgumentConditionOperation)Enum.Parse(typeof(ArgumentConditionOperation), comparType);
                         condition.CondType = (ArgumentConditionType)Enum.Parse(typeof(ArgumentConditionType), type);
                         condition.Data = value;
                         var attr = arg.Attributes.Find(x => x.Name.Equals(attrName));
@@ -101,7 +101,7 @@ namespace HelloForms
                 {
                     OntologyClass resKlass = null;
                     Result result;
-                    foreach(OntologyClass klass in ontology)
+                    foreach (OntologyClass klass in ontology)
                     {
                         resKlass = klass.FindChild(xres.Attribute(FatonConstants.XML_RESULT_CLASSNAME).Value);
                         if (resKlass != null)
@@ -110,9 +110,9 @@ namespace HelloForms
                     if (resKlass == null)
                         continue;
                     result = scheme.AddResult(resKlass, xres.Attribute(FatonConstants.XML_RESULT_NAME).Value);
-                    foreach(XElement xrul in xres.Elements())
+                    foreach (XElement xrul in xres.Elements())
                     {
-                        Result.RuleType ruleType = (Result.RuleType) Enum.Parse(typeof(Result.RuleType),
+                        Result.RuleType ruleType = (Result.RuleType)Enum.Parse(typeof(Result.RuleType),
                             xrul.Attribute(FatonConstants.XML_RESULT_RULE_TYPE).Value);
                         if (ruleType == Result.RuleType.DEF)
                         {
@@ -127,39 +127,42 @@ namespace HelloForms
                             rule.ResourceType = (RuleResourceType)Enum.Parse(typeof(RuleResourceType),
                                 xrul.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCETYPE).Value);
                         }
-                        
-                        if(ruleType == Result.RuleType.FUNC)
+
+                        if (ruleType == Result.RuleType.FUNC)
                         {
 
                         }
                     }
                     if (xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT) != null)
-                        result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT).Value));                    
+                        result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT).Value));
                     if (xres.Attribute(FatonConstants.XML_RESULT_RESEDIT) != null)
-                        result.EditObject = scheme.Results.Find(x => x.Name .Equals(xres.Attribute(FatonConstants.XML_RESULT_RESEDIT).Value));
+                        result.EditObject = scheme.Results.Find(x => x.Name.Equals(xres.Attribute(FatonConstants.XML_RESULT_RESEDIT).Value));
 
                 }
 
-                foreach(var xcond in conditions)
+                foreach (var xcomplex in conditionComplexes)
                 {
-                    var cond = scheme.AddCondition();
-                    cond.ID = uint.Parse(xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_ID).Value);
-                    cond.Type = (ConditionType)Enum.Parse(typeof(ConditionType), xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE).Value);
-                    cond.Operation = (ConditionOperation)Enum.Parse(typeof(ConditionOperation), xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION).Value);
+                    var argName1 = uint.Parse(xcomplex.Attribute("Arg1").Value);
+                    var argName2 = uint.Parse(xcomplex.Attribute("Arg2").Value);
+                    var conditions = xcomplex.Elements();
+                    foreach (var xcond in conditions)
+                    {
+                        var cond = scheme.AddCondition();
+                        cond.ID = uint.Parse(xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_ID).Value);
+                        cond.Type = (ConditionType)Enum.Parse(typeof(ConditionType), xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE).Value);
+                        cond.Operation = (ConditionOperation)Enum.Parse(typeof(ConditionOperation), xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION).Value);
 
-                    var arg1 = scheme.Arguments.Find(x =>
-                       x.Order == uint.Parse(xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1).Value));
-                    var arg2 = scheme.Arguments.Find(x =>
-                       x.Order == uint.Parse(xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2).Value));
-                    cond.Arg1 = arg1;
-                    cond.Arg2 = arg2;
-                    cond.Data = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA).Value;
+                        var arg1 = scheme.Arguments.Find(x => x.Order == argName1);
+                        var arg2 = scheme.Arguments.Find(x => x.Order == argName2);
+                        cond.Arg1 = arg1;
+                        cond.Arg2 = arg2;
+                        cond.Data = xcond.Attribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA).Value;
+                    }
                 }
-
                 bank.Schemes.Add(scheme);
             }
 
-            return bank; 
+            return bank;
         }
     }
 }

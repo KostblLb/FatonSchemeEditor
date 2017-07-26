@@ -635,5 +635,13 @@ namespace HelloForms
             ser.Serialize(fs, CurrentProject);
             fs.Close();
         }
+
+        private void deserializationTestButton_Click(object sender, EventArgs e)
+        {
+            var ser = new System.Xml.Serialization.XmlSerializer(typeof(EditorProject));
+            var fs = new FileStream("ser_text.xml", FileMode.Open);
+            var ep = (EditorProject) ser.Deserialize(fs);
+            fs.Close();
+        }
     }
 }

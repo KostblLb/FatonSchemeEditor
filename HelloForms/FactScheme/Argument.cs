@@ -15,7 +15,7 @@ namespace FactScheme
 {
     public enum ArgumentType { IOBJECT, TERMIN };
     public enum ArgumentCompareType { EQUAL, PLUS_CHILD }
-    public enum ArgumentConditionType { SEM, SEG, MORPH }
+    public enum ArgumentConditionType { SEM, SEG, MORH }
     public enum ArgumentConditionOperation { EQ, NEQ };
     public class Argument : ISchemeComponent, INotifyPropertyChanged
     {

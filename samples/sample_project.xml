@@ -4,11 +4,10 @@
   <DICTIONARY>./eso.vc</DICTIONARY>
   <SEGMENTS>./sample_segments.xml</SEGMENTS>
   <GRAMTAB>./gramtab.ini</GRAMTAB>
-  <FATON_SCHEMES_BANK>
+  <Bank>
     <Scheme Name="Базовая_Солнечная_Система">
       <Argument Order="1" ObjectType="IOBJECT" ClassName="Планета" AllowInheritance="true" />
       <Argument Order="2" ObjectType="IOBJECT" ClassName="Звезда" AllowInheritance="true">
-        <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Число;ед" />
         <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Одушевленность;но" />
       </Argument>
       <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE" ObjectType="IOBJECT">
@@ -16,10 +15,10 @@
         <Rule ResourceType="ARG" Resurce="2" AttrName="Центр" Type="DEF" />
       </Result>
       <ConditionComplex Arg1="1" Arg2="2">
-        <Condition ID="1" Type="SYNT" Operation="EQ" ActantName="ВращаетсяВокруг" />
-      </ConditionComplex/>
+        <Condition ID="1" Type="SYNT" Operation="EQ" Data="СистемаСпутник;ВращаетсяВокруг" />
+      </ConditionComplex>
     </Scheme>
-  </FATON_SCHEMES_BANK>
+  </Bank>
   <FATON_EDITOR_MARKUP>
     <Базовая_Солнечная_Система>
       <node type="FactScheme.Result" id="система" left="411" top="318" />

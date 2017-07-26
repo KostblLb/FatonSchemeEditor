@@ -226,11 +226,11 @@ namespace HelloForms
         }
 
 
-        private static NodeInfo.SectionInfo ConditionArgSection(Argument arg)
+        private static NodeInfo.SectionInfo ConditionArgSection(Argument arg, string text)
         {
             var argInfo = new NodeInfo.SectionInfo();
             var lbl = new Label();
-            lbl.Content = "Arg";
+            lbl.Content = text;
             argInfo.UIPanel = lbl;
             argInfo.IsInput = true;
             if (arg != null)
@@ -244,13 +244,13 @@ namespace HelloForms
 
             info.NodeNameProperty = "Условие схемы";
 
-            var argInfo1 = Medium.ConditionArgSection(condition.Arg1);
+            var argInfo1 = Medium.ConditionArgSection(condition.Arg1, "Arg1 (predicate)");
             argInfo1.InputAdded += (object s, ConnectionEventArgs e) =>
             {
                 argInfo1.Data = e.SourceConnector.Tag;
                 condition.Arg1 = (FactScheme.Argument)e.SourceConnector.Tag;
             };
-            var argInfo2 = Medium.ConditionArgSection(condition.Arg2);
+            var argInfo2 = Medium.ConditionArgSection(condition.Arg2, "Arg2 (actant)");
             argInfo2.InputAdded += (object s, ConnectionEventArgs e) =>
             {
                 argInfo2.Data = e.SourceConnector.Tag;
@@ -383,6 +383,7 @@ namespace HelloForms
             string[] syntData = condition.Data?.Split(';');
             string modelNameText = syntData?.Length > 0 ?
                 syntData[0] : "ModelName";
+            modelName.Text = modelNameText;
             modelName.TextChanged += (s, e) =>
             {
                 condition.Data = String.Format("{0};{1}",
@@ -390,7 +391,7 @@ namespace HelloForms
             };
 
             string actantNameText = syntData?.Length > 1 ?
-                syntData[0] : "ActantName";
+                syntData[1] : "ActantName";
             actantName.Text = actantNameText;
             actantName.TextChanged += (s, e) =>
             {
@@ -405,7 +406,7 @@ namespace HelloForms
 
             //morph(gramtab) coherence selection
             var gramtabCombo = new ComboBox();
-            gramtabCombo.Tag = ConditionType.MORPH;
+            gramtabCombo.Tag = ConditionType.MORH;
             gramtabCombo.Visibility = Visibility.Collapsed;
             gramtabCombo.ItemsSource = gramtab.Keys;
             gramtabCombo.SelectionChanged += (s, e) =>

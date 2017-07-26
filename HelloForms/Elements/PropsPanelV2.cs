@@ -109,7 +109,7 @@ namespace HelloForms
                     if (CurrentProject.Gramtab.Count > 0)
                         first = CurrentProject.Gramtab.First();
                     gramTypeCombo.SelectedItem =
-                        condition.CondType == ArgumentConditionType.MORPH ?
+                        condition.CondType == ArgumentConditionType.MORH ?
                         values[0] :
                         first.Key;
 
@@ -132,7 +132,7 @@ namespace HelloForms
                     };
                     morphPanel.Children.Add(gramTypeCombo);
                     morphPanel.Children.Add(gramValueCombo);
-                    morphPanel.Tag = ArgumentConditionType.MORPH;
+                    morphPanel.Tag = ArgumentConditionType.MORH;
                     morphPanel.Visibility = System.Windows.Visibility.Collapsed;
                     Grid.SetRow(morphPanel, i);
                     Grid.SetColumn(morphPanel, 2);

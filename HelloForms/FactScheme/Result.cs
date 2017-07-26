@@ -12,7 +12,7 @@ namespace FactScheme
     //public partial class FactScheme
     //{
     public enum ResultType { CREATE, EDIT }
-    public enum RuleResourceType { ARG, RES, FUN}
+    public enum RuleResourceType { ARG, RES, FUN }
 
     public partial class Result : ISchemeComponent
     {
@@ -25,6 +25,8 @@ namespace FactScheme
             public string ReferenceName { get; private set; }
             [XmlIgnore]
             public string InputAttributeName { get; private set; }
+            [XmlIgnore]
+            public string AttributeName { get; private set; }
 
             [XmlAttribute]
             public RuleResourceType ResourceType { get; set; }
@@ -53,7 +55,8 @@ namespace FactScheme
             }
 
             [XmlIgnore]
-            public OntologyNode.Attribute Attribute {
+            public OntologyNode.Attribute Attribute
+            {
                 get { return _attribute; }
                 set { _attribute = value; }
             }
@@ -61,19 +64,14 @@ namespace FactScheme
             public string XMLAttribute
             {
                 get { return _attribute.Name; }
-                set {
-                    if (ResourceType == RuleResourceType.ARG)
-                        _attribute = ((Argument)Reference).Klass.AllAttributes.Find(x => x.Name.Equals(value));
-                    else if (ResourceType == RuleResourceType.RES)
-                        _attribute = ((Result)Reference).Reference.AllAttributes.Find(x => x.Name.Equals(value));
-                    else { } //functor block
-                }
+                set { AttributeName = value; }
             }
 
             [XmlIgnore]
             public OntologyNode.Attribute InputAttribute { get; set; }
             [XmlAttribute(AttributeName = FatonConstants.XML_RESULT_RULE_ATTRFROM)]
-            public string XMLInputAttribute {
+            public string XMLInputAttribute
+            {
                 get { return InputAttribute?.Name; }
                 set { InputAttributeName = value; }
             }

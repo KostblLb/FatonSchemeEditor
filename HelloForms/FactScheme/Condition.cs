@@ -10,7 +10,7 @@ using Faton;
 namespace FactScheme
 {
 
-    public enum ConditionType { SEG, POS, CONTACT, SEM, SYNT, MORPH }
+    public enum ConditionType { SEG, POS, CONTACT, SEM, SYNT, MORH }
     public enum ConditionPosition { ANY, PRE_FORCED, PRE_PRIOR, POST_FORCED, POST_PRIOR }
     public enum ConditionContact { ANY, ABS, OBJ, GROUP, OBJECT_GROUP }
     public enum ConditionOperation { EQ, NEQ };
