@@ -85,9 +85,14 @@ namespace FactScheme
             /// <param name="attr"></param>
             /// <param name="reference"></param>
             /// <param name="inputAttr">may be null if 'reference' is a functor</param>
-            public Rule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)
+            public Rule(OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)
             {
-                Type = type;
+                if (reference is Argument)
+                    Type = RuleType.ATTR;
+                else if (reference is Functor)
+                    Type = RuleType.FUNC;
+                else
+                    Type = RuleType.DEF;
                 Attribute = attr;
                 Reference = reference;
                 InputAttribute = inputAttr;
@@ -159,7 +164,7 @@ namespace FactScheme
         //FUG
         public Rule AddRule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)//, string value)
         {
-            Rule rule = new Rule(type, attr, reference, inputAttr);
+            Rule rule = new Rule(attr, reference, inputAttr);
             _rules.Add(rule);
             return rule;
         }
