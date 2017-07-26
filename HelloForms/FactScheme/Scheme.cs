@@ -266,8 +266,8 @@ namespace FactScheme
                 xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ID, condition.ID));
                 xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE, condition.Type));
                 xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION, condition.Operation));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1, condition.Arg1));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2, condition.Arg2));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1, condition.Arg1.Order));
+                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2, condition.Arg2.Order));
                 xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA, condition.Data));
 
                 xcond.Add(xattrs);

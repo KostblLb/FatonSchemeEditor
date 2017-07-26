@@ -26,6 +26,7 @@ namespace FactScheme
             public ArgumentConditionType CondType { get; set; }
             [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_OPERATION)]
             public ArgumentConditionOperation Operation { get; set; }
+            [XmlAttribute(AttributeName = FatonConstants.XML_ARGUMENT_CONDITION_DATA)]
             public string Data { get; set; }
 
             public ArgumentCondition()

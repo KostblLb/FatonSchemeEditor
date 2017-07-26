@@ -105,18 +105,21 @@ namespace HelloForms
                     var values = condition.Data.Split(';');
                     var gramTypeCombo = new ComboBox();
                     gramTypeCombo.ItemsSource = CurrentProject.Gramtab.Keys.ToList();
+                    var first = new KeyValuePair<string, List<string>>( "", new List<string>());
+                    if (CurrentProject.Gramtab.Count > 0)
+                        first = CurrentProject.Gramtab.First();
                     gramTypeCombo.SelectedItem =
                         condition.CondType == ArgumentConditionType.MORPH ?
                         values[0] :
-                        CurrentProject.Gramtab.First().Key;
+                        first.Key;
 
                     var gramValueCombo = new ComboBox();
                     gramValueCombo.ItemsSource = CurrentProject.Gramtab.ContainsKey(values[0]) ?
                         CurrentProject.Gramtab[values[0]].ToList() :
-                        CurrentProject.Gramtab.First().Value.ToList();
+                        first.Value.ToList();
                     gramValueCombo.SelectedItem = values.Length > 1 ?
                         values[1] :
-                        gramTypeCombo.Items[0];
+                        first.Key;
 
                     gramTypeCombo.SelectionChanged += (s, e) =>
                     {

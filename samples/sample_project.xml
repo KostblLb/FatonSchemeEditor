@@ -12,10 +12,12 @@
         <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Одушевленность;но" />
       </Argument>
       <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE" ObjectType="IOBJECT">
-        <Rule Attribute="Спутник" Type="DEF" ArgFrom="1" />
-        <Rule Attribute="Центр" Type="DEF" ArgFrom="2" />
+        <Rule ResourceType="ARG" Resurce="1" AttrName="Спутник" Type="DEF" />
+        <Rule ResourceType="ARG" Resurce="2" AttrName="Центр" Type="DEF" />
       </Result>
-      <Condition Arg1="1" Arg2="2" ID="1" Type="SYNT" Operation="EQ" ActantName="ВращаетсяВокруг" />
+      <ConditionComplex Arg1="1" Arg2="2">
+        <Condition ID="1" Type="SYNT" Operation="EQ" ActantName="ВращаетсяВокруг" />
+      </ConditionComplex/>
     </Scheme>
   </FATON_SCHEMES_BANK>
   <FATON_EDITOR_MARKUP>

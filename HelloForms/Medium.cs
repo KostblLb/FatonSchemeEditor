@@ -363,8 +363,8 @@ namespace HelloForms
                 semSelectionArgs[i].SelectionChanged += (s, e) =>
                 {
                     condition.Data = String.Format("{0};{1}",
-                        (string)semSelectionArgs[0].SelectedItem,
-                        (string)semSelectionArgs[1].SelectedItem);
+                        semSelectionArgs[0].SelectedItem?.ToString(),
+                        semSelectionArgs[1].SelectedItem?.ToString());
                 };
                 semSelectionArgs[i].SelectedValue = vals?.Length > i ?
                     vals[i] : null;

@@ -46,6 +46,10 @@ namespace Ontology
                 get { return _name; }
                 set { _name = value; }
             }
+            public override string ToString()
+            {
+                return Name;
+            }
         }
         public List<Attribute> attrs;
         private string _name;
