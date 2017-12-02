@@ -9,23 +9,51 @@ namespace FactScheme
 {
     //public partial class FactScheme
     //{
+    public static class FunctorFactory
+    {
+        public static Functor Build(string fid)
+        {
+            switch (fid)
+            {
+                case "F_CONCAT":
+                    return new FunctorCat();
+                case "F_BASE":
+                default:
+                    return new Functor();
+            }
+        }
+    }
     public class Functor : ISchemeComponent
     {
         public class FunctorInput
         {
-            //public object defaultValue;
-            public object value;
-            public OntologyNode.Attribute source;
+            public string name; //public name for GUI
+            public object source;
+            public OntologyNode.Attribute value;
             public object param;
+
+            public FunctorInput(string myName)
+            {
+                name = myName;
+            }
+            
+            public void Set(OntologyNode.Attribute attr, ISchemeComponent attrSource)
+            {
+                this.value = attr;
+                this.source = attrSource;
+            }
         }
 
-        protected string _id;
-        public string ID { get { return _id; } }
+        protected string _name;
+        public string Name { get { return _name; } }
+        public uint CID { get; set; } //component id
         List<FunctorInput> _inputs;
         public OntologyNode.Attribute Output;
         protected int _numArgs; //args number, -1 for variable
-                                //protected int _countArgs; //number of added args
+        protected int _minArgs; //minimal present args number (some may be empty)
+
         public int NumArgs { get { return _numArgs; } }
+        public int MinArgs { get { return _minArgs; } }
         public List<string> Params;
         protected object _defaultValue; //default output value
         public object DefaultValue { get { return _defaultValue; } }
@@ -33,25 +61,22 @@ namespace FactScheme
 
         public Functor()
         {
-            _id = "F_BASE";
+            CID = UID.Get();
+            _name = "F_BASE";
             _inputs = new List<FunctorInput>();
             Params = new List<string>();
-            Output = null;
+            Output = new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, "output");
             _numArgs = -1;
+            _minArgs = 0;
             _defaultValue = null;
         }
 
-        public Functor(int numArgs) : base()
+        public Functor(int numArgs, int minArgs, string defaultInputName = "input") : this()
         {
             _numArgs = numArgs;
-            for (int i = 0; i < numArgs; i++)
-                _inputs.Add(new FunctorInput());
-        }
-
-        public void SetInput(object attr, OntologyNode.Attribute attrSource, FunctorInput input)
-        {
-            input.value = attr;
-            input.source = attrSource;
+            _minArgs = minArgs;
+            for (int i = 0; i < minArgs; i++)
+                _inputs.Add(new FunctorInput(defaultInputName));
         }
 
         public List<ISchemeComponent> Up()
@@ -75,18 +100,18 @@ namespace FactScheme
 }
 public class FunctorIncrement : FactScheme.Functor
 {
-    public FunctorIncrement() : base(1)
+    public FunctorIncrement() : base(1, 1)
     {
-        _id = "F_INC";
+        _name = "F_INC";
         _defaultValue = 0;
     }
 }
 
 public class FunctorCat : FactScheme.Functor
 {
-    public FunctorCat() : base()
+    public FunctorCat() : base(-1, 2)
     {
-        _id = "F_CONCAT";
+        _name = "F_CONCAT";
         _defaultValue = "";
     }
     //}

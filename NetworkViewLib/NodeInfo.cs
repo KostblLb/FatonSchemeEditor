@@ -12,6 +12,7 @@ namespace network
     public class NodeInfo : INotifyPropertyChanged
     {
         public object Tag;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public class HeaderInfo
         {
@@ -21,7 +22,6 @@ namespace network
         }
         public HeaderInfo Header { get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
         public string NodeNameProperty
         {
             get { return Header.Name; }

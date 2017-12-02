@@ -94,6 +94,12 @@ namespace network
                 RoutingStrategy.Bubble,
                 typeof(ConnectionEventHandler),
                 typeof(Connector));
+        public static readonly RoutedEvent ConnectionRemovedEvent =
+            EventManager.RegisterRoutedEvent(
+                "ConnectionRemoved",
+                RoutingStrategy.Bubble,
+                typeof(ConnectionEventHandler),
+                typeof(Connector));
 
         public static readonly RoutedEvent InputAddedEvent =
             EventManager.RegisterRoutedEvent(
@@ -220,11 +226,21 @@ namespace network
 
         private void Connector_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            RaiseEvent(new RoutedEventArgs(ConnectorDragEvent));
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 Console.WriteLine("dragging connection from " + e.Source);
-                DragDrop.DoDragDrop(this, this, DragDropEffects.Link);
+                if (Connections.Count > 0 && Mode == ConnectorMode.Input)
+                {
+                    var src = Connections.First();
+                    RaiseEvent(new ConnectionEventArgs(ConnectionRemovedEvent, src, this));
+                    src.RaiseEvent(new RoutedEventArgs(ConnectorDragEvent));
+                    DragDrop.DoDragDrop(src, src, DragDropEffects.Link);
+                }
+                else
+                {
+                    RaiseEvent(new RoutedEventArgs(ConnectorDragEvent));
+                    DragDrop.DoDragDrop(this, this, DragDropEffects.Link);
+                }
             }
         }
 

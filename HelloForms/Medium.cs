@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using FactScheme;
 using Ontology;
-using VocabularyExtractor;
 using System.Windows.Data;
 
 namespace HelloForms
@@ -20,12 +19,13 @@ namespace HelloForms
     /// </summary>
     public class Medium
     {
+
         public static void AddSchemeConnection(Scheme scheme, Connector src, Connector dst)
         {
             //if (dst.Tag == null || src.Tag == null)
             //    throw new Exception("connector not attached to attribute");
 
-            if (dst.Tag is FactScheme.Result) //very specific code for linking EDIT connector of a result
+            if (dst.Tag is FactScheme.Result && src.Tag is ISchemeComponent) //very specific code for linking EDIT connector of a result
             {
                 ((Result)dst.Tag).EditObject = src.ParentNode.Tag as ISchemeComponent;
             }
@@ -35,7 +35,7 @@ namespace HelloForms
                 var srcAttr = src.Tag as OntologyNode.Attribute;
                 var result = dst.ParentNode.Tag as FactScheme.Result;
                 if (src.ParentNode.Tag is FactScheme.Argument)
-                    result.AddRule(FactScheme.Result.RuleType.DEF,
+                    result.AddRule(FactScheme.Result.RuleType.ATTR,
                         dstAttr,
                         src.ParentNode.Tag as ISchemeComponent,
                         srcAttr);
@@ -48,11 +48,9 @@ namespace HelloForms
 
             else if (dst.ParentNode.Tag is FactScheme.Functor)
             {
-                //wont work
-                //var functor = dst.ParentNode.Tag as FactScheme.Functor;
-                //functor.SetInput(src.Tag, 
-                //    src.ParentNode.Tag, 
-                //    dst.Tag as FactScheme.Functor.FunctorInput);
+                var functor = dst.ParentNode.Tag as FactScheme.Functor;
+                if (src.Tag is OntologyNode.Attribute)
+                    (dst.Tag as FactScheme.Functor.FunctorInput).Set(src.Tag as OntologyNode.Attribute, src.ParentNode.Tag as ISchemeComponent);
             }
         }
 
@@ -80,6 +78,7 @@ namespace HelloForms
             {
                 if (e.PropertyName == "Order")
                     info.NodeNameProperty = string.Format("arg{0} {1}", argument.Order, argument.Name);
+                //if (e.PropertyName == "")
             };
 
             foreach (var attr in argument.Attributes)
@@ -89,26 +88,9 @@ namespace HelloForms
                 attrInfo.IsInput = false;
                 attrInfo.IsOutput = true;
                 var attrName = new Label();
-                if (argument.ArgType == ArgumentType.IOBJECT)
-                    attrName.Content = attr.Name;
-                else
-                    attrName.Content = "Значение";
+                attrName.Content = attr.Name;
                 attrName.ToolTip = attr.AttrType;
 
-                //WrapPanel panel = new WrapPanel();
-                //Button attrSetup = new Button();
-                //attrSetup.Height = 16;
-                //attrSetup.Width = 16;
-                //attrSetup.Content = "::";
-                //attrSetup.ToolTip = "Изменить ограничения атрибута";
-                //attrSetup.HorizontalAlignment = HorizontalAlignment.Right;
-                //attrSetup.Click += (s, e) =>
-                //{
-                //    Medium.onAttributeSetup(attr, argument);
-                //};
-
-                //panel.Children.Add(attrName);
-                //panel.Children.Add(attrSetup);
                 attrInfo.UIPanel = attrName;
                 info.Sections.Add(attrInfo);
             }
@@ -149,6 +131,7 @@ namespace HelloForms
                     if (result.Reference != ((Result)input).Reference)
                         e.Valid = false;
                 }
+                else e.Valid = false;
             };
             info.Sections.Add(resultInfo);
 
@@ -165,7 +148,7 @@ namespace HelloForms
                     attrInfo.Data = attr;
                     attrInfo.IsInput = true;
                     attrInfo.IsOutput = true;
-                    attrInfo.InputValidation = (s, e) =>
+                    attrInfo.InputValidation += (s, e) =>
                     {
                         var src = e.SourceConnector.Tag;
                         var dst = e.DestConnector.Tag;
@@ -201,9 +184,22 @@ namespace HelloForms
             var info = new NodeInfo();
             info.Tag = functor;
 
-            info.NodeNameProperty = functor.ID;
+            info.NodeNameProperty = functor.Name;
+
+            for (int i = 0; i < functor.Inputs.Count; i++)
+            {
+                NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
+                attrInfo.IsInput = true;
+                attrInfo.IsOutput = false;
+                attrInfo.Data = functor.Inputs[i];
+                var l = new Label();
+                l.Content = functor.Inputs[i].name;
+                attrInfo.UIPanel = l;
+                info.Sections.Add(attrInfo);
+            }
 
             var output = new NodeInfo.SectionInfo();
+            output.Data = functor.Output;
             output.IsInput = false;
             output.IsOutput = true;
             var outputLabel = new Label();
@@ -211,15 +207,6 @@ namespace HelloForms
             output.UIPanel = outputLabel;
             info.Sections.Add(output);
 
-            if (functor.NumArgs > 0)
-                for (int i = 0; i < functor.NumArgs; i++)
-                {
-                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
-                    attrInfo.IsInput = true;
-                    attrInfo.IsOutput = false;
-                    attrInfo.Data = functor.Inputs[i];
-                    info.Sections.Add(attrInfo);
-                }
             //else
             //    Button
             return info;
@@ -259,6 +246,12 @@ namespace HelloForms
             info.Sections.Add(argInfo1);
             info.Sections.Add(argInfo2);
             NodeInfo.SectionInfo[] args = { argInfo1, argInfo2 };
+            foreach (var arg in args) {
+                arg.InputValidation += (object s, ConnectionEventArgs e) => {
+                    if (e.SourceConnector.Tag.GetType() != typeof(Argument))
+                        e.Valid = false;
+                };
+            }
 
             //toggle not\equal button
             var equalSection = new NodeInfo.SectionInfo();
@@ -355,6 +348,8 @@ namespace HelloForms
                 int j = i; //damn closures
                 semSelectionArgs[j] = new ComboBox();
                 semSelectionArgs[j].DisplayMemberPath = "Name";
+                if (args[i].Data != null)
+                    semSelectionArgs[i].ItemsSource = ((FactScheme.Argument)args[i].Data).Attributes;
                 args[i].PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == "Data")
@@ -485,6 +480,20 @@ namespace HelloForms
                     var dstConn = dstNode.Connectors.First(x =>
                         x.Tag == res &&
                         x.Mode == Connector.ConnectorMode.Input);
+                    nv.AddConnection(srcConn, dstConn, false);
+                }
+            }
+
+            foreach(Functor fun in scheme.Functors)
+            {
+                var dstNode = nodes.First(x => x.Tag == fun);
+                foreach(var input in fun.Inputs)
+                {
+                    var srcNode = nodes.First(x => x.Tag == input.source);
+                    var srcConn = srcNode.Connectors.First(x =>
+                        (x.Tag == input.value) &&
+                        x.Mode == Connector.ConnectorMode.Output);
+                    var dstConn = dstNode.Connectors.First(x => x.Tag == input);
                     nv.AddConnection(srcConn, dstConn, false);
                 }
             }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<segments>
+	<class name="Предложение"/>
+	<class name="Абзац"/>
+	<class name="Заголовок"/>
+	<class name="список"/>
+    <class name="Клауза"/>
+    <class name="Группа"/>
+    <class name="Описание"/>
+</segments>

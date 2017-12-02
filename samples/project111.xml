@@ -5,15 +5,15 @@
   <SEGMENTS>./sample_segments.xml</SEGMENTS>
   <GRAMTAB>./gramtab.ini</GRAMTAB>
   <Bank>
-    <Scheme Name="Базовая_Солнечная_Система">
-      <Argument Order="1" ObjectType="IOBJECT" ClassName="Планета" AllowInheritance="true" />
-      <Argument Order="2" ObjectType="IOBJECT" ClassName="Звезда" AllowInheritance="true">
+    <Scheme Name="Базовая_Солнечная_Система" Segment="">
+      <Argument Order="1" ObjectType="IOBJECT" ClassName="Планета" TypeCompare="EQUAL" />
+      <Argument Order="2" ObjectType="IOBJECT" ClassName="Звезда" TypeCompare="EQUAL">
         <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Одушевленность;но" />
       </Argument>
-      <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE" ObjectType="IOBJECT">
-        <Rule ResourceType="ARG" Resurce="1" AttrName="Спутник" Type="DEF" />
-        <Rule ResourceType="ARG" Resurce="2" AttrName="Центр" Type="DEF" />
-      </Result>
+      <Argument Order="3" ObjectType="TERMIN" ClassName="Технология" TypeCompare="EQUAL">
+        <Condition AttrName="Технология" Type="SEM" Operation="EQ" Data="Технология" />
+      </Argument>
+      <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE" />
       <ConditionComplex Arg1="1" Arg2="2">
         <Condition ID="1" Type="SYNT" Operation="EQ" Data="СистемаСпутник;ВращаетсяВокруг" />
       </ConditionComplex>
@@ -25,6 +25,7 @@
       <node type="FactScheme.Argument" id="1" left="77" top="290" />
       <node type="FactScheme.Argument" id="2" left="76" top="139" />
       <node type="FactScheme.Condition" id="1" left="392" top="72" />
+      <node type="FactScheme.Argument" id="3" left="0" top="0" />
     </Базовая_Солнечная_Система>
   </FATON_EDITOR_MARKUP>
 </FATON_EDITOR_PROJECT>

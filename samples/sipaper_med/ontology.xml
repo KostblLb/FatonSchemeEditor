@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ontology>
+    <!-- классы -->
+    <class name="Препарат">
+        <attr type="string">Наименование</attr>
+        <attr type="string">Тип</attr>
+    </class>
+    <class name="Цель">
+        <attr type="string">Тип</attr>
+    </class>
+    <class name="Группа">
+        <attr type="string">Тип</attr>
+    </class>
+    
+    <!-- отношения -->
+    <class name="имеетНазначение">
+        <attr type="object" class="Группа">Группа</attr>
+        <attr type="object" class="Препарат">Препарат</attr>
+        <attr type="string">Тип</attr>
+        <attr type="string">Кратность</attr>
+        <attr type="string">Размер дозы</attr>
+        <attr type="string">Время приёма</attr>
+    </class>
+    
+    <!-- домены -->
+    <domain name="ТипыПрепаратов">
+        <value>Коричневый карлик</value>
+        <value>Белый карлик</value>
+        <value>Красный гигант</value>
+        <value>Сверхновая</value>
+    </domain>
+</ontology>

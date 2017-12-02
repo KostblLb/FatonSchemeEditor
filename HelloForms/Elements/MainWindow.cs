@@ -14,8 +14,7 @@ using System.IO;
 using Faton;
 using Ontology;
 using FactScheme;
-using Shared;
-using VocabularyExtractor;
+using Vocabularies;
 
 namespace HelloForms
 {
@@ -37,7 +36,22 @@ namespace HelloForms
             }
         }
 
-        EditorProject CurrentProject;
+        EditorProject _currentProject;
+        EditorProject CurrentProject {
+            get { return _currentProject; }
+            set
+            {
+                _currentProject = value;
+                NVHosts.Clear();
+                foreach (var scheme in value.Bank.Schemes)
+                    initNVHost(scheme);
+                if (!value.Bank.Schemes.Any())
+                    createScheme();
+                var bs = new BindingSource(value.Bank.Schemes, "");
+                bankListDataGrid.DataSource = bs;
+                schemeSegmentCombo.DataSource = value.Segments;
+            }
+        }
 
         public MainWindow()
         {
@@ -60,7 +74,6 @@ namespace HelloForms
         private void Form1_Load(object sender, EventArgs e)
         {
             CurrentProject = new EditorProject();
-            createScheme();
         }
 
         #region toolstrip
@@ -81,21 +94,6 @@ namespace HelloForms
             createScheme();
         }
 
-        private void removeSchemeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (bankListView.SelectedIndices.Count == 0)
-                return;
-            int index = bankListView.SelectedIndices[0];
-            if (CurrentProject.Bank.Schemes[index] == CurrentScheme)
-                CurrentScheme = CurrentProject.Bank.Schemes[0];
-
-            CurrentProject.Bank.Schemes.Remove(bankListView.SelectedItems[0].Tag as Scheme);
-
-            if (CurrentProject.Bank.Schemes.Count == 0)
-                createScheme();
-
-            updateBankListView();
-        }
 
         private void addDictionaryArgumentMenuItem_Click(object sender, EventArgs e)
         {
@@ -135,10 +133,9 @@ namespace HelloForms
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentProject = new EditorProject();
             dictionaryTreeView.Nodes.Clear();
             ontologyTreeView.Nodes.Clear();
-            createScheme();
+            CurrentProject = new EditorProject();
         }
 
         private void importOntologyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -186,6 +183,8 @@ namespace HelloForms
             doc.Add(xbank);
             doc.Save(fstream);
             fstream.Close();
+
+            statusLabel.Text = Locale.STATUS_SAVED;
         }
         private void openProjectDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -201,9 +200,9 @@ namespace HelloForms
             XElement xmarkup = CurrentProject.Markup;
             if (xmarkup != null)
             {
-                foreach (Scheme scheme in CurrentProject.Bank.Schemes)
+                foreach (var xscheme in xmarkup.Elements())
                 {
-                    XElement xscheme = xmarkup.Element(scheme.Name);
+                    var scheme = CurrentProject.Bank.Schemes.First(x => x.Name == xscheme.Attribute("name").Value);
                     ElementHost host = initNVHost(scheme);
                     network.NetworkView nv = host.Child as network.NetworkView;
                     foreach (XElement xel in xscheme.Elements())
@@ -222,7 +221,7 @@ namespace HelloForms
                         }
                         else if (xel.Attribute("type").Value == typeof(Functor).ToString())
                         {
-                            Functor f = scheme.Functors.First(x => x.ID == xel.Attribute("id").Value);
+                            Functor f = scheme.Functors.First(x => x.CID == uint.Parse(xel.Attribute("id").Value));
                             node = nv.AddNode(Medium.Convert(f));
                         }
                         else if (xel.Attribute("type").Value == typeof(Condition).ToString())
@@ -243,15 +242,20 @@ namespace HelloForms
             }
             if (!CurrentProject.Bank.Schemes.Any())
                 createScheme();
-            updateBankListView();
+            //updateBankListView();
+            
             CurrentScheme = CurrentProject.Bank.Schemes[0];
+            bankListDataGrid.DataSource = CurrentProject.Bank.Schemes;
+            schemeSegmentCombo.DataSource = CurrentProject.Segments;
+
+            statusLabel.Text = Locale.STATUS_PROJECT_LOADED;
         }
         private void saveProjectFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             XElement xmarkup = new XElement(EditorConstants.XML_EDITOR_MARKUP);
             foreach (Scheme scheme in CurrentProject.Bank.Schemes)
             {
-                XElement xscheme = new XElement(scheme.XMLName);
+                XElement xscheme = new XElement("scheme", new XAttribute("name", scheme.Name));
                 network.NetworkView nv = NVHosts[scheme].Child as network.NetworkView;
                 foreach (network.Node node in nv.Nodes)
                 {
@@ -260,10 +264,12 @@ namespace HelloForms
                         id = (node.Tag as Argument).Order.ToString();
                     else if (node.Tag is Condition)
                         id = ((Condition)node.Tag).ID.ToString();
+                    else if (node.Tag is Functor)
+                        id = ((Functor)node.Tag).CID.ToString();
                     else
                         id = (node.TagName);
                     XElement xnode = new XElement("node",
-                        new XAttribute("type", node.Tag.GetType().ToString()),
+                        new XAttribute("type", (node.Tag is Functor) ? "FactScheme.Functor" : node.Tag.GetType().ToString()), //shiieeeeeeet
                         new XAttribute("id", id),
                         new XAttribute("left", (int)node.Margin.Left),
                         new XAttribute("top", (int)node.Margin.Top));
@@ -275,6 +281,8 @@ namespace HelloForms
             var fstream = saveProjectFileDialog.OpenFile();
             CurrentProject.Save(fstream);
             fstream.Close();
+
+            statusLabel.Text = Locale.STATUS_SAVED;
         }
         private void importOntologyFileDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -283,12 +291,16 @@ namespace HelloForms
             var ontology = CurrentProject.LoadOntology(fstream, path);
             buildOntologyTree(ontology);
             fstream.Close();
+
+            statusLabel.Text = Locale.STATUS_ONTOLOGY_LOADED;
         }
         private void importDictionaryFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             string path = importDictionaryFileDialog.FileName;
             var themes = CurrentProject.LoadDictionary(path);
             buildDictionaryTree(themes);
+
+            statusLabel.Text = Locale.STATUS_DICTIONARY_LOADED;
         }
         private void importGramtabFileDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -296,13 +308,16 @@ namespace HelloForms
             var path = importGramtabFileDialog.FileName;
             CurrentProject.LoadGramtab(fstream, path);
             fstream.Close();
+
+            statusLabel.Text = Locale.STATUS_GRAMTAB_LOADED;
         }
         private void importSegmentsFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             Stream fstream = importSegmentsFileDialog.OpenFile();
             var path = importSegmentsFileDialog.FileName;
-            CurrentProject.LoadSegments(fstream, path);
+            schemeSegmentCombo.DataSource = CurrentProject.LoadSegments(fstream, path);
             fstream.Close();
+            statusLabel.Text = Locale.STATUS_SEGMENTS_LOADED;
         }
         #endregion open/save
 
@@ -384,17 +399,17 @@ namespace HelloForms
             OntologyNode.Ontology = ontology;
         }
 
-        private void buildDictionaryTree(List<VocTheme> themes)
+        private void buildDictionaryTree(Vocabulary voc)
         {
             dictionaryTreeView.Nodes.Clear();
-            //list always comes ordered so that parents are always defined before children (?)
-            themes.Reverse();
-            Stack<VocTheme> s = new Stack<VocTheme>(themes);
+            Stack<Termin> s = new Stack<Termin>();
+            s.Push(voc.Root);
             TreeNodeCollection baseNodeCollection = dictionaryTreeView.Nodes;
+
             while (s.Any())
             {
-                VocTheme theme = s.Pop();
-                if (theme == null)
+                Termin term = s.Pop();
+                if (term == null)
                 {
                     if (baseNodeCollection[0].Parent.Parent == null)
                         baseNodeCollection = dictionaryTreeView.Nodes;
@@ -402,42 +417,41 @@ namespace HelloForms
                         baseNodeCollection = baseNodeCollection[0].Parent.Parent.Nodes;
                     continue;
                 }
-                TreeNode treeNode = new TreeNode(theme.name);
-                treeNode.Tag = theme;
+                TreeNode treeNode = new TreeNode(term.Name);
+                treeNode.Tag = term;
 
                 //make sure children are not added to the root
-                if (theme.root || baseNodeCollection != dictionaryTreeView.Nodes)
-                    baseNodeCollection.Add(treeNode);
+                //if (theme.root || baseNodeCollection != dictionaryTreeView.Nodes)
+                baseNodeCollection.Add(treeNode);
 
-                if (theme.children.Count > 0)
+                if (term.Children.Any())
                 {
                     s.Push(null);
-                    foreach (VocTheme child in theme.children)
-                        s.Push(child);
+                    for (int i = term.Children.Count - 1; i >= 0; i--)
+                    {
+                        s.Push(term.Children[i]);
+                    }
                     baseNodeCollection = treeNode.Nodes;
                 }
             }
 
-            themes.Reverse();
-            //Themes = themes;
+            baseNodeCollection = dictionaryTreeView.Nodes;
+            foreach (var term in DiglexFunctions.LexFunctions)
+            {
+                var lexNode = new TreeNode(term.Name);
+                lexNode.Tag = term;
+                baseNodeCollection.Add(lexNode);
+            }
         }
 
         #endregion
-
-        private void updateBankListView()
-        {
-            bankListView.Items.Clear();
-            foreach (Scheme fs in CurrentProject.Bank.Schemes)
-            {
-                ListViewItem listItem = new ListViewItem(fs.Name);
-                listItem.Tag = fs;
-                bankListView.Items.Add(listItem);
-            }
-        }
+        
 
         //private System.Windows.Thickness nvCanvasOffset = new System.Windows.Thickness( -short.MaxValue / 2.0, -short.MaxValue / 2.0 , 0, 0);
         ElementHost initNVHost(Scheme scheme)
         {
+            if (NVHosts.ContainsKey(scheme))
+                return NVHosts[scheme];
             ElementHost elementHost = new ElementHost();
             elementHost.Dock = DockStyle.Fill;
             elementHost.AutoSize = true;
@@ -470,12 +484,12 @@ namespace HelloForms
         private void createScheme()
         {
             int defaultSchemeCount = 1;
-            while (CurrentProject.Bank.Schemes.Find(x => x.Name == EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount) != null)
-                defaultSchemeCount++;
+            if (CurrentProject.Bank.Schemes.Any())
+                while (CurrentProject.Bank.Schemes.FirstOrDefault(x => x.Name == EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount) != null)
+                    defaultSchemeCount++;
             Scheme scheme = new Scheme(EditorConstants.DEFAULT_SCHEME_NAME + defaultSchemeCount);
 
             CurrentProject.Bank.Schemes.Add(scheme);
-            updateBankListView();
 
             initNVHost(scheme);
             CurrentScheme = scheme;
@@ -555,10 +569,10 @@ namespace HelloForms
             return ontologyClass;
         }
 
-        private VocTheme menuItemToTheme(ToolStripMenuItem item)
+        private Termin menuItemToTheme(ToolStripMenuItem item)
         {
             TreeNode selectedNode = ((item.GetCurrentParent() as ContextMenuStrip).SourceControl as TreeView).SelectedNode;
-            VocTheme theme = selectedNode.Tag as VocTheme;
+            var theme = selectedNode.Tag as Termin;
             return theme;
         }
 
@@ -593,23 +607,16 @@ namespace HelloForms
         {
             if (e.CancelEdit)
                 return;
-            var item = (sender as ListView).SelectedItems[0];
+            var item = (sender as ListView).Items[e.Item];
             var scheme = item.Tag as Scheme;
             if (scheme != null && e.Label != "")
                 scheme.Name = e.Label;
+            //updateBankListView();
         }
 
         private void bankListFilter_TextChanged(object sender, EventArgs e)
         {
-            var filterText = bankListFilter.Text.ToLower();
-            bankListView.Clear();
-            foreach (var scheme in CurrentProject.Bank.Schemes)
-                if (scheme.Name.ToLower().Contains(filterText))
-                {
-                    var item = new ListViewItem(scheme.Name);
-                    item.Tag = scheme;
-                    bankListView.Items.Add(item);
-                }
+            //filtering of scheme banks
         }
 
         private void addSchemeConditionButton_Click(object sender, EventArgs e)
@@ -628,20 +635,15 @@ namespace HelloForms
             CurrentProject.GenFatonCfg(saveFatonCfgFileDialog.FileName);
         }
 
-        private void serializationTestButton_Click(object sender, EventArgs e)
+        private void bankListDataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var ser = new System.Xml.Serialization.XmlSerializer(typeof(EditorProject));
-            var fs = new FileStream("ser_text.xml", FileMode.Create);
-            ser.Serialize(fs, CurrentProject);
-            fs.Close();
+            CurrentScheme = bankListDataGrid.CurrentRow.DataBoundItem as Scheme;
         }
 
-        private void deserializationTestButton_Click(object sender, EventArgs e)
+        private void addFnCatToolStripItem_Click(object sender, EventArgs e)
         {
-            var ser = new System.Xml.Serialization.XmlSerializer(typeof(EditorProject));
-            var fs = new FileStream("ser_text.xml", FileMode.Open);
-            var ep = (EditorProject) ser.Deserialize(fs);
-            fs.Close();
+            var fun = CurrentScheme.AddFunctor<FunctorCat>();
+            getCurrentNetworkView().AddNode(Medium.Convert(fun));
         }
     }
 }

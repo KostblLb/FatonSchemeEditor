@@ -9,6 +9,13 @@ namespace HelloForms
 {
     public partial class MainWindow : System.Windows.Forms.Form
     {
+        private string[] DataSplit(string data)
+        {
+            var split = data.Split(';');
+            if (split == null || split.Length == 0)
+                return null;
+            return split;
+        }
         private void OpenPropsPanelV2(Argument arg)
         {
             var host = new System.Windows.Forms.Integration.ElementHost();
@@ -28,13 +35,14 @@ namespace HelloForms
                 attrStackPanel.Children.Add(attrName);
 
                 var grid = new Grid();
-                ColumnDefinition[] cd = new ColumnDefinition[4];
+                ColumnDefinition[] cd = new ColumnDefinition[5];
                 for (int j = 0; j < cd.Length; j++)
                     cd[j] = new ColumnDefinition();
                 cd[0].Width = GridLength.Auto;
                 cd[1].Width = new GridLength(16);
                 cd[2].Width = new GridLength(32, GridUnitType.Star);
-                cd[3].Width = new GridLength(16);
+                cd[3].Width = new GridLength(32, GridUnitType.Star);
+                cd[4].Width = new GridLength(16);
                 foreach (var def in cd)
                     grid.ColumnDefinitions.Add(def);
 
@@ -97,6 +105,7 @@ namespace HelloForms
                     segCombo.Tag = ArgumentConditionType.SEG;
                     segCombo.Visibility = System.Windows.Visibility.Collapsed;
                     Grid.SetRow(segCombo, i);
+                    Grid.SetColumnSpan(segCombo, 2);
                     Grid.SetColumn(segCombo, 2);
                     grid.Children.Add(segCombo);
                     //wrapPanel.Children.Add(segCombo);
@@ -136,20 +145,68 @@ namespace HelloForms
                     morphPanel.Visibility = System.Windows.Visibility.Collapsed;
                     Grid.SetRow(morphPanel, i);
                     Grid.SetColumn(morphPanel, 2);
+                    Grid.SetColumnSpan(morphPanel, 2);
                     grid.Children.Add(morphPanel);
                     //wrapPanel.Children.Add(morphPanel);
 
-                    var semTextBox = new TextBox();
-                    semTextBox.Text = condition.Data;
-                    semTextBox.TextChanged += (s, e) =>
+                    if (arg.ArgType != ArgumentType.TERMIN || attr.Name != "$Класс")
                     {
-                        condition.Data = semTextBox.Text;
-                    };
-                    semTextBox.Tag = ArgumentConditionType.SEM;
-                    Grid.SetColumn(semTextBox, 2);
-                    Grid.SetRow(semTextBox, i);
-                    grid.Children.Add(semTextBox);
-                    //wrapPanel.Children.Add(semTextBox);
+                        var semTextBox = new TextBox();
+                        semTextBox.Text = condition.Data;
+                        semTextBox.TextChanged += (s, e) =>
+                        {
+                            condition.Data = semTextBox.Text;
+                        };
+                        semTextBox.Tag = ArgumentConditionType.SEM;
+                        Grid.SetColumn(semTextBox, 2);
+                        Grid.SetColumnSpan(semTextBox, 2);
+                        Grid.SetRow(semTextBox, i);
+                        grid.Children.Add(semTextBox);
+                    }
+                    else
+                    {
+                        var semComboBox = new ComboBox();
+                        var semTextBox = new TextBox();
+                        var vocAttrs = new List<Vocabularies.Termin>();
+                        var split = DataSplit(condition.Data);
+                        foreach (var term in CurrentProject.Dictionary)
+                        {
+                            vocAttrs.Add(term);
+                        }
+                        semComboBox.ItemsSource = vocAttrs;
+                        semComboBox.DisplayMemberPath = "Name";
+                        if (split != null)
+                        {
+                            semComboBox.SelectedValue = vocAttrs.Find(x => x.Name == split[0]);
+                            if (split.Length > 1)
+                                semTextBox.Text = (split != null && split.Length > 1) ? split[1] : "";
+                        }
+                        else
+                        {
+                            semComboBox.SelectedValue = vocAttrs[0];
+                            semTextBox.Text = "";
+                        }
+                        semComboBox.SelectionChanged += (s, e) =>
+                        {
+                            var semClassName = ((Vocabularies.Termin)semComboBox.SelectedItem).Name;
+                            condition.Data = String.Format("{0};{1}", semClassName, semTextBox.Text);
+                        };
+                        semComboBox.Tag = ArgumentConditionType.SEM;
+                        Grid.SetColumn(semComboBox, 2);
+                        Grid.SetRow(semComboBox, i);
+                        grid.Children.Add(semComboBox);
+
+                        semTextBox.TextChanged += (s, e) =>
+                        {
+                            var semClassName = ((Vocabularies.Termin)semComboBox.SelectedItem).Name;
+                            condition.Data = String.Format("{0};{1}", semClassName, semTextBox.Text);
+                        };
+                        semTextBox.Tag = ArgumentConditionType.SEM;
+                        Grid.SetColumn(semTextBox, 3);
+                        Grid.SetRow(semTextBox, i);
+                        grid.Children.Add(semTextBox);
+
+                    }
 
                     var removeCondButton = new Button();
                     removeCondButton.Width = 16;
@@ -160,7 +217,7 @@ namespace HelloForms
                         OpenPropsPanelV2(arg);
                     };
                     Grid.SetRow(removeCondButton, i);
-                    Grid.SetColumn(removeCondButton, 3);
+                    Grid.SetColumn(removeCondButton, 4);
                     grid.Children.Add(removeCondButton);
                     //wrapPanel.Children.Add(removeCondButton);
 

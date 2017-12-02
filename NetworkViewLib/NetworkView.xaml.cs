@@ -140,7 +140,12 @@ namespace network
             remove { RemoveHandler(Connector.ConnectionAddedEvent, value); }
         }
 
-        public event Connector.ConnectionEventHandler ConnectionRemoved;
+        public event Connector.ConnectionEventHandler ConnectionRemoved
+        {
+            add { AddHandler(Connector.ConnectionRemovedEvent, value); }
+            remove { RemoveHandler(Connector.ConnectionRemovedEvent, value); }
+        }
+
 
         public event Connector.ConnectionEventHandler ConnectionBeforeAdd
         {
@@ -231,6 +236,11 @@ namespace network
         private void NetworkViewConnectionAdded(object sender, ConnectionEventArgs e)
         {
             
+        }
+
+        private void NetworkViewConnectionRemoved(object sender, ConnectionEventArgs e)
+        {
+            RemoveConnection(e.SourceConnector, e.DestConnector);
         }
 
         private void NetworkViewNodeMoved(object sender, RoutedEventArgs e)
@@ -393,7 +403,7 @@ namespace network
         {
             this.RemoveConnectionPath(src, dst);
             dst.Disconnect(src);
-            ConnectionRemoved?.Invoke(this, new ConnectionEventArgs(src, dst));
+            //ConnectionRemoved?.Invoke(this, new ConnectionEventArgs(src, dst));
         }
 
         public NetworkView()
@@ -401,6 +411,7 @@ namespace network
             InitializeComponent();
             this.ConnectorDrag += NetworkViewConnectorDragStarted;
             this.ConnectionAdded += NetworkViewConnectionAdded;
+            this.ConnectionRemoved += NetworkViewConnectionRemoved;
             this.ConnectionBeforeAdd += NVConnectionBeforeAdd;
             this.NodeMoved += NetworkViewNodeMoved;
             this.NodeSelected += NVNodeSelected;

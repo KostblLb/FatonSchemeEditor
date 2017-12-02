@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 using Ontology;
 using Faton;
-using Shared;
+using Vocabularies;
 
 namespace FactScheme
 {
@@ -37,7 +37,7 @@ namespace FactScheme
         }
 
         OntologyClass _klass;
-        VocTheme _theme;
+        Termin _theme;
         List<OntologyNode.Attribute> _attrs;
         protected uint _order;
 
@@ -75,7 +75,7 @@ namespace FactScheme
             set { ClassName = value; }
         }
         [XmlIgnore]
-        public VocTheme Theme
+        public Termin Theme
         {
             get { return _theme; }
         }
@@ -92,7 +92,7 @@ namespace FactScheme
                 if (ArgType == ArgumentType.IOBJECT)
                     return Klass.Name;
                 else
-                    return Theme.name;
+                    return Theme.Name;
             }
         }
 
@@ -111,6 +111,7 @@ namespace FactScheme
         {
             Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
             CompareType = ArgumentCompareType.EQUAL;
+            _attrs = new List<OntologyNode.Attribute>();
         }
 
         public Argument(OntologyClass klass, string name = null, bool inherit = true) : this()
@@ -124,15 +125,16 @@ namespace FactScheme
                 Conditions.Add(attr, new List<ArgumentCondition>());
             }
         }
-
-        public Argument(VocTheme theme) : this()
+        public Argument(Termin theme) : this()
         {
             ArgType = ArgumentType.TERMIN;
             _theme = theme;
-            Conditions = new Dictionary<OntologyNode.Attribute, List<ArgumentCondition>>();
-            _attrs = new List<OntologyNode.Attribute>();
-            _attrs.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, theme.name));
-            Conditions.Add(_attrs[0], new List<ArgumentCondition>());
+            _attrs.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, "$Класс"));
+            _attrs.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, "$Значение"));
+            foreach (var attr in _attrs)
+            {
+                Conditions.Add(attr, new List<ArgumentCondition>());
+            }
         }
 
         #region ISchemeComponent implementation

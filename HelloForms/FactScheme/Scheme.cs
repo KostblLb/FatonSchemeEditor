@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Ontology;
-using Shared;
+using Vocabularies;
 using Faton;
 
 namespace FactScheme
@@ -23,6 +23,9 @@ namespace FactScheme
 
         [XmlAttribute]
         public string Name { get { return _name; } set { _name = value; } }
+
+        [XmlAttribute]
+        public string Segment { get; set; }
 
         [XmlIgnore]
         public string XMLName { get { return _name.Replace(' ', '_'); } }
@@ -73,6 +76,7 @@ namespace FactScheme
 
         public Scheme()
         {
+            Segment = "";
             Components = new HashSet<ISchemeComponent>();
             _numArgs = 0;
             _numConds = 0;
@@ -84,7 +88,7 @@ namespace FactScheme
             _name = name;
         }
 
-        public Argument AddArgument(VocTheme theme)
+        public Argument AddArgument(Termin theme)
         {
             _saved = false;
             Argument arg = new Argument(theme);
@@ -132,11 +136,11 @@ namespace FactScheme
 
             return res;
         }
-
-        public Functor AddFunctor()
+ 
+        public Functor AddFunctor<T>() where T: Functor, new()
         {
             _saved = false;
-            Functor func = new Functor();
+            Functor func = new T();
 
             Components.Add(func);
             return func;
@@ -178,7 +182,8 @@ namespace FactScheme
             //    return _xml;
 
             XElement root = new XElement(FatonConstants.XML_SCHEME_TAG, 
-                new XAttribute(FatonConstants.XML_SCHEME_NAME, Name));
+                new XAttribute(FatonConstants.XML_SCHEME_NAME, Name),
+                new XAttribute(FatonConstants.XML_SCHEME_SEGMENT, Segment));
             foreach(Argument arg in Arguments)
             {
                 XElement xarg =
@@ -225,19 +230,29 @@ namespace FactScheme
                 {
                     XElement xrul;
                     List<XAttribute> xattrs = new List<XAttribute>();
-                    xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_ATTR, rule.Attribute.Name));
                     xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_TYPE, rule.Type));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_ATTR, rule.Attribute.Name));
 
                     if (rule.Type == Result.RuleType.FUNC)
                     {
                         Functor f = rule.Reference as Functor;
-                        xattrs.Add(new XAttribute("FunctorID", f.ID));
+                        xattrs.Add(new XAttribute("FunctorName", f.Name));
+                        xattrs.Add(new XAttribute("FunctorID", f.CID));
                         xattrs.Add(new XAttribute("Default", f.DefaultValue));
                         xrul = new XElement("Rule", xattrs);
-                        foreach(object input in f.Inputs)
+                        foreach(Functor.FunctorInput input in f.Inputs)
                         {
-                            xrul.Add(new XElement("input", 
-                                        new XAttribute("FIXME", "fixme"))); 
+                            string resourceName = "", resourceType = "";
+                            if (input.source is FactScheme.Argument)
+                            {
+                                resourceName = ((FactScheme.Argument)input.source).Order.ToString();
+                                resourceType = "ARG";
+                            }
+                            
+                            xrul.Add(new XElement(FatonConstants.XML_RESULT_RULE_FUNCTOR_INPUT, 
+                                        new XAttribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_RESOURCETYPE, resourceType),
+                                        new XAttribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_RESOURCE, resourceName),
+                                        new XAttribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_ATTRFROM, input.value.Name))); 
                         }
                     }
                     else
@@ -257,22 +272,27 @@ namespace FactScheme
                 root.Add(xres);
             }
 
-            foreach (var condition in Conditions)
-            {
-                var xcond = new XElement(FatonConstants.XML_ARGUMENT_CONDITION_TAG);
-                var xattrs = new List<XAttribute>();
-                if (condition.Arg1 == null || condition.Arg2 == null)
-                    throw new ArgumentNullException("Scheme conditions must have both arguments set");
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ID, condition.ID));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE, condition.Type));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION, condition.Operation));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1, condition.Arg1.Order));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2, condition.Arg2.Order));
-                xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA, condition.Data));
+            foreach (var conditionComplex in XMLConditionComplexes) {
+                var xcomplex = new XElement(FatonConstants.XML_CONDITIONCOMPLEX_TAG,
+                    new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG1, conditionComplex.Arg1),
+                    new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ARG2, conditionComplex.Arg2));
+                foreach (var condition in conditionComplex.Conditions)
+                {
+                    var xcond = new XElement(FatonConstants.XML_ARGUMENT_CONDITION_TAG);
+                    var xattrs = new List<XAttribute>();
+                    if (condition.Arg1 == null || condition.Arg2 == null)
+                        throw new ArgumentNullException("Scheme conditions must have both arguments set");
+                    xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_ID, condition.ID));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_TYPE, condition.Type));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_OPERATION, condition.Operation));
+                    xattrs.Add(new XAttribute(FatonConstants.XML_ARGUMENT_CONDITION_DATA, condition.Data?? ""));
 
-                xcond.Add(xattrs);
-                root.Add(xcond);
+                    xcond.Add(xattrs);
+                    xcomplex.Add(xcond);
+                }
+                root.Add(xcomplex);
             }
+
             _xml = root;
             _saved = true;
             return root;

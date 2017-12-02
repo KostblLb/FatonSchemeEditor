@@ -74,6 +74,7 @@
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\ConditionComplex.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
+    <Compile Include="FactScheme\UID.cs" />
     <Compile Include="FactScheme\ISchemeComponent.cs" />
     <Compile Include="misc\DataContainer.cs" />
     <Compile Include="misc\DataObject.cs" />
@@ -101,6 +102,9 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="misc\XMLHighlight.cs" />
+    <Compile Include="Vocabulary\DiglexFunctions.cs" />
+    <Compile Include="Vocabulary\KlanParser.cs" />
+    <Compile Include="Vocabulary\Vocabulary.cs" />
     <EmbeddedResource Include="Elements\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,10 +119,12 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="FactScheme\Argument.cs" />
+    <None Include="Properties\DataSources\EditorProject.datasource" />
     <None Include="Properties\DataSources\FactScheme.Argument+ArgumentCondition.datasource" />
     <None Include="Properties\DataSources\FactScheme.Argument.datasource" />
     <None Include="Properties\DataSources\FactScheme.Condition.datasource" />
     <None Include="Properties\DataSources\FactScheme.Condition1.datasource" />
+    <None Include="Properties\DataSources\FactSchemeBank.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
@@ -172,8 +178,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)" "$(SolutionDir)..\fatonschemeeditor_build\bin\"
-copy /Y "$(SolutionDir)samples" "$(SolutionDir)..\fatonschemeeditor_build\samples"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

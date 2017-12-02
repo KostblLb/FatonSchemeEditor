@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripNewScheme = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,8 +52,6 @@
             this.addResultMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dictionaryTreeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.bankContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.removeSchemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.importOntologyFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.importDictionaryFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -60,13 +59,18 @@
             this.tabsAndBankContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.bankGroupBox = new System.Windows.Forms.GroupBox();
-            this.bankListView = new System.Windows.Forms.ListView();
+            this.bankListDataGrid = new System.Windows.Forms.DataGridView();
+            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.schemeSegmentCombo = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.segmentsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.editorProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.schemesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.factSchemeBankBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bankListFilter = new System.Windows.Forms.TextBox();
             this.propsGroupBox = new System.Windows.Forms.GroupBox();
             this.propsPanel = new System.Windows.Forms.Integration.ElementHost();
             this.schemesTabControl = new System.Windows.Forms.TabControl();
             this.schemeTabViewPage = new System.Windows.Forms.TabPage();
-            this.addSchemeConditionButton = new System.Windows.Forms.Button();
             this.schemeTabXMLPage = new System.Windows.Forms.TabPage();
             this.schemeXMLTextBox = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -84,10 +88,15 @@
             this.importGramtabFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.importSegmentsFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFatonCfgFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.addFnCatToolStripItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.ontologyTreeMenuStrip.SuspendLayout();
             this.dictionaryTreeMenuStrip.SuspendLayout();
-            this.bankContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).BeginInit();
             this.tabsAndBankContainer.Panel1.SuspendLayout();
             this.tabsAndBankContainer.Panel2.SuspendLayout();
@@ -97,6 +106,11 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.bankGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bankListDataGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.segmentsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.editorProjectBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.schemesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.factSchemeBankBindingSource)).BeginInit();
             this.propsGroupBox.SuspendLayout();
             this.schemesTabControl.SuspendLayout();
             this.schemeTabViewPage.SuspendLayout();
@@ -113,6 +127,8 @@
             this.mainContainer.Panel1.SuspendLayout();
             this.mainContainer.Panel2.SuspendLayout();
             this.mainContainer.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // файлToolStripMenuItem
@@ -296,21 +312,6 @@
             this.toolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolStripMenuItem1.Click += new System.EventHandler(this.addDictionaryArgumentMenuItem_Click);
             // 
-            // bankContextMenuStrip
-            // 
-            this.bankContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.bankContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeSchemeToolStripMenuItem});
-            this.bankContextMenuStrip.Name = "bankContextMenuStrip";
-            this.bankContextMenuStrip.Size = new System.Drawing.Size(179, 28);
-            // 
-            // removeSchemeToolStripMenuItem
-            // 
-            this.removeSchemeToolStripMenuItem.Name = "removeSchemeToolStripMenuItem";
-            this.removeSchemeToolStripMenuItem.Size = new System.Drawing.Size(178, 24);
-            this.removeSchemeToolStripMenuItem.Text = "Удалить схему";
-            this.removeSchemeToolStripMenuItem.Click += new System.EventHandler(this.removeSchemeToolStripMenuItem_Click);
-            // 
             // openProjectDialog
             // 
             this.openProjectDialog.FileName = "project.xml";
@@ -326,7 +327,7 @@
             // importDictionaryFileDialog
             // 
             this.importDictionaryFileDialog.FileName = "dictionary";
-            this.importDictionaryFileDialog.Filter = "KLAN Vocabulary|*.vc|Any|*.*";
+            this.importDictionaryFileDialog.Filter = "Словарь KLAN|*.vc.th";
             this.importDictionaryFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.importDictionaryFileDialog_FileOk);
             // 
             // saveProjectFileDialog
@@ -353,7 +354,7 @@
             this.tabsAndBankContainer.Panel2.Controls.Add(this.schemesTabControl);
             this.tabsAndBankContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tabsAndBankContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.tabsAndBankContainer.Size = new System.Drawing.Size(705, 688);
+            this.tabsAndBankContainer.Size = new System.Drawing.Size(641, 688);
             this.tabsAndBankContainer.SplitterDistance = global::HelloForms.Properties.Settings.Default.TabsAndBankSplitter;
             this.tabsAndBankContainer.TabIndex = 1;
             this.tabsAndBankContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.window_SplitterMoved);
@@ -381,7 +382,7 @@
             // 
             // bankGroupBox
             // 
-            this.bankGroupBox.Controls.Add(this.bankListView);
+            this.bankGroupBox.Controls.Add(this.bankListDataGrid);
             this.bankGroupBox.Controls.Add(this.bankListFilter);
             this.bankGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bankGroupBox.Location = new System.Drawing.Point(0, 0);
@@ -392,25 +393,62 @@
             this.bankGroupBox.TabStop = false;
             this.bankGroupBox.Text = "Банк";
             // 
-            // bankListView
+            // bankListDataGrid
             // 
-            this.bankListView.ContextMenuStrip = this.bankContextMenuStrip;
-            this.bankListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bankListView.FullRowSelect = true;
-            this.bankListView.GridLines = true;
-            this.bankListView.LabelEdit = true;
-            this.bankListView.Location = new System.Drawing.Point(3, 40);
-            this.bankListView.Name = "bankListView";
-            this.bankListView.Size = new System.Drawing.Size(277, 132);
-            this.bankListView.TabIndex = 0;
-            this.bankListView.UseCompatibleStateImageBehavior = false;
-            this.bankListView.View = System.Windows.Forms.View.List;
-            this.bankListView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.bankListView_AfterLabelEdit);
-            this.bankListView.DoubleClick += new System.EventHandler(this.bankListView_DoubleClick);
+            this.bankListDataGrid.AllowUserToAddRows = false;
+            this.bankListDataGrid.AllowUserToResizeRows = false;
+            this.bankListDataGrid.AutoGenerateColumns = false;
+            this.bankListDataGrid.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.bankListDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.bankListDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.nameDataGridViewTextBoxColumn,
+            this.schemeSegmentCombo});
+            this.bankListDataGrid.DataSource = this.schemesBindingSource;
+            this.bankListDataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bankListDataGrid.Location = new System.Drawing.Point(3, 40);
+            this.bankListDataGrid.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.bankListDataGrid.Name = "bankListDataGrid";
+            this.bankListDataGrid.RowTemplate.Height = 24;
+            this.bankListDataGrid.Size = new System.Drawing.Size(277, 132);
+            this.bankListDataGrid.TabIndex = 1;
+            this.bankListDataGrid.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.bankListDataGrid_CellClick);
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            this.nameDataGridViewTextBoxColumn.HeaderText = "Имя";
+            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            this.nameDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            // 
+            // schemeSegmentCombo
+            // 
+            this.schemeSegmentCombo.DataPropertyName = "Segment";
+            this.schemeSegmentCombo.DataSource = this.segmentsBindingSource;
+            this.schemeSegmentCombo.HeaderText = "Сегмент";
+            this.schemeSegmentCombo.Name = "schemeSegmentCombo";
+            // 
+            // segmentsBindingSource
+            // 
+            this.segmentsBindingSource.DataMember = "Segments";
+            this.segmentsBindingSource.DataSource = this.editorProjectBindingSource;
+            // 
+            // editorProjectBindingSource
+            // 
+            this.editorProjectBindingSource.DataSource = typeof(HelloForms.EditorProject);
+            // 
+            // schemesBindingSource
+            // 
+            this.schemesBindingSource.DataMember = "Schemes";
+            this.schemesBindingSource.DataSource = this.factSchemeBankBindingSource;
+            // 
+            // factSchemeBankBindingSource
+            // 
+            this.factSchemeBankBindingSource.DataSource = typeof(HelloForms.FactSchemeBank);
             // 
             // bankListFilter
             // 
             this.bankListFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            this.bankListFilter.Enabled = false;
             this.bankListFilter.Location = new System.Drawing.Point(3, 18);
             this.bankListFilter.Name = "bankListFilter";
             this.bankListFilter.Size = new System.Drawing.Size(277, 22);
@@ -449,36 +487,26 @@
             this.schemesTabControl.Name = "schemesTabControl";
             this.schemesTabControl.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.schemesTabControl.SelectedIndex = 0;
-            this.schemesTabControl.Size = new System.Drawing.Size(418, 688);
+            this.schemesTabControl.Size = new System.Drawing.Size(354, 688);
             this.schemesTabControl.TabIndex = 0;
             this.schemesTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.schemesTabControl_Selected);
             // 
             // schemeTabViewPage
             // 
-            this.schemeTabViewPage.Controls.Add(this.addSchemeConditionButton);
+            this.schemeTabViewPage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(202)))), ((int)(((byte)(202)))), ((int)(((byte)(202)))));
+            this.schemeTabViewPage.Controls.Add(this.toolStrip1);
             this.schemeTabViewPage.Location = new System.Drawing.Point(4, 25);
             this.schemeTabViewPage.Name = "schemeTabViewPage";
-            this.schemeTabViewPage.Size = new System.Drawing.Size(410, 659);
+            this.schemeTabViewPage.Size = new System.Drawing.Size(346, 659);
             this.schemeTabViewPage.TabIndex = 0;
             this.schemeTabViewPage.Text = "Сеть";
-            this.schemeTabViewPage.UseVisualStyleBackColor = true;
-            // 
-            // addSchemeConditionButton
-            // 
-            this.addSchemeConditionButton.Location = new System.Drawing.Point(3, 3);
-            this.addSchemeConditionButton.Name = "addSchemeConditionButton";
-            this.addSchemeConditionButton.Size = new System.Drawing.Size(147, 23);
-            this.addSchemeConditionButton.TabIndex = 0;
-            this.addSchemeConditionButton.Text = "Добавить условие";
-            this.addSchemeConditionButton.UseVisualStyleBackColor = true;
-            this.addSchemeConditionButton.Click += new System.EventHandler(this.addSchemeConditionButton_Click);
             // 
             // schemeTabXMLPage
             // 
             this.schemeTabXMLPage.Controls.Add(this.schemeXMLTextBox);
             this.schemeTabXMLPage.Location = new System.Drawing.Point(4, 25);
             this.schemeTabXMLPage.Name = "schemeTabXMLPage";
-            this.schemeTabXMLPage.Size = new System.Drawing.Size(410, 659);
+            this.schemeTabXMLPage.Size = new System.Drawing.Size(346, 659);
             this.schemeTabXMLPage.TabIndex = 1;
             this.schemeTabXMLPage.Text = "XML";
             this.schemeTabXMLPage.UseVisualStyleBackColor = true;
@@ -491,7 +519,7 @@
             this.schemeXMLTextBox.Location = new System.Drawing.Point(0, 0);
             this.schemeXMLTextBox.Name = "schemeXMLTextBox";
             this.schemeXMLTextBox.ReadOnly = true;
-            this.schemeXMLTextBox.Size = new System.Drawing.Size(410, 659);
+            this.schemeXMLTextBox.Size = new System.Drawing.Size(346, 659);
             this.schemeXMLTextBox.TabIndex = 0;
             this.schemeXMLTextBox.Text = "";
             this.schemeXMLTextBox.WordWrap = false;
@@ -513,7 +541,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.groupBox4);
-            this.splitContainer2.Size = new System.Drawing.Size(200, 688);
+            this.splitContainer2.Size = new System.Drawing.Size(264, 688);
             this.splitContainer2.SplitterDistance = global::HelloForms.Properties.Settings.Default.OntologyAndAttributesSplitter;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
@@ -527,7 +555,7 @@
             this.ontologyAndDictionaryTabsBox.Location = new System.Drawing.Point(0, 0);
             this.ontologyAndDictionaryTabsBox.Name = "ontologyAndDictionaryTabsBox";
             this.ontologyAndDictionaryTabsBox.SelectedIndex = 0;
-            this.ontologyAndDictionaryTabsBox.Size = new System.Drawing.Size(200, 337);
+            this.ontologyAndDictionaryTabsBox.Size = new System.Drawing.Size(264, 337);
             this.ontologyAndDictionaryTabsBox.TabIndex = 2;
             // 
             // tabPage1
@@ -536,7 +564,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(192, 308);
+            this.tabPage1.Size = new System.Drawing.Size(256, 308);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Онтология";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -549,7 +577,7 @@
             this.ontologyTreeView.Location = new System.Drawing.Point(3, 3);
             this.ontologyTreeView.Margin = new System.Windows.Forms.Padding(4);
             this.ontologyTreeView.Name = "ontologyTreeView";
-            this.ontologyTreeView.Size = new System.Drawing.Size(186, 302);
+            this.ontologyTreeView.Size = new System.Drawing.Size(250, 302);
             this.ontologyTreeView.TabIndex = 1;
             this.ontologyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -559,7 +587,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 308);
+            this.tabPage2.Size = new System.Drawing.Size(256, 308);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Словарь";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -570,7 +598,7 @@
             this.dictionaryTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dictionaryTreeView.Location = new System.Drawing.Point(3, 3);
             this.dictionaryTreeView.Name = "dictionaryTreeView";
-            this.dictionaryTreeView.Size = new System.Drawing.Size(186, 302);
+            this.dictionaryTreeView.Size = new System.Drawing.Size(250, 302);
             this.dictionaryTreeView.TabIndex = 0;
             // 
             // groupBox4
@@ -580,7 +608,7 @@
             this.groupBox4.Location = new System.Drawing.Point(0, 0);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.groupBox4.Size = new System.Drawing.Size(200, 346);
+            this.groupBox4.Size = new System.Drawing.Size(264, 346);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Атрибуты класса";
@@ -597,7 +625,7 @@
             this.listView1.Location = new System.Drawing.Point(3, 20);
             this.listView1.Margin = new System.Windows.Forms.Padding(4);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(194, 323);
+            this.listView1.Size = new System.Drawing.Size(258, 323);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -655,11 +683,70 @@
             // 
             this.saveFatonCfgFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFatonCfgFileDialog_FileOk);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(3, 697);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(910, 22);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
+            this.toolStripDropDownButton1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip1.Size = new System.Drawing.Size(346, 27);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(71, 24);
+            this.toolStripButton1.Text = "Условие";
+            this.toolStripButton1.Click += new System.EventHandler(this.addSchemeConditionButton_Click);
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFnCatToolStripItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(81, 24);
+            this.toolStripDropDownButton1.Text = "Функтор";
+            // 
+            // addFnCatToolStripItem
+            // 
+            this.addFnCatToolStripItem.Name = "addFnCatToolStripItem";
+            this.addFnCatToolStripItem.Size = new System.Drawing.Size(181, 26);
+            this.addFnCatToolStripItem.Text = "&&";
+            this.addFnCatToolStripItem.Click += new System.EventHandler(this.addFnCatToolStripItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 722);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainContainer);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -673,7 +760,6 @@
             this.menuStrip1.PerformLayout();
             this.ontologyTreeMenuStrip.ResumeLayout(false);
             this.dictionaryTreeMenuStrip.ResumeLayout(false);
-            this.bankContextMenuStrip.ResumeLayout(false);
             this.tabsAndBankContainer.Panel1.ResumeLayout(false);
             this.tabsAndBankContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tabsAndBankContainer)).EndInit();
@@ -684,9 +770,15 @@
             this.splitContainer1.ResumeLayout(false);
             this.bankGroupBox.ResumeLayout(false);
             this.bankGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bankListDataGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.segmentsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.editorProjectBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.schemesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.factSchemeBankBindingSource)).EndInit();
             this.propsGroupBox.ResumeLayout(false);
             this.schemesTabControl.ResumeLayout(false);
             this.schemeTabViewPage.ResumeLayout(false);
+            this.schemeTabViewPage.PerformLayout();
             this.schemeTabXMLPage.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -700,6 +792,10 @@
             this.mainContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
             this.mainContainer.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -720,8 +816,6 @@
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip dictionaryTreeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ContextMenuStrip bankContextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem removeSchemeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenu;
         private System.Windows.Forms.OpenFileDialog openProjectDialog;
         private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
@@ -737,15 +831,9 @@
         private System.Windows.Forms.SplitContainer tabsAndBankContainer;
         private System.Windows.Forms.TabControl schemesTabControl;
         private System.Windows.Forms.TabPage schemeTabViewPage;
-        private System.Windows.Forms.Button addSchemeConditionButton;
         private System.Windows.Forms.TabPage schemeTabXMLPage;
         private System.Windows.Forms.RichTextBox schemeXMLTextBox;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TabControl ontologyAndDictionaryTabsBox;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TreeView ontologyTreeView;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TreeView dictionaryTreeView;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -757,11 +845,28 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.GroupBox bankGroupBox;
         private System.Windows.Forms.GroupBox propsGroupBox;
-        private System.Windows.Forms.ListView bankListView;
         private System.Windows.Forms.TextBox bankListFilter;
         private System.Windows.Forms.Integration.ElementHost propsPanel;
         private System.Windows.Forms.ToolStripMenuItem exportFatonCfgToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFatonCfgFileDialog;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.DataGridView bankListDataGrid;
+        private System.Windows.Forms.BindingSource schemesBindingSource;
+        private System.Windows.Forms.BindingSource factSchemeBankBindingSource;
+        private System.Windows.Forms.BindingSource editorProjectBindingSource;
+        private System.Windows.Forms.BindingSource segmentsBindingSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewComboBoxColumn schemeSegmentCombo;
+        private System.Windows.Forms.TabControl ontologyAndDictionaryTabsBox;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TreeView ontologyTreeView;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TreeView dictionaryTreeView;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem addFnCatToolStripItem;
     }
 }
 

@@ -16,6 +16,7 @@ namespace Faton
         public const string XML_BANK_TAG = "Bank";
         public const string XML_SCHEME_TAG = "Scheme";
         public const string XML_SCHEME_NAME = "Name";
+        public const string XML_SCHEME_SEGMENT = "Segment";
 
         public const string XML_ARGUMENT_TAG = "Argument";
         public const string XML_ARGUMENT_CONDITION_TAG = "Condition";
@@ -46,10 +47,17 @@ namespace Faton
         public const string XML_RESULT_RULE_ATTRFROM = "FromAttrName";
         public const string XML_RESULT_RULE_RESOURCE = "Resurce";
         public const string XML_RESULT_RULE_RESOURCETYPE = "ResourceType";
+        public const string XML_RESULT_RULE_FUNCTOR_ID = "FunctorID";
+        public const string XML_RESULT_RULE_FUNCTOR_NAME = "FunctorName";
+        public const string XML_RESULT_RULE_FUNCTOR_INPUT = "Input";
+        public const string XML_RESULT_RULE_FUNCTOR_RESOURCETYPE = XML_RESULT_RULE_RESOURCETYPE;
+        public const string XML_RESULT_RULE_FUNCTOR_RESOURCE = XML_RESULT_RULE_RESOURCE;
+        public const string XML_RESULT_RULE_FUNCTOR_ATTRFROM = XML_RESULT_RULE_ATTRFROM;
 
         public const string XML_CONDITIONCOMPLEX_TAG = "ConditionComplex";
         public const string XML_CONDITIONCOMPLEX_CONDITION_TAG = "Condition";
-        
+
+        public const string VOCABULARY_ROOT_NAME = "TERM";
 
         //constants for generating ini config files for faton
         public const string CFG_SEG_PATH = "segments";

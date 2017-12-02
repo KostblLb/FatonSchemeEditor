@@ -8,8 +8,9 @@ using System.Xml.Serialization;
 using FactScheme;
 using Faton;
 using Ontology;
-using Shared;
+using Vocabularies;
 using System.Xml;
+using System.ComponentModel;
 
 namespace HelloForms
 {
@@ -19,11 +20,11 @@ namespace HelloForms
         [XmlAttribute]
         public string Name { get; set; }
         [XmlElement(ElementName = FatonConstants.XML_SCHEME_TAG)]
-        public List<Scheme> Schemes { get; private set; }
+        public BindingList<Scheme> Schemes { get; private set; }
 
         public FactSchemeBank()
         {
-            Schemes = new List<Scheme>();
+            Schemes = new BindingList<Scheme>();
         }
 
         public FactSchemeBank(string name = "new_bank") : this()
@@ -44,12 +45,15 @@ namespace HelloForms
             return doc;
         }
 
-        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology)
+        public static FactSchemeBank FromXml(XElement root, List<OntologyNode> ontology, Vocabularies.Vocabulary themes)
         {
             FactSchemeBank bank = new FactSchemeBank();
             foreach (XElement xscheme in root.Elements())
             {
                 Scheme scheme = new Scheme(xscheme.Attribute(FatonConstants.XML_SCHEME_NAME).Value);
+                scheme.Segment = xscheme.Attribute(FatonConstants.XML_SCHEME_SEGMENT)?.Value;
+                if (scheme.Segment == null)
+                    scheme.Segment = "";
                 var arguments = from x in xscheme.Elements()
                                 where x.Name.LocalName == FatonConstants.XML_ARGUMENT_TAG
                                 select x;
@@ -67,8 +71,13 @@ namespace HelloForms
                     Argument arg = null;
                     if (xarg.Attribute(FatonConstants.XML_ARGUMENT_OBJECTTYPE).Value.Equals(ArgumentType.TERMIN.ToString()))
                     {
-                        //var theme = themes.Find(x => x.name == xarg.Attribute("ClassName").Value);
-                        //arg = scheme.AddArgument(theme);
+                        Termin term;
+                        string termName = xarg.Attribute("ClassName").Value;
+                        if (termName.StartsWith("#"))
+                            term = DiglexFunctions.LexFunctions.First(x => x.Name == termName);
+                        else
+                            term = themes[termName];
+                        arg = scheme.AddArgument(term);
                     }
                     else
                     {
@@ -114,10 +123,10 @@ namespace HelloForms
                     {
                         Result.RuleType ruleType = (Result.RuleType)Enum.Parse(typeof(Result.RuleType),
                             xrul.Attribute(FatonConstants.XML_RESULT_RULE_TYPE).Value);
-                        if (ruleType == Result.RuleType.DEF)
+                        OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute(FatonConstants.XML_RESULT_RULE_ATTR).Value);
+                        if (ruleType == Result.RuleType.ATTR)
                         {
                             Argument arg = scheme.Arguments.Find(x => x.Order == int.Parse(xrul.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCE).Value));
-                            OntologyNode.Attribute attr = result.Reference.AllAttributes.Find(x => x.Name == xrul.Attribute(FatonConstants.XML_RESULT_RULE_ATTR).Value);
                             OntologyNode.Attribute inputAttr = null;
                             if (attr.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
                             {
@@ -130,7 +139,28 @@ namespace HelloForms
 
                         if (ruleType == Result.RuleType.FUNC)
                         {
-
+                            Functor fun = FunctorFactory.Build(xrul.Attribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_NAME).Value);
+                            fun.CID = UID.Take(uint.Parse(xrul.Attribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_ID).Value));
+                            var inputs = xrul.Elements(FatonConstants.XML_RESULT_RULE_FUNCTOR_INPUT);
+                            fun.Inputs.Clear();
+                            foreach (var xinput in inputs)
+                            {
+                                var resourceType = (RuleResourceType)Enum.Parse(typeof(RuleResourceType),
+                                    xinput.Attribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_RESOURCETYPE).Value);
+                                ISchemeComponent resource = null;
+                                OntologyNode.Attribute value = null;
+                                if (resourceType == RuleResourceType.ARG)
+                                {
+                                    resource = scheme.Arguments.Find(x => x.Order == int.Parse(xinput.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCE).Value));
+                                    value = ((Argument)resource).Attributes.Find(x => x.Name == xinput.Attribute(FatonConstants.XML_RESULT_RULE_FUNCTOR_ATTRFROM).Value);
+                                }
+                                else { };
+                                var input = new Functor.FunctorInput("input");
+                                input.Set(value, resource);
+                                fun.Inputs.Add(input);
+                            }
+                            scheme.Components.Add(fun);
+                            result.AddRule(ruleType, attr, fun, fun.Output);
                         }
                     }
                     if (xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT) != null)

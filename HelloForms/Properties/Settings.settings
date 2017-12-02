@@ -15,7 +15,7 @@
       <Value Profile="(Default)">283</Value>
     </Setting>
     <Setting Name="MainSplitter" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">200</Value>
+      <Value Profile="(Default)">264</Value>
     </Setting>
     <Setting Name="OntologyAndAttributesSplitter" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">337</Value>

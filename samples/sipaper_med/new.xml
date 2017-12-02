@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FATON_EDITOR_PROJECT>
+  <ONTOLOGY>C:\Users\Пользователь\Documents\things\диплом2\SiPaper_med\ontology.xml</ONTOLOGY>
+  <DICTIONARY>C:\Users\Пользователь\Documents\things\диплом2\SiPaper_med\med.vc.th</DICTIONARY>
+  <SEGMENTS></SEGMENTS>
+  <GRAMTAB></GRAMTAB>
+  <Bank>
+    <Scheme Name="НоваяСхема1" Segment="">
+      <Argument Order="1" ObjectType="IOBJECT" ClassName="Препарат" TypeCompare="EQUAL" />
+      <Argument Order="2" ObjectType="TERMIN" ClassName="Препарат" TypeCompare="EQUAL">
+        <Condition AttrName="$Класс" Type="SEM" Operation="NEQ" Data="ТипПрепарата;пилюля" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="Кратность;4" />
+      </Argument>
+      <Result Name="NewResult" ClassName="Препарат" Type="CREATE">
+        <Rule Type="FUNC" AttrName="Наименование" FunctorName="F_CONCAT" FunctorID="1" Default="">
+          <Input ResourceType="ARG" Resurce="1" FromAttrName="Наименование" />
+          <Input ResourceType="ARG" Resurce="1" FromAttrName="Тип" />
+        </Rule>
+      </Result>
+    </Scheme>
+  </Bank>
+  <FATON_EDITOR_MARKUP>
+    <scheme name="НоваяСхема1">
+      <node type="FactScheme.Result" id="NewResult" left="532" top="248" />
+      <node type="FactScheme.Argument" id="1" left="102" top="228" />
+      <node type="FactScheme.Functor" id="1" left="323" top="247" />
+      <node type="FactScheme.Argument" id="2" left="132" top="118" />
+    </scheme>
+  </FATON_EDITOR_MARKUP>
+</FATON_EDITOR_PROJECT>

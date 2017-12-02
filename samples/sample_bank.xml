@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Bank>
+  <Scheme Name="Базовая_Солнечная_Система">
+    <Argument Order="1" ObjectType="IOBJECT" ClassName="Планета" TypeCompare="EQUAL" />
+    <Argument Order="2" ObjectType="IOBJECT" ClassName="Звезда" TypeCompare="EQUAL">
+      <Condition AttrName="Вид" Type="MORH" Operation="EQ" Data="Одушевленность;но" />
+    </Argument>
+    <Result Name="система" ClassName="X вращается вокруг Y" Type="CREATE">
+      <Rule AttrName="Спутник" Type="ATTR" ResourceType="ARG" Resurce="1" />
+      <Rule AttrName="Центр" Type="ATTR" ResourceType="ARG" Resurce="2" />
+    </Result>
+    <Condition ID="1" Type="SYNT" Operation="EQ" Arg1="1" Arg2="2" Data="СистемаСпутник;ВращаетсяВокруг" />
+  </Scheme>
+</Bank>

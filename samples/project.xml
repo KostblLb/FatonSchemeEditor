@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FATON_EDITOR_PROJECT>
+  <Bank>
+    <Scheme Name="sdf" Segment="" />
+    <Scheme Name="asdf" Segment="" />
+  </Bank>
+  <FATON_EDITOR_MARKUP>
+    <sdf />
+    <asdf />
+  </FATON_EDITOR_MARKUP>
+</FATON_EDITOR_PROJECT>
