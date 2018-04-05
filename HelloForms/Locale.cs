@@ -20,9 +20,10 @@ namespace HelloForms
         public const string ONTOLOGY_TREE_ADD_RESULT = "Добавить как результат";
 
         public const string SCHEME_EXPORT_FILTER = "Faton Scheme file|*.xml";
-        public const string DICTIONARY_FORMAT_FILTER = "Словарь KLAN|*.vc.th||*.*";
+        public const string DICTIONARY_FORMAT_FILTER = "Словарь|*.th||*.*";
 
         public const string ERR_ONTOLOGY_NOT_LOADED = "Онтология не загружена";
+        public const string ERR_ONTOLOGY_NOPARENT = "Базовый класс \"{0}\" не определён для \"{1}\"";
         public const string ERR_DICTIONARY_NOPARENT = "Родитель {0} не определён для {1}";
 
         public const string SCHEME_TAB_NAME = "Схема ({0})";

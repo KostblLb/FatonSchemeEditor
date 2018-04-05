@@ -19,6 +19,7 @@ namespace FactScheme
         public enum RuleType { DEF, FUNC, ATTR }
         public class Rule
         {
+            public string Default { get; set; }
             private OntologyNode.Attribute _attribute;
             private ISchemeComponent _reference;
             [XmlIgnore]
@@ -94,15 +95,18 @@ namespace FactScheme
                 Attribute = attr;
                 Reference = reference;
                 InputAttribute = inputAttr;
+                Default = "";
             }
-            public Rule()
+            public Rule(OntologyNode.Attribute attr, string defaultValue)
             {
+                Attribute = attr;
                 Type = RuleType.DEF;
+                Default = defaultValue;
             }
         }
 
         OntologyClass _reference;
-        List<Rule> _rules;
+        Dictionary<string, Rule> _rules;
         ResultType _type;
         String _name;
 
@@ -110,7 +114,7 @@ namespace FactScheme
         {
             _name = "newresult";
             _type = ResultType.CREATE;
-            _rules = new List<Rule>();
+            _rules = new Dictionary<string, Rule>();
             _reference = null;
         }
 
@@ -118,7 +122,7 @@ namespace FactScheme
         {
             _name = name;
             _type = type;
-            _rules = new List<Rule>();
+            _rules = new Dictionary<string, Rule>();
             _reference = reference;
         }
 
@@ -153,7 +157,7 @@ namespace FactScheme
         }
 
         [XmlElement(ElementName = Faton.FatonConstants.XML_RESULT_RULE_TAG)]
-        public List<Rule> Rules
+        public Dictionary<string, Rule> Rules
         {
             get { return _rules; }
         }
@@ -163,7 +167,7 @@ namespace FactScheme
         public Rule AddRule(RuleType type, OntologyNode.Attribute attr, ISchemeComponent reference, OntologyNode.Attribute inputAttr)//, string value)
         {
             Rule rule = new Rule(attr, reference, inputAttr);
-            _rules.Add(rule);
+            _rules.Add(attr.Name, rule);
             return rule;
         }
 
@@ -171,20 +175,24 @@ namespace FactScheme
         public List<ISchemeComponent> Up()
         {
             var components = new List<ISchemeComponent>();
-            foreach (Rule rule in Rules)
+            foreach (var rule in Rules)
             {
-                components.Add(rule.Reference as ISchemeComponent);
+                components.Add(rule.Value.Reference as ISchemeComponent);
             }
             return components;
         }
 
         public void RemoveUpper(ISchemeComponent upper)
         {
-            var rulesCopy = new List<Rule>();
-            rulesCopy.AddRange(Rules);
+            var rulesCopy = new Dictionary<string, Rule>(Rules);
+            //rulesCopy.AddRange(Rules);
             foreach (var rule in rulesCopy)
-                if (rule.Reference == upper)
-                    Rules.Remove(rule);
+                if (rule.Value.Reference == upper)
+                {
+                    var defaultValue = rule.Value.Default;
+                    Rules.Remove(rule.Key);
+                    if (defaultValue != null) Rules[rule.Key] = new Rule(rule.Value.Attribute, defaultValue);
+                }
             if (upper == EditObject)
                 EditObject = null;
         }
@@ -195,8 +203,8 @@ namespace FactScheme
             var attr = attribute as OntologyNode.Attribute;
             if (attr == null)
                 return;
-            var rule = Rules.Find(x => x.Attribute == attr);
-            Rules.Remove(rule);
+            var rule = Rules.First(x => x.Value.Attribute == attr);
+            Rules.Remove(rule.Key);
         }
         #endregion
     }

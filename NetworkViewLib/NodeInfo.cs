@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -60,7 +61,7 @@ namespace network
                 }
             }
         }
-        public List<SectionInfo> Sections { get; }
+        public ObservableCollection<SectionInfo> Sections { get; }
         
         public ContextMenu Menu;
 
@@ -68,7 +69,7 @@ namespace network
 
         public NodeInfo()
         {
-            Sections = new List<SectionInfo>();
+            Sections = new ObservableCollection<SectionInfo>();
             Header = new HeaderInfo();
             FillColor = System.Windows.Media.Colors.White;
         }

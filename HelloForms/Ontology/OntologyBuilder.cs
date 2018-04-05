@@ -19,6 +19,9 @@ namespace HelloForms
             var classes = from x in ontology.Elements()
                           where x.Name.LocalName == "class"
                           select x;
+            var domains = from x in ontology.Elements()
+                          where x.Name.LocalName == "domain"
+                          select x;
             foreach (XElement c in classes)
             {
                 currentClass = new OntologyClass(c.Attribute("name").Value);
@@ -47,9 +50,14 @@ namespace HelloForms
                 {
                     foreach (XElement parentElement in classParents)
                     {
-                        OntologyClass parentClass = (OntologyClass)result.Find(x => x.Name == ((XText)parentElement.FirstNode).Value);
+                        OntologyClass parentClass = null;
+                        foreach(OntologyClass rootClass in result)
+                        {
+                            parentClass = rootClass.FindChild(parentElement.Value);
+                            if (parentClass != null) break;
+                        }
                         if (parentClass == null)
-                            throw new Exception(String.Format("base class {0} not defined for {1}", parentElement.Attribute("name").Value, currentClass.Name));
+                            throw new Exception(String.Format(Locale.ERR_ONTOLOGY_NOPARENT, parentElement.Value, currentClass.Name));
                         parentClass.AddChild(currentClass);
                         currentClass.AddParent(parentClass);
                     }
@@ -58,6 +66,15 @@ namespace HelloForms
                     result.Add(currentClass);
             }
 
+            Ontology.Ontology.Domains = new Dictionary<string, List<string>>();
+            foreach (XElement d in domains) {
+                var valueList = new List<string>();
+                foreach (XElement el in d.Elements())
+                    valueList.Add(el.Value);
+                Ontology.Ontology.Domains.Add(d.Attribute("name").Value, valueList);
+            }
+
+            Ontology.Ontology.Classes = result;
             return result;
         }
         public static List<OntologyNode> fromXml(Stream istream)

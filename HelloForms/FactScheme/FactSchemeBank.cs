@@ -78,6 +78,9 @@ namespace HelloForms
                         else
                             term = themes[termName];
                         arg = scheme.AddArgument(term);
+                        var varattrs = from x in xarg.Elements() where x.Name == "VarAttr" select x;
+                        foreach (var attr in varattrs)
+                            arg.Attributes.Add(new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, attr.Attribute("Name").Value, true));
                     }
                     else
                     {
@@ -135,6 +138,7 @@ namespace HelloForms
                             var rule = result.AddRule(ruleType, attr, arg, inputAttr);
                             rule.ResourceType = (RuleResourceType)Enum.Parse(typeof(RuleResourceType),
                                 xrul.Attribute(FatonConstants.XML_RESULT_RULE_RESOURCETYPE).Value);
+                            if (xrul.Attribute("Default") != null) rule.Default = xrul.Attribute("Default").Value;
                         }
 
                         if (ruleType == Result.RuleType.FUNC)
@@ -160,14 +164,16 @@ namespace HelloForms
                                 fun.Inputs.Add(input);
                             }
                             scheme.Components.Add(fun);
-                            result.AddRule(ruleType, attr, fun, fun.Output);
+                            var rule = result.AddRule(ruleType, attr, fun, fun.Output);
+                            if (xrul.Attribute("Default") != null) rule.Default = xrul.Attribute("Default").Value;
                         }
                     }
                     if (xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT) != null)
+                    {
+                        result.Type = ResultType.EDIT;
                         result.EditObject = scheme.Arguments.Find(x => x.Order == int.Parse(xres.Attribute(FatonConstants.XML_RESULT_ARGEDIT).Value));
-                    if (xres.Attribute(FatonConstants.XML_RESULT_RESEDIT) != null)
-                        result.EditObject = scheme.Results.Find(x => x.Name.Equals(xres.Attribute(FatonConstants.XML_RESULT_RESEDIT).Value));
-
+                    }
+                    
                 }
 
                 foreach (var xcomplex in conditionComplexes)

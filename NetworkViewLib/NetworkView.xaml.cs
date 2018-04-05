@@ -104,6 +104,7 @@ namespace network
             else
             {
                 p = DrawBezier(start, end);
+                p.SetValue(Canvas.ZIndexProperty, -1);
                 drawnConnections.Add(new Tuple<Connector, Connector>(src, dest), p);
                 this.Children.Add(p);
             }
@@ -264,7 +265,9 @@ namespace network
             if (!(e.Source is Node))
                 return;
             if (this._selectedNode != null)
+            {
                 this._selectedNode.Deselect();
+            }
             this._selectedNode = e.Source as Node;
             this._selectedNode.Select();
         }

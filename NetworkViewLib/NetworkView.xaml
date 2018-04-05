@@ -11,7 +11,7 @@
             Loaded="NetworkViewLoaded"
             QueryContinueDrag="somequery"
             DragOver="ConnectorDragOver"
-            Background="#FFCACACA"
+            Background="#FFF1F1F1"
             AllowDrop="True" 
             MouseWheel="NVMouseWheel"
             MouseDown="NVMouseDown"

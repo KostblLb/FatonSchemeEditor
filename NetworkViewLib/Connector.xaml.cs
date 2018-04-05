@@ -19,6 +19,7 @@ namespace network
     {
         public ConnectionEventArgs(RoutedEvent e, Connector src, Connector dst) : this(e)
         {
+            Valid = true;
             SourceConnector = src;
             DestConnector = dst;
         }
@@ -178,8 +179,13 @@ namespace network
         /// <param name="other"></param>
         public void Disconnect(Connector other)
         {
+            if (!this.Connections.Contains(other)) return;
             this.Connections.Remove(other);
             other.Connections.Remove(this);
+            if (this.Mode == ConnectorMode.Input)
+                RaiseEvent(new ConnectionEventArgs(ConnectionRemovedEvent, other, this));
+            else
+                RaiseEvent(new ConnectionEventArgs(ConnectionRemovedEvent, this, other));
         }
 
         public bool ValidateConnection(object sender)
@@ -201,6 +207,8 @@ namespace network
             }
             if (this.Connections.Contains(other) || other.Connections.Contains(this))
                 return false;
+            Connector dst = other.Mode == ConnectorMode.Input ? other : this;
+            if (dst.Connections.Count > 0) return false;
             return true;
         }
 
@@ -221,7 +229,7 @@ namespace network
             if (other.Mode == ConnectorMode.Output)
                 RaiseEvent(new ConnectionEventArgs(ConnectionBeforeAddEvent, other, this));
             else
-                RaiseEvent(new ConnectionEventArgs(ConnectionBeforeAddEvent, this, other));
+                other.RaiseEvent(new ConnectionEventArgs(ConnectionBeforeAddEvent, this, other));
         }
 
         private void Connector_MouseDown(object sender, MouseButtonEventArgs e)

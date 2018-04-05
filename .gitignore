@@ -4,6 +4,7 @@
 *.dll
 *.exe
 *.VC.db
+
 Debug
 
 HelloForms/bin
@@ -22,5 +23,6 @@ Shared/Release
 .vs/*
 /Debug.7z
 *.7z
-.svn/*
+
 .svn
+.svn/*

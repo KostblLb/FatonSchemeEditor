@@ -22,7 +22,7 @@
     </Canvas.Resources>
     <Rectangle x:Name="pRect" RadiusX="5" RadiusY="5" Style="{StaticResource notSelected}"
                        Width="{Binding ActualWidth}"
-                       Height="{Binding ActualHeight}"
+                       Height="{Binding ActualHeight}" SizeChanged="pRect_SizeChanged"
                        >
         <Rectangle.Effect>
             <DropShadowEffect Opacity="0.5"/>
@@ -64,9 +64,9 @@
 
         <StackPanel x:Name="pInfoHeader" Margin="0,0,0,5"/>
 
-        <Border BorderBrush="#FF624A00" BorderThickness="0,1,0,0" Margin="3,2" Width="150"/>
+        <Border BorderBrush="#FF624A00" BorderThickness="0,1,0,0" Margin="3,2" Width="120"/>
         
-        <Grid x:Name="pSectionsGrid">
+        <Grid x:Name="pSectionsGrid" Margin="-12,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="pInputs" Width="16"/>
                 <ColumnDefinition Width="*"/>

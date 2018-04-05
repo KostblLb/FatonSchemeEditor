@@ -192,6 +192,13 @@ namespace FactScheme
                         new XAttribute(FatonConstants.XML_ARGUMENT_OBJECTTYPE, arg.ArgType),
                         new XAttribute(FatonConstants.XML_ARGUMENT_CLASSNAME, arg.Name),
                         new XAttribute(FatonConstants.XML_ARGUMENT_COMPARETYPE, arg.CompareType));
+                var varattrs = from x in arg.Attributes where x.Varattr select x;
+                foreach(var attr in varattrs)
+                {
+                    XElement xattr = new XElement("VarAttr",
+                        new XAttribute("Name", attr.Name));
+                    xarg.Add(xattr);
+                }
                 foreach(var pair in arg.Conditions)
                 {
                     foreach (var cond in pair.Value)
@@ -226,8 +233,9 @@ namespace FactScheme
 
                 XElement xres = new XElement(FatonConstants.XML_RESULT_TAG, xattrs_);
 
-                foreach (Result.Rule rule in res.Rules)
+                foreach (KeyValuePair<string, Result.Rule> rulePair in res.Rules)
                 {
+                    var rule = rulePair.Value;
                     XElement xrul;
                     List<XAttribute> xattrs = new List<XAttribute>();
                     xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_TYPE, rule.Type));
@@ -238,7 +246,8 @@ namespace FactScheme
                         Functor f = rule.Reference as Functor;
                         xattrs.Add(new XAttribute("FunctorName", f.Name));
                         xattrs.Add(new XAttribute("FunctorID", f.CID));
-                        xattrs.Add(new XAttribute("Default", f.DefaultValue));
+                        //xattrs.Add(new XAttribute("Default", f.DefaultValue));
+                        if (rule.Default != null) xattrs.Add(new XAttribute("Default", rule.Default));
                         xrul = new XElement("Rule", xattrs);
                         foreach(Functor.FunctorInput input in f.Inputs)
                         {
@@ -260,10 +269,11 @@ namespace FactScheme
                         xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCETYPE, rule.ResourceType));
                         if (rule.Reference is Argument)
                             xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCE, (rule.Reference as Argument).Order));
-                        else
+                        else if (rule.Reference is Result)
                             xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_RESOURCE, (rule.Reference as Result).Name));
-                        if (rule.Attribute.AttrType != OntologyNode.Attribute.AttributeType.OBJECT)
+                        if (rule.Attribute.AttrType != OntologyNode.Attribute.AttributeType.OBJECT && rule.InputAttribute != null)
                             xattrs.Add(new XAttribute(FatonConstants.XML_RESULT_RULE_ATTRFROM, rule.InputAttribute.Name));
+                        if (rule.Default != null) xattrs.Add(new XAttribute("Default", rule.Default));
                         xrul = new XElement(FatonConstants.XML_RESULT_RULE_TAG, xattrs);
                     }
                     xres.Add(xrul);

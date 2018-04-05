@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FATON_EDITOR_PROJECT>
+  <ONTOLOGY>.\ontology.xml</ONTOLOGY>
+  <DICTIONARY>.\med.vc.th</DICTIONARY>
+  <SEGMENTS></SEGMENTS>
+  <GRAMTAB></GRAMTAB>
+  <Bank>
+    <Scheme Name="НоваяСхема1" Segment="">
+      <Argument Order="1" ObjectType="IOBJECT" ClassName="Препарат" TypeCompare="EQUAL" />
+      <Argument Order="2" ObjectType="TERMIN" ClassName="Препарат" TypeCompare="EQUAL">
+        <Condition AttrName="$Класс" Type="SEM" Operation="NEQ" Data="ТипПрепарата;пилюля" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="Кратность;4" />
+      </Argument>
+      <Result Name="NewResult" ClassName="Препарат" Type="CREATE">
+        <Rule Type="FUNC" AttrName="Наименование" FunctorName="F_CONCAT" FunctorID="1" Default="">
+          <Input ResourceType="ARG" Resurce="1" FromAttrName="Наименование" />
+          <Input ResourceType="ARG" Resurce="1" FromAttrName="Тип" />
+        </Rule>
+      </Result>
+    </Scheme>
+    <Scheme Name="НоваяСхема2" Segment="">
+      <Argument Order="1" ObjectType="TERMIN" ClassName="Препарат" TypeCompare="EQUAL">
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="ИмяПрепарата;" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="Доза;2" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="Время;1" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="Кратность;3" />
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="" />
+      </Argument>
+      <Argument Order="2" ObjectType="TERMIN" ClassName="Препарат" TypeCompare="EQUAL">
+        <Condition AttrName="$Класс" Type="SEM" Operation="EQ" Data="ТипПрепарата;" />
+      </Argument>
+      <Argument Order="3" ObjectType="TERMIN" ClassName="Доза" TypeCompare="EQUAL" />
+      <Argument Order="4" ObjectType="IOBJECT" ClassName="Группа" TypeCompare="EQUAL" />
+      <Result Name="NewResult" ClassName="Препарат" Type="CREATE">
+        <Rule Type="ATTR" AttrName="Наименование" ResourceType="ARG" Resurce="1" FromAttrName="$Значение" />
+        <Rule Type="ATTR" AttrName="Тип" ResourceType="ARG" Resurce="2" FromAttrName="$Значение" />
+      </Result>
+      <Result Name="NewResult(1)" ClassName="имеетНазначение" Type="CREATE">
+        <Rule Type="ATTR" AttrName="Размер дозы" ResourceType="ARG" Resurce="3" FromAttrName="$Значение" />
+        <Rule Type="ATTR" AttrName="Группа" ResourceType="ARG" Resurce="4" />
+      </Result>
+    </Scheme>
+  </Bank>
+  <FATON_EDITOR_MARKUP>
+    <scheme name="НоваяСхема1">
+      <node type="FactScheme.Result" id="NewResult" left="532" top="248" />
+      <node type="FactScheme.Argument" id="1" left="102" top="228" />
+      <node type="FactScheme.Functor" id="1" left="323" top="247" />
+      <node type="FactScheme.Argument" id="2" left="132" top="118" />
+    </scheme>
+    <scheme name="НоваяСхема2">
+      <node type="FactScheme.Argument" id="1" left="47" top="113" />
+      <node type="FactScheme.Argument" id="2" left="52" top="307" />
+      <node type="FactScheme.Result" id="NewResult" left="330" top="219" />
+      <node type="FactScheme.Result" id="NewResult(1)" left="624" top="342" />
+      <node type="FactScheme.Argument" id="3" left="315" top="576" />
+      <node type="FactScheme.Argument" id="4" left="301" top="429" />
+    </scheme>
+  </FATON_EDITOR_MARKUP>
+</FATON_EDITOR_PROJECT>

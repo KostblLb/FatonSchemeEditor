@@ -47,13 +47,15 @@ namespace HelloForms
                     grid.ColumnDefinitions.Add(def);
 
                 int i = 0;
+                if (!arg.Conditions.ContainsKey(attr))
+                    arg.Conditions.Add(attr, new List<Argument.ArgumentCondition>());
                 foreach (var condition in arg.Conditions[attr])
                 {
                     grid.RowDefinitions.Add(new RowDefinition());
                     var wrapPanel = new WrapPanel();
 
                     var condTypeCombo = new ComboBox();
-                    condTypeCombo.ItemsSource = Enum.GetValues(typeof(ArgumentConditionType));
+                    condTypeCombo.ItemsSource = attr.Varattr ? new ArgumentConditionType[] { ArgumentConditionType.SEM } : Enum.GetValues(typeof(ArgumentConditionType));
                     int k = i;
                     condTypeCombo.SelectionChanged += (s, e) =>
                     {

@@ -103,7 +103,7 @@ namespace HelloForms
             var theme = menuItemToTheme(sender as ToolStripMenuItem);
             FactScheme.Argument arg = CurrentScheme.AddArgument(theme);
 
-            network.Node node = nv.AddNode(Medium.Convert(arg), true);
+            network.Node node = nv.AddNode(Medium.Convert(arg, CurrentProject.Dictionary), true);
         }
 
         private void addArgumentMenuItem_Click(object sender, EventArgs e)
@@ -212,7 +212,7 @@ namespace HelloForms
                         if (xel.Attribute("type").Value == typeof(Argument).ToString())
                         {
                             Argument arg = scheme.Arguments.First(x => x.Order == int.Parse(xel.Attribute("id").Value));
-                            node = nv.AddNode(Medium.Convert(arg));
+                            node = nv.AddNode(Medium.Convert(arg, CurrentProject.Dictionary));
                         }
                         else if (xel.Attribute("type").Value == typeof(Result).ToString())
                         {
@@ -396,7 +396,7 @@ namespace HelloForms
                     }
                 }
             }
-            OntologyNode.Ontology = ontology;
+            Ontology.Ontology.Classes = ontology;
         }
 
         private void buildDictionaryTree(Vocabulary voc)
@@ -644,6 +644,42 @@ namespace HelloForms
         {
             var fun = CurrentScheme.AddFunctor<FunctorCat>();
             getCurrentNetworkView().AddNode(Medium.Convert(fun));
+        }
+
+        private void removeSchemeMenuItem_Click(object sender, EventArgs e)
+        {
+            var scheme = bankListDataGrid.CurrentRow.DataBoundItem as Scheme;
+            var schemeIdx = CurrentProject.Bank.Schemes.IndexOf(scheme);
+            CurrentProject.Bank.Schemes.RemoveAt(schemeIdx);
+            if (CurrentProject.Bank.Schemes.Count == 0) createScheme();
+            else if (CurrentProject.Bank.Schemes.Count > schemeIdx) CurrentScheme = CurrentProject.Bank.Schemes.ElementAt(schemeIdx);
+            else CurrentScheme = CurrentScheme = CurrentProject.Bank.Schemes.ElementAt(schemeIdx - 1);
+        }
+
+        private void bankListDataGrid_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            if (bankListDataGrid.Rows.Count == 0) createScheme();
+            //else CurrentScheme = 
+        }
+
+        private void bankListDataGrid_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            var scheme = bankListDataGrid.CurrentRow.DataBoundItem as Scheme;
+            CurrentProject.Bank.Schemes.Remove(scheme);
+        }
+
+        private void bankListDataGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex != -1 && e.RowIndex != -1 && e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                DataGridViewCell c = (sender as DataGridView)[e.ColumnIndex, e.RowIndex];
+                if (!c.Selected)
+                {
+                    c.DataGridView.ClearSelection();
+                    c.DataGridView.CurrentCell = c;
+                    c.Selected = true;
+                }
+            }
         }
     }
 }

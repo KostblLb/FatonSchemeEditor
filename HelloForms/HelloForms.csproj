@@ -71,6 +71,15 @@
     <Compile Include="Elements\PropsPanelV2.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Elements\ResultDefaultDomainAttr.xaml.cs">
+      <DependentUpon>ResultDefaultDomainAttr.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Elements\TerminAttribute.xaml.cs">
+      <DependentUpon>TerminAttribute.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Elements\UserControl1.xaml.cs">
+      <DependentUpon>UserControl1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FactScheme\Condition.cs" />
     <Compile Include="FactScheme\ConditionComplex.cs" />
     <Compile Include="FactScheme\FactSchemeBank.cs" />
@@ -163,18 +172,24 @@
     <None Include="Resources\wrench.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KlanVocabularyExtractor\KlanVocabularyExtractor.vcxproj">
-      <Project>{96f3c74e-a088-4152-b439-e2e083e9ce20}</Project>
-      <Name>VocabularyExtractor</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NetworkViewLib\NetworkViewLib.csproj">
       <Project>{6f552069-ed70-4909-a982-a1c6333318c6}</Project>
       <Name>NetworkViewLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Shared\Shared.vcxproj">
-      <Project>{1a43b7ae-2639-4a6b-be86-fb2076bf2b31}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Elements\ResultDefaultDomainAttr.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Elements\TerminAttribute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Elements\UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

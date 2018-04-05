@@ -4,36 +4,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Faton;
-using Shared;
 
 namespace Ontology
 {
+    public static class Ontology
+    {
+        public static List<OntologyNode> Classes;
+        public static Dictionary<string, List<string>> Domains;
+        static Ontology(){
+            Classes = new List<OntologyNode>();
+            Domains = new Dictionary<string, List<string>>();
+        }
+    }
     public class OntologyNode
     {
         /// <summary>
         /// The Tree-like list of Ontology nodes
         /// </summary>
-        public static List<OntologyNode> Ontology; 
+        //public static List<OntologyNode> Ontology;
+        public static List<List<string>> Domains;
 
         public class Attribute
         {
             //CLASS is attr type for linking ontology classes typically to relation objects
             public enum AttributeType { STRING, INT, OBJECT, DOMAIN};
-            
+
+            bool _varattr;
             AttributeType _attrType;
             string _name;
             //optional value (like classname)
             public object Opt { get; set; }
+            public bool Varattr { get { return _varattr; } }
 
             public Attribute()
             {
                 _attrType = AttributeType.STRING;
                 _name = "";
             }
-            public Attribute(AttributeType myType, string myName)
+            public Attribute(AttributeType myType, string myName, bool varattr = false)
             {
                 _attrType = myType;
                 _name = myName;
+                _varattr = varattr;
             }
 
             public AttributeType AttrType
@@ -155,7 +167,7 @@ namespace Ontology
             _parents.Add(p);
         }
 
-        private OntologyClass find(string name, bool up)
+        private OntologyClass Find(string name, bool up)
         {
             OntologyClass klass = null;
             HashSet<OntologyClass> viewed = new HashSet<OntologyClass>();
@@ -188,12 +200,12 @@ namespace Ontology
 
         public OntologyClass FindParent(string name)
         {
-            return find(name, true);
+            return Find(name, true);
         }
 
         public OntologyClass FindChild(string name)
         {
-            return find(name, false);
+            return Find(name, false);
         }
     }
     

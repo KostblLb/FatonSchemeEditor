@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,14 @@ namespace Vocabularies
             Type = type;
             Parents = new List<Termin>();
             Children = new List<Termin>();
-        } 
+        }
+
+        public override string ToString()
+        {
+            return Name ?? base.ToString();
+        }
     }
-    public class Vocabulary
+    public class Vocabulary : IEnumerable<Termin>
     {
         Dictionary<string, int> strToId;
         Dictionary<int, Termin> Termins { get; }
@@ -53,13 +59,20 @@ namespace Vocabularies
             Termins.Add(id, term);
             return term;
         }
-        public Termin this[string key]
-        {
-            get { return Termins[strToId[key]]; }
-        }
+
         public IEnumerator<Termin> GetEnumerator()
         {
             return Termins.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }
+
+        public Termin this[string key]
+        {
+            get { return Termins[strToId[key]]; }
         }
     }
 }

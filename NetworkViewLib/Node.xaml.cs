@@ -72,6 +72,71 @@ namespace network
             this.DataContext = this;
         }
 
+        void addSection(NodeInfo.SectionInfo sectInfo)
+        {
+            int numRows = pSectionsGrid.RowDefinitions.Count;
+            pSectionsGrid.RowDefinitions.Add(new RowDefinition());
+            if (sectInfo.IsInput)
+            {
+                Connector conn = new Connector(Connector.ConnectorMode.Input, sectInfo.Data);
+                conn.SetValue(Grid.RowProperty, numRows);
+                conn.SetValue(Grid.ColumnProperty, 0);
+                pSectionsGrid.Children.Add(conn);
+                if (sectInfo.InputValidation != null)
+                    conn.ConnectionBeforeAdd += sectInfo.InputValidation;
+                if (sectInfo.InputAdded != null)
+                    conn.InputAdded += sectInfo.InputAdded;
+                conn.Tag = sectInfo.Data;
+                sectInfo.Input = conn;
+                conn.ParentNode = this;
+                if (!Connectors.Contains(conn)) //remove mb?
+                    Connectors.Add(conn);
+            }
+            if (sectInfo.IsOutput)
+            {
+                Connector conn = new Connector(Connector.ConnectorMode.Output, sectInfo.Data);
+                conn.SetValue(Grid.RowProperty, numRows);
+                conn.SetValue(Grid.ColumnProperty, 2);
+                pSectionsGrid.Children.Add(conn);
+                if (sectInfo.OutputAdded != null)
+                    conn.OutputAdded += sectInfo.OutputAdded;
+                conn.Tag = sectInfo.Data;
+                sectInfo.Output = conn;
+                conn.ParentNode = this;
+                if (!Connectors.Contains(conn)) //remove mb?
+                    Connectors.Add(conn);
+            }
+
+            if (sectInfo.UIPanel != null)
+            {
+                sectInfo.UIPanel.SetValue(Grid.RowProperty, numRows);
+                sectInfo.UIPanel.SetValue(Grid.ColumnProperty, 1);
+                pSectionsGrid.Children.Add(sectInfo.UIPanel);
+            }
+        }
+
+        void removeSectionAt(int row)
+        {
+            pSectionsGrid.RowDefinitions.RemoveAt(row);
+            var arr = new UIElement[pSectionsGrid.Children.Count];
+            pSectionsGrid.Children.CopyTo(arr, 0);
+            foreach (UIElement child in arr)
+            {
+                int childRow = Grid.GetRow(child);
+                if (childRow == row)
+                {
+                    if (child is Connector)
+                    {
+                        var conn = child as Connector;
+                        var connections = new HashSet<Connector>(conn.Connections);
+                        foreach (var connection in connections) conn.Disconnect(connection);
+                    }
+                    pSectionsGrid.Children.Remove(child);
+                }
+                else if (childRow > row) child.SetValue(Grid.RowProperty, childRow - 1);
+            }
+        }
+
         public Node(NodeInfo info) : this()
         {
             this.Info = info;
@@ -89,40 +154,22 @@ namespace network
 
             foreach (NodeInfo.SectionInfo sectInfo in info.Sections)
             {
-                int numRows = pSectionsGrid.RowDefinitions.Count;
-                pSectionsGrid.RowDefinitions.Add(new RowDefinition());
-                if (sectInfo.IsInput)
-                {
-                    Connector conn = new Connector(Connector.ConnectorMode.Input, sectInfo.Data);
-                    conn.SetValue(Grid.RowProperty, numRows);
-                    conn.SetValue(Grid.ColumnProperty, 0);
-                    pSectionsGrid.Children.Add(conn);
-                    if (sectInfo.InputValidation != null)
-                        conn.ConnectionBeforeAdd += sectInfo.InputValidation;
-                    if (sectInfo.InputAdded != null)
-                        conn.InputAdded += sectInfo.InputAdded;
-                    conn.Tag = sectInfo.Data;
-                    sectInfo.Input = conn;
-                }
-                if (sectInfo.IsOutput)
-                {
-                    Connector conn = new Connector(Connector.ConnectorMode.Output, sectInfo.Data);
-                    conn.SetValue(Grid.RowProperty, numRows);
-                    conn.SetValue(Grid.ColumnProperty, 2);
-                    pSectionsGrid.Children.Add(conn);
-                    if (sectInfo.OutputAdded != null)
-                        conn.OutputAdded += sectInfo.OutputAdded;
-                    conn.Tag = sectInfo.Data;
-                    sectInfo.Output = conn;
-                }
-
-                if (sectInfo.UIPanel != null)
-                {
-                    sectInfo.UIPanel.SetValue(Grid.RowProperty, numRows);
-                    sectInfo.UIPanel.SetValue(Grid.ColumnProperty, 1);
-                    pSectionsGrid.Children.Add(sectInfo.UIPanel);
-                }
+                addSection(sectInfo);
             }
+            info.Sections.CollectionChanged += (s, e) =>
+            {
+                // adding happens only at the end of the list
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                {
+                    addSection(e.NewItems[0] as NodeInfo.SectionInfo);
+                }
+                else if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                {
+                    removeSectionAt(e.OldStartingIndex);
+                }
+                RaiseEvent(new RoutedEventArgs(NodeSelectedEvent));
+            };
+
             foreach (Connector c in pSectionsGrid.Children.OfType<Connector>().Union(
                 pNameGrid.Children.OfType<Connector>()))
             {
@@ -131,6 +178,7 @@ namespace network
                     Connectors.Add(c);
             }
 
+            // context menu feature!
             if (info.Menu == null)
                 this.ContextMenu = new ContextMenu();
             else
@@ -251,12 +299,17 @@ namespace network
         {
             this.pRect.Stroke = Brushes.Red;
             this.Focus();
+            Canvas.SetZIndex(this, 1);
         }
         public void Deselect()
         {
+            Canvas.SetZIndex(this, 0);
             this.pRect.Stroke = Brushes.Black;
         }
 
-
+        private void pRect_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RaiseEvent(new RoutedEventArgs(NodeMovedEvent));
+        }
     }
 }

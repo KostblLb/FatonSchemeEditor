@@ -67,7 +67,7 @@ namespace HelloForms
         #region convertations
         ///convert factscheme argument into nv node
         ///
-        public static NodeInfo Convert(FactScheme.Argument argument)
+        public static NodeInfo Convert(FactScheme.Argument argument, Vocabularies.Vocabulary vocabulary = null)
         {
             NodeInfo info = new NodeInfo();
 
@@ -81,21 +81,55 @@ namespace HelloForms
                 //if (e.PropertyName == "")
             };
 
-            foreach (var attr in argument.Attributes)
+            if (argument.ArgType == ArgumentType.IOBJECT)
             {
-                NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
-                attrInfo.Data = attr;
-                attrInfo.IsInput = false;
-                attrInfo.IsOutput = true;
-                var attrName = new Label();
-                attrName.Content = attr.Name;
-                attrName.ToolTip = attr.AttrType;
+                foreach (var attr in argument.Attributes)
+                {
+                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
+                    attrInfo.Data = attr;
+                    attrInfo.IsInput = false;
+                    attrInfo.IsOutput = true;
+                    var attrName = new Label();
+                    attrName.Content = attr.Name;
+                    attrName.ToolTip = (attr.AttrType == OntologyNode.Attribute.AttributeType.DOMAIN || attr.AttrType == OntologyNode.Attribute.AttributeType.OBJECT) ? attr.Opt : attr.AttrType;
 
-                attrInfo.UIPanel = attrName;
-                info.Sections.Add(attrInfo);
+                    attrInfo.UIPanel = attrName;
+                    info.Sections.Add(attrInfo);
+                }
+
+                info.FillColor = System.Windows.Media.Colors.LightSkyBlue;
             }
+            else
+            {
+                for (int i = 0; i < 2; i++) // $Class and $Value are 2 mandatory attributes
+                {
+                    var attr = argument.Attributes[i];
+                    NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
+                    attrInfo.Data = attr;
+                    attrInfo.IsInput = false;
+                    attrInfo.IsOutput = true;
+                    var attrName = new Label();
+                    attrName.Content = attr.Name;
+                    attrName.ToolTip = (attr.AttrType == OntologyNode.Attribute.AttributeType.DOMAIN || attr.AttrType == OntologyNode.Attribute.AttributeType.OBJECT) ? attr.Opt : attr.AttrType;
 
-            info.FillColor = System.Windows.Media.Colors.LightSkyBlue;
+                    attrInfo.UIPanel = attrName;
+                    info.Sections.Add(attrInfo);
+                }
+                var plusInfo = new NodeInfo.SectionInfo();
+                var plusBtn = new Button();
+                plusBtn.Content = "+";
+                plusBtn.Click += (s, e) =>
+                {
+                    var newAttr = new OntologyNode.Attribute(OntologyNode.Attribute.AttributeType.STRING, vocabulary.First().Name, true);
+                    argument.Attributes.Add(newAttr);
+                    info.Sections.Add(TerminVarAttrInfo(argument, newAttr, vocabulary, info));
+                };
+                plusInfo.UIPanel = plusBtn;
+                info.Sections.Add(plusInfo);
+                for (int i = 2; i < argument.Attributes.Count; i++)
+                    info.Sections.Add(TerminVarAttrInfo(argument, argument.Attributes[i], vocabulary, info));
+                info.FillColor = System.Windows.Media.Colors.DeepSkyBlue;
+            }
 
             return info;
         }
@@ -147,7 +181,7 @@ namespace HelloForms
                     var attrInfo = new NodeInfo.SectionInfo();
                     attrInfo.Data = attr;
                     attrInfo.IsInput = true;
-                    attrInfo.IsOutput = true;
+                    //attrInfo.IsOutput = true;
                     attrInfo.InputValidation += (s, e) =>
                     {
                         var src = e.SourceConnector.Tag;
@@ -159,16 +193,89 @@ namespace HelloForms
                         }
                         if (src is Argument && dst is OntologyNode.Attribute)
                         {
+                            if (((Argument)src).Klass == null)
+                            {
+                                e.Valid = false;
+                                return;
+                            }
                             var parent = ((Argument)src).Klass.FindParent((string)((OntologyClass.Attribute)dst).Opt);
                             e.Valid = parent != null;
                             return;
                         }
                         if (src is OntologyNode.Attribute && dst is OntologyNode.Attribute)
-                            e.Valid = ((OntologyNode.Attribute)src).AttrType == ((OntologyNode.Attribute)dst).AttrType;
+                        {
+                            if (((OntologyNode.Attribute)src).AttrType != ((OntologyNode.Attribute)dst).AttrType)
+                            {
+                                e.Valid = false;
+                                return;
+                            }
+                            var attrType = ((OntologyNode.Attribute)src).AttrType;
+                            if (attrType == OntologyNode.Attribute.AttributeType.DOMAIN || attrType == OntologyNode.Attribute.AttributeType.OBJECT)
+                                e.Valid = ((OntologyNode.Attribute)src).Opt == ((OntologyNode.Attribute)dst).Opt;
+                        }
                     };
-                    var attrName = new Label();
-                    attrName.Content = attr.Name;
-                    attrName.ToolTip = attr.AttrType;
+                    FrameworkElement attrName;
+                    if (attr.AttrType == OntologyNode.Attribute.AttributeType.OBJECT)
+                    {
+                        attrName = new Label();
+                        ((Label)attrName).Content = attr.Name;
+                    }
+                    else if(attr.AttrType == OntologyNode.Attribute.AttributeType.DOMAIN)
+                    {
+                        attrName = new Elements.ResultDefaultDomainAttr();
+                        var items = new List<ComboBoxItem>();
+                        var selectedIndex = 0;
+                        if (!Ontology.Ontology.Domains.ContainsKey((string)(attr.Opt)))
+                        {
+                            var item = new ComboBoxItem();
+                            item.Content = "domain doesnt exist";
+                            items.Add(item);
+                        }
+
+                        else for (int i = 0; i < Ontology.Ontology.Domains[(string)attr.Opt].Count; i++)
+                            {
+                                var domainValue = Ontology.Ontology.Domains[(string)attr.Opt][i];
+                                var item = new ComboBoxItem();
+                                item.Content = domainValue;
+                                item.Selected += (s, e) => {
+                                    if (result.Rules.ContainsKey(attr.Name))
+                                        result.Rules[attr.Name].Default = domainValue;
+                                    else
+                                    {
+                                        var rule = new Result.Rule(attr, domainValue);
+                                        result.Rules[attr.Name] = rule;
+                                    }
+                                };
+                                items.Add(item);
+                                if (result.Rules.ContainsKey(attr.Name) && result.Rules[attr.Name].Default == domainValue) selectedIndex = i;
+                            }
+                        ((Elements.ResultDefaultDomainAttr)attrName).GetComboBox().ItemsSource = items;
+                        ((Elements.ResultDefaultDomainAttr)attrName).GetComboBox().SelectedIndex = selectedIndex;
+                        ((Elements.ResultDefaultDomainAttr)attrName).Header = attr.Name;
+                        if (result.Rules.ContainsKey(attr.Name))
+                        {
+                            ((Elements.ResultDefaultDomainAttr)attrName).GetComboBox().SelectedItem = result.Rules[attr.Name].Default;
+                        }
+                    }
+                    else
+                    {
+                        attrName = new Elements.UserControl1();
+                        ((Elements.UserControl1)attrName).Header = attr.Name;
+                        if (result.Rules.ContainsKey(attr.Name))
+                        {
+                            ((Elements.UserControl1)attrName).GetTextBox().Text = result.Rules[attr.Name].Default;
+                        }
+                        ((Elements.UserControl1)attrName).GetTextBox().TextChanged += (s, e) =>
+                        {
+                            if (result.Rules.ContainsKey(attr.Name))
+                                result.Rules[attr.Name].Default = ((TextBox)s).Text;
+                            else
+                            {
+                                var rule = new Result.Rule(attr, ((TextBox)s).Text);
+                                result.Rules[attr.Name] = rule;
+                            }
+                        };
+                    }
                     attrInfo.UIPanel = attrName;
                     info.Sections.Add(attrInfo);
                 }
@@ -231,13 +338,13 @@ namespace HelloForms
 
             info.NodeNameProperty = "Условие схемы";
 
-            var argInfo1 = Medium.ConditionArgSection(condition.Arg1, "Arg1 (predicate)");
+            var argInfo1 = Medium.ConditionArgSection(condition.Arg1, "Arg1");
             argInfo1.InputAdded += (object s, ConnectionEventArgs e) =>
             {
                 argInfo1.Data = e.SourceConnector.Tag;
                 condition.Arg1 = (FactScheme.Argument)e.SourceConnector.Tag;
             };
-            var argInfo2 = Medium.ConditionArgSection(condition.Arg2, "Arg2 (actant)");
+            var argInfo2 = Medium.ConditionArgSection(condition.Arg2, "Arg2");
             argInfo2.InputAdded += (object s, ConnectionEventArgs e) =>
             {
                 argInfo2.Data = e.SourceConnector.Tag;
@@ -423,6 +530,32 @@ namespace HelloForms
         #endregion convertations
 
         #region various panels
+
+        static NodeInfo.SectionInfo TerminVarAttrInfo(Argument argument, OntologyNode.Attribute attr, Vocabularies.Vocabulary vocabulary, NodeInfo nodeInfo)
+        {
+            NodeInfo.SectionInfo attrInfo = new NodeInfo.SectionInfo();
+            attrInfo.Data = attr;
+            attrInfo.IsOutput = true;
+            var attrName = new TerminAttribute();
+            attrName.RemoveAttrButton.Click += (s, e) =>
+            {
+                Console.WriteLine("removed varattr");
+                argument.Attributes.Remove(attr);
+                nodeInfo.Sections.Remove(attrInfo);
+                // re-render node
+            };
+            var vocList = vocabulary.ToList();
+            attrName.AttrNameComboBox.ItemsSource = vocList;
+            attrName.AttrNameComboBox.SelectedIndex = vocList.FindIndex(t => t.Name == attr.Name);
+            attrName.AttrNameComboBox.SelectionChanged += (s, e) => {
+                attr.Name = e.AddedItems[0].ToString();
+            };
+            attrName.ToolTip = attr.AttrType;
+
+            attrInfo.UIPanel = attrName;
+            return attrInfo;
+        }
+
         private static StackPanel ResultInfoPanel(FactScheme.Result result)
         {
             StackPanel stackPanel = new StackPanel();
@@ -430,6 +563,8 @@ namespace HelloForms
 
             ComboBox cb = new ComboBox();
             cb.ItemsSource = Enum.GetValues(typeof(FactScheme.ResultType));
+            cb.SelectedValue = result.Type;
+
             stackPanel.Children.Add(cb);
 
             TextBlock editedArgName = new TextBlock();
@@ -447,7 +582,6 @@ namespace HelloForms
                     result.Type = ResultType.EDIT;
                 }
             };
-            cb.SelectedValue = FactScheme.ResultType.CREATE;
 
             return stackPanel;
         }
@@ -460,8 +594,10 @@ namespace HelloForms
             foreach (Result res in scheme.Results)
             {
                 var dstNode = nodes.First(x => x.Tag == res);
-                foreach (Result.Rule rule in res.Rules)
+                foreach (var rulePair in res.Rules)
                 {
+                    var rule = rulePair.Value;
+                    if (rule.Reference == null) continue;
                     var srcNode = nodes.First(x => x.Tag == rule.Reference);
                     var srcConn = srcNode.Connectors.First(x =>
                         ((rule.Attribute.AttrType == OntologyNode.Attribute.AttributeType.OBJECT &&
